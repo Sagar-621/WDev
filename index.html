@@ -45,20 +45,47 @@
     <!-- ===== HERO SECTION ===== -->
     <section class="hero" id="home">
         <div class="hero-bg">
-            <img src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1920&q=80"
-                alt="Fashion model in elegant cultural outfit">
+            <img src="https://images.unsplash.com/photo-1595777707802-51b751f89ec8?w=1920&q=80"
+                alt="Premium fashion collection - elegant cultural attire" loading="lazy">
+            <picture>
+                <source media="(max-width: 768px)"
+                    srcset="https://images.unsplash.com/photo-1595777707802-51b751f89ec8?w=768&q=80">
+                <img src="https://images.unsplash.com/photo-1595777707802-51b751f89ec8?w=1920&q=80"
+                    alt="Premium fashion collection - elegant cultural attire">
+            </picture>
         </div>
         <div class="hero-overlay"></div>
         <div class="hero-content">
-            <!-- <img src="Fashion logo.jfif" alt="DeVASTHRA" class="hero-logo"> -->
-            <!-- <div class="hero-badge">Culture in Motion</div> -->
-            <h1 class="hero-title">Where <em>Culture</em> Meets Fashion</h1>
-            <p class="hero-tagline">Celebrating the art of tradition reimagined for the modern soul. DeVASTHRA brings
-                you
-                curated collections that blend heritage craftsmanship with contemporary elegance.</p>
+            <div class="hero-badge-premium">Luxury Heritage Collection</div>
+            <h1 class="hero-title">Where <span class="hero-highlight">Culture</span> Meets Fashion</h1>
+            <p class="hero-tagline">Celebrating the art of tradition reimagined for the modern soul. Premium pieces that
+                blend age-old craftsmanship with contemporary elegance.</p>
             <div class="hero-buttons">
-                <a href="#products" class="btn btn-primary">Shop Now</a>
-                <a href="#collections" class="btn btn-outline">View Collection</a>
+                <a href="#products" class="btn btn-primary btn-large">Explore Collection</a>
+                <a href="#collections" class="btn btn-outline btn-large">Discover More</a>
+            </div>
+            <div class="hero-trust-badges">
+                <div class="trust-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <span>Premium Quality</span>
+                </div>
+                <div class="trust-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <span>Expert Support</span>
+                </div>
+                <div class="trust-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                    <span>Secure Shopping</span>
+                </div>
             </div>
         </div>
     </section>
@@ -73,178 +100,8 @@
                     detail and premium craftsmanship, rooted in cultural heritage.</p>
             </div>
 
-            <div class="products-grid">
-                <!-- Product 1 -->
-                <div class="product-card fade-in">
-                    <div class="product-image">
-                        <img src="https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&q=80"
-                            alt="Cashmere Knit Sweater">
-                        <span class="product-badge new">New</span>
-                        <div class="product-actions-overlay">
-                            <button class="btn add-to-cart" data-product="Cashmere Knit Sweater">Add to Cart</button>
-                        </div>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name">Cashmere Knit Sweater</h3>
-                        <div class="product-price">
-                            <span class="current">₹4,999</span>
-                        </div>
-                        <div class="product-sizes">
-                            <span>S</span><span>M</span><span>L</span><span>XL</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Product 2 -->
-                <div class="product-card fade-in">
-                    <div class="product-image">
-                        <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600&q=80"
-                            alt="Tailored Wool Overcoat">
-                        <span class="product-badge trending">Trending</span>
-                        <div class="product-actions-overlay">
-                            <button class="btn add-to-cart" data-product="Tailored Wool Overcoat">Add to Cart</button>
-                        </div>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name">Tailored Wool Overcoat</h3>
-                        <div class="product-price">
-                            <span class="current">₹8,499</span>
-                            <span class="original">₹11,499</span>
-                            <span class="discount">26% OFF</span>
-                        </div>
-                        <div class="product-sizes">
-                            <span>S</span><span>M</span><span>L</span><span>XL</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Product 3 -->
-                <div class="product-card fade-in">
-                    <div class="product-image">
-                        <img src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600&q=80"
-                            alt="Classic Linen Shirt">
-                        <div class="product-actions-overlay">
-                            <button class="btn add-to-cart" data-product="Classic Linen Shirt">Add to Cart</button>
-                        </div>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name">Classic Linen Shirt</h3>
-                        <div class="product-price">
-                            <span class="current">₹2,499</span>
-                        </div>
-                        <div class="product-sizes">
-                            <span>S</span><span>M</span><span>L</span><span>XL</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Product 4 -->
-                <div class="product-card fade-in">
-                    <div class="product-image">
-                        <img src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600&q=80"
-                            alt="Leather Tote Bag">
-                        <span class="product-badge new">New</span>
-                        <div class="product-actions-overlay">
-                            <button class="btn add-to-cart" data-product="Leather Tote Bag">Add to Cart</button>
-                        </div>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name">Leather Tote Bag</h3>
-                        <div class="product-price">
-                            <span class="current">₹6,499</span>
-                        </div>
-                        <div class="product-sizes">
-                            <span>S</span><span>M</span><span>L</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Product 5 -->
-                <div class="product-card fade-in">
-                    <div class="product-image">
-                        <img src="https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=600&q=80"
-                            alt="Silk Blend Blazer">
-                        <span class="product-badge sale">Sale</span>
-                        <div class="product-actions-overlay">
-                            <button class="btn add-to-cart" data-product="Silk Blend Blazer">Add to Cart</button>
-                        </div>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name">Silk Blend Blazer</h3>
-                        <div class="product-price">
-                            <span class="current">₹7,299</span>
-                            <span class="original">₹9,999</span>
-                            <span class="discount">27% OFF</span>
-                        </div>
-                        <div class="product-sizes">
-                            <span>S</span><span>M</span><span>L</span><span>XL</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Product 6 -->
-                <div class="product-card fade-in">
-                    <div class="product-image">
-                        <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&q=80"
-                            alt="Handloom Midi Dress">
-                        <span class="product-badge trending">Trending</span>
-                        <div class="product-actions-overlay">
-                            <button class="btn add-to-cart" data-product="Handloom Midi Dress">Add to Cart</button>
-                        </div>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name">Handloom Midi Dress</h3>
-                        <div class="product-price">
-                            <span class="current">₹5,599</span>
-                        </div>
-                        <div class="product-sizes">
-                            <span>S</span><span>M</span><span>L</span><span>XL</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Product 7 -->
-                <div class="product-card fade-in">
-                    <div class="product-image">
-                        <img src="https://images.unsplash.com/photo-1612731486606-2614b4d74921?w=600&q=80"
-                            alt="Pashmina Wool Stole">
-                        <div class="product-actions-overlay">
-                            <button class="btn add-to-cart" data-product="Pashmina Wool Stole">Add to Cart</button>
-                        </div>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name">Pashmina Wool Stole</h3>
-                        <div class="product-price">
-                            <span class="current">₹1,899</span>
-                        </div>
-                        <div class="product-sizes">
-                            <span>S</span><span>M</span><span>L</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Product 8 -->
-                <div class="product-card fade-in">
-                    <div class="product-image">
-                        <img src="https://images.unsplash.com/photo-1560243563-062bfc001d68?w=600&q=80"
-                            alt="Premium Chino Trousers">
-                        <span class="product-badge new">New</span>
-                        <div class="product-actions-overlay">
-                            <button class="btn add-to-cart" data-product="Premium Chino Trousers">Add to Cart</button>
-                        </div>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name">Premium Chino Trousers</h3>
-                        <div class="product-price">
-                            <span class="current">₹3,899</span>
-                            <span class="original">₹5,199</span>
-                            <span class="discount">25% OFF</span>
-                        </div>
-                        <div class="product-sizes">
-                            <span>S</span><span>M</span><span>L</span><span>XL</span>
-                        </div>
-                    </div>
-                </div>
+            <div class="products-grid" id="productsGrid">
+                <!-- Rendered dynamically by script.js -->
             </div>
         </div>
     </section>
@@ -260,65 +117,29 @@
             </div>
 
             <div class="collections-grid">
-                <!-- Men -->
+                <!-- Round neck Shirts -->
                 <div class="collection-card fade-in">
-                    <img src="https://images.unsplash.com/photo-1617137968427-85924c800a22?w=600&q=80"
-                        alt="Men's Collection">
-                    <div class="collection-overlay">
-                        <span class="collection-label">Collection</span>
-                        <h3 class="collection-name">Men</h3>
-                        <a href="#" class="collection-link">
-                            Explore
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M5 12h14M12 5l7 7-7 7" />
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Women -->
-                <div class="collection-card fade-in">
-                    <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&q=80"
-                        alt="Women's Collection">
-                    <div class="collection-overlay">
-                        <span class="collection-label">Collection</span>
-                        <h3 class="collection-name">Women</h3>
-                        <a href="#" class="collection-link">
-                            Explore
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M5 12h14M12 5l7 7-7 7" />
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- New Arrivals -->
-                <div class="collection-card fade-in">
-                    <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=600&q=80"
-                        alt="New Arrivals Collection">
-                    <div class="collection-overlay">
-                        <span class="collection-label">Just In</span>
-                        <h3 class="collection-name">New Arrivals</h3>
-                        <a href="#" class="collection-link">
-                            Explore
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M5 12h14M12 5l7 7-7 7" />
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Heritage -->
-                <div class="collection-card fade-in">
-                    <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=600&q=80"
-                        alt="Heritage Collection">
+                    <img src="PLBTshirt-catalog/YESH0480.JPG.jpeg" alt="Polo Shirts Collection">
                     <div class="collection-overlay">
                         <span class="collection-label">Signature</span>
-                        <h3 class="collection-name">Heritage</h3>
-                        <a href="#" class="collection-link">
+                        <h3 class="collection-name">Round Neck</h3>
+                        <a href="#products" class="collection-link">
+                            Explore
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 12h14M12 5l7 7-7 7" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Printed Neck -->
+                <div class="collection-card fade-in">
+                    <img src="Btshirt-catalog/YESH0471.JPG.jpeg" alt="Round Neck Collection">
+                    <div class="collection-overlay">
+                        <span class="collection-label">Essential</span>
+                        <h3 class="collection-name">Printed</h3>
+                        <a href="#products" class="collection-link">
                             Explore
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                 stroke-linecap="round" stroke-linejoin="round">
@@ -336,8 +157,7 @@
         <div class="container">
             <div class="about-wrapper">
                 <div class="about-image fade-in">
-                    <img src="https://images.unsplash.com/photo-1558171813-4c088753af8f?w=800&q=80"
-                        alt="DeVASTHRA fashion atelier">
+                    <img src="Fashion logo.jfif" alt="DeVASTHRA fashion atelier">
                     <div class="about-image-accent"></div>
                 </div>
                 <div class="about-content fade-in">
@@ -566,6 +386,7 @@
     </footer>
 
     <!-- Toast notification -->
+
     <div class="toast" id="toast">
         <span class="toast-icon">✦</span>
         <span id="toastMessage">Item added to cart</span>

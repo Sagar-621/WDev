@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Detail — DeVASTHRA</title>
+    <meta name="description" content="DeVASTHRA product detail page — premium fashion celebrating culture in motion.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="Fashion logo.jfif">
+</head>
+
+<body>
+
+    <!-- ===== HEADER / NAVBAR ===== -->
+    <header class="header" id="header">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="Fashion logo.jfif" alt="DeVASTHRA Logo" class="logo-img">
+                <span class="logo-text">De<span class="logo-v">V</span>ASTHRA</span>
+            </a>
+            <nav class="nav-links" id="navLinks">
+                <a href="index.html#home">Home</a>
+                <a href="index.html#collections">Collections</a>
+                <a href="index.html#products">Products</a>
+                <a href="index.html#about">About</a>
+                <a href="index.html#contact">Contact</a>
+            </nav>
+            <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <div class="mobile-overlay" id="mobileOverlay"></div>
+    </header>
+
+    <!-- ===== PRODUCT DETAIL PAGE ===== -->
+    <main class="pdp-page">
+        <div class="container">
+            <!-- Breadcrumb -->
+            <nav class="pdp-breadcrumb" id="pdpBreadcrumb">
+                <a href="index.html">Home</a>
+                <span>›</span>
+                <a href="index.html#products">Products</a>
+                <span>›</span>
+                <span id="breadcrumbName">Product</span>
+            </nav>
+
+            <!-- Product Layout -->
+            <div class="pdp-layout">
+                <!-- Thumbnail Strip -->
+                <div class="pdp-thumbnails" id="pdpThumbnails">
+                    <!-- Rendered by JS -->
+                </div>
+
+                <!-- Main Image -->
+                <div class="pdp-main-image" id="pdpMainImage">
+                    <img id="pdpHeroImg" src="" alt="">
+                </div>
+
+                <!-- Product Info -->
+                <div class="pdp-info" id="pdpInfo">
+                    <span class="pdp-badge" id="pdpBadge"></span>
+                    <h1 class="pdp-product-name" id="pdpName"></h1>
+                    <div class="pdp-price" id="pdpPrice"></div>
+                    <p class="pdp-description" id="pdpDesc"></p>
+
+                    <!-- Highlights -->
+                    <div class="pdp-highlights" id="pdpHighlights">
+                        <h4>Product Details</h4>
+                        <ul id="pdpHighlightsList"></ul>
+                    </div>
+
+                    <div class="pdp-divider"></div>
+
+                    <!-- Size Selector -->
+                    <div class="pdp-section">
+                        <h4>Select Size</h4>
+                        <div class="pdp-sizes" id="pdpSizes"></div>
+                    </div>
+
+                    <!-- Quantity -->
+                    <div class="pdp-section">
+                        <h4>Quantity</h4>
+                        <div class="pdp-qty">
+                            <div class="qty-picker">
+                                <button class="qty-btn" id="qtyMinus" aria-label="Decrease quantity">−</button>
+                                <span class="qty-value" id="qtyValue">1</span>
+                                <button class="qty-btn" id="qtyPlus" aria-label="Increase quantity">+</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="pdp-actions">
+                        <button class="btn btn-primary" id="pdpAddToCart">Add to Cart</button>
+                        <button class="btn btn-buy" id="pdpBuyNow">Buy Now</button>
+                    </div>
+
+                    <!-- Delivery Info -->
+                    <div class="pdp-delivery">
+                        <div class="pdp-delivery-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 12h14" />
+                                <path d="m12 5 7 7-7 7" />
+                            </svg>
+                            <span><strong>Free Delivery</strong> on orders above ₹999</span>
+                        </div>
+                        <div class="pdp-delivery-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0" />
+                                <path d="m9 12 2 2 4-4" />
+                            </svg>
+                            <span><strong>10 Days</strong> Easy Return & Exchange</span>
+                        </div>
+                        <div class="pdp-delivery-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <rect width="20" height="14" x="2" y="5" rx="2" />
+                                <line x1="2" x2="22" y1="10" y2="10" />
+                            </svg>
+                            <span><strong>Pay on Delivery</strong> available</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Brand -->
+                <div class="footer-brand">
+                    <a href="index.html" class="logo">
+                        <img src="Fashion logo.jfif" alt="DeVASTHRA" class="logo-img">
+                        <span class="logo-text">De<span class="logo-v">V</span>ASTHRA</span>
+                    </a>
+                    <p>Culture in Motion. Fashion that celebrates heritage and modern elegance, crafted for those who
+                        wear their identity with pride.</p>
+                    <div class="footer-social">
+                        <a href="https://www.instagram.com/devasthra_official?utm_source=qr&igsh=eXV4emFnOWdsMjBz"
+                            target="_blank" rel="noopener" aria-label="Instagram">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                            </svg>
+                        </a>
+                        <a href="#" aria-label="Twitter / X">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 4l11.733 16h4.267l-11.733 -16z" />
+                                <path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772" />
+                            </svg>
+                        </a>
+                        <a href="#" aria-label="Facebook">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+                            </svg>
+                        </a>
+                    </div>
+                    <!-- Powered by NatooKart -->
+                    <div style="margin-top: 20px; opacity: 0.5; display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase;">Powered
+                            by</span>
+                        <img src="Company logo.jpeg" alt="NatooKart" class="company-badge">
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html#home">Home</a></li>
+                        <li><a href="index.html#collections">Collections</a></li>
+                        <li><a href="index.html#products">Products</a></li>
+                        <li><a href="index.html#about">About Us</a></li>
+                        <li><a href="index.html#contact">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Customer Care -->
+                <div class="footer-col">
+                    <h4>Customer Care</h4>
+                    <ul>
+                        <li><a href="#">Size Guide</a></li>
+                        <li><a href="#">Shipping & Returns</a></li>
+                        <li><a href="#">Order Tracking</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+
+                <!-- Newsletter -->
+                <div class="footer-col footer-newsletter">
+                    <h4>Stay Updated</h4>
+                    <p>Subscribe to receive exclusive offers, early access to new collections, and style inspiration
+                        directly to your inbox.</p>
+                    <form class="newsletter-form" id="newsletterForm">
+                        <input type="email" placeholder="Enter your email" required>
+                        <button type="submit">Join</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 DeVASTHRA. All rights reserved.</p>
+                <div class="footer-bottom-links">
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast">
+        <span class="toast-icon">✦</span>
+        <span id="toastMessage">Item added to cart</span>
+    </div>
+
+    <script src="product-detail.js"></script>
+</body>
+
+</html>

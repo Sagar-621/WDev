@@ -1,6 +1,6 @@
 /* ========================================
    DeVASTHRA — Culture in Motion
-   Interactive Functionality
+   Main Page Interactivity
    ======================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -15,20 +15,65 @@ document.addEventListener('DOMContentLoaded', () => {
     const contactForm = document.getElementById('contactForm');
     const newsletterForm = document.getElementById('newsletterForm');
 
-    // ── DeVASTHRA Brand Colors ──
+    // ── Brand Colors ──
     const BRAND_MAROON = '#6B0F2B';
-    const BRAND_GOLD = '#DAA520';
 
-    // ── 1. Sticky Header Shadow on Scroll ──
-    let lastScroll = 0;
+    // ── Product Data ──
+    const PRODUCTS = [
+        {
+            id: 'btshirt',
+            name: "DeVASTHRA Branded T-Shirt",
+            image: "Btshirt.JPG.jpeg",
+            price: 1499,
+            originalPrice: 2499,
+            badge: "Trending",
+            badgeClass: "trending",
+            sizes: [],
+            description: "A premium navy blue t-shirt featuring the iconic DeVASTHRA mandala artwork with 'Loka Seema Ativartin' typography. Crafted from 100% cotton with a regular fit for everyday comfort and cultural expression.",
+            catalogFolder: "Btshirt-catalog",
+            catalogImages: ["YESH0468.JPG.jpeg", "YESH0471.JPG.jpeg", "YESH0474.JPG.jpeg", "YESH0477.JPG.jpeg"],
+            highlights: [
+                "100% Premium Cotton",
+                "Regular Fit",
+                "Round Neck",
+                "Short Sleeves",
+                "DeVASTHRA signature mandala print",
+                "Machine washable"
+            ]
+        },
+        {
+            id: 'plbtshirt',
+            name: "DeVASTHRA Plain T-Shirt",
+            image: "PLBTshirt.JPG.jpeg",
+            price: 999,
+            originalPrice: 1799,
+            badge: "New",
+            badgeClass: "new",
+            sizes: [],
+            description: "A sleek plain navy blue oversized t-shirt with the subtle DeVASTHRA branding. Made from premium cotton with a relaxed, oversized silhouette perfect for effortless street style.",
+            catalogFolder: "PLBTshirt-catalog",
+            catalogImages: ["YESH0480.JPG.jpeg", "YESH0482.JPG.jpeg", "YESH0485.JPG.jpeg"],
+            highlights: [
+                "100% Premium Cotton",
+                "Oversized Fit",
+                "Round Neck",
+                "Short Sleeves",
+                "Minimal DeVASTHRA branding",
+                "Soft hand feel"
+            ]
+        }
+    ];
+
+    // Make PRODUCTS available globally for product-detail.js
+    window.DEVASTHRA_PRODUCTS = PRODUCTS;
+
+    // ── 1. Sticky Header Shadow ──
     window.addEventListener('scroll', () => {
-        const currentScroll = window.pageYOffset;
-        if (currentScroll > 60) {
+        if (window.pageYOffset > 60) {
             header.classList.add('scrolled');
         } else {
             header.classList.remove('scrolled');
         }
-        lastScroll = currentScroll;
     }, { passive: true });
 
     // ── 2. Mobile Hamburger Menu ──
@@ -47,41 +92,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     hamburger.addEventListener('click', () => {
-        if (navLinks.classList.contains('open')) {
-            closeMenu();
-        } else {
-            openMenu();
-        }
+        navLinks.classList.contains('open') ? closeMenu() : openMenu();
     });
 
     mobileOverlay.addEventListener('click', closeMenu);
+    navLinks.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
 
-    // Close menu when a nav link is clicked
-    navLinks.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', closeMenu);
-    });
-
-    // ── 3. Smooth Scroll for Anchor Links ──
+    // ── 3. Smooth Scroll ──
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', (e) => {
             e.preventDefault();
             const target = document.querySelector(anchor.getAttribute('href'));
             if (target) {
-                const headerOffset = 80;
-                const elementPosition = target.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-                window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth'
-                });
+                const offset = target.getBoundingClientRect().top + window.pageYOffset - 80;
+                window.scrollTo({ top: offset, behavior: 'smooth' });
             }
         });
     });
 
-    // ── 4. Scroll-Triggered Fade-In Animations ──
-    const fadeElements = document.querySelectorAll('.fade-in');
-
+    // ── 4. Scroll-Triggered Fade-In ──
     const fadeObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -89,104 +118,115 @@ document.addEventListener('DOMContentLoaded', () => {
                 fadeObserver.unobserve(entry.target);
             }
         });
-    }, {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
-    fadeElements.forEach(el => fadeObserver.observe(el));
+    document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
 
-    // ── 5. Toast Notification Helper ──
+    // ── 5. Toast Helper ──
     let toastTimeout;
     function showToast(message) {
         clearTimeout(toastTimeout);
         toastMessage.textContent = message;
         toast.classList.add('show');
-        toastTimeout = setTimeout(() => {
-            toast.classList.remove('show');
-        }, 3000);
+        toastTimeout = setTimeout(() => toast.classList.remove('show'), 3000);
     }
 
-    // ── 6. Add to Cart Buttons ──
-    document.querySelectorAll('.add-to-cart').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const productName = btn.getAttribute('data-product');
-            showToast(`${productName} added to cart`);
+    // ── 6. Price Formatter ──
+    function formatPrice(price) {
+        return '₹' + price.toLocaleString('en-IN');
+    }
 
-            // Button feedback animation with brand color
-            btn.textContent = '✓ Added';
-            btn.style.background = BRAND_GOLD;
-            btn.style.color = '#fff';
-            setTimeout(() => {
-                btn.textContent = 'Add to Cart';
-                btn.style.background = '';
-                btn.style.color = '';
-            }, 2000);
-        });
-    });
+    // ── 7. Render Product Grid ──
+    function renderProducts() {
+        const grid = document.getElementById('productsGrid');
+        if (!grid) return;
 
-    // ── 7. Product Size Selection ──
-    document.querySelectorAll('.product-sizes span').forEach(sizeBtn => {
-        sizeBtn.addEventListener('click', () => {
-            // Deselect siblings
-            const parent = sizeBtn.parentElement;
-            parent.querySelectorAll('span').forEach(s => {
-                s.style.borderColor = '';
-                s.style.color = '';
-                s.style.background = '';
+        grid.innerHTML = PRODUCTS.map(product => {
+            const discount = product.originalPrice
+                ? Math.round((1 - product.price / product.originalPrice) * 100)
+                : 0;
+
+            return `
+                <div class="product-card fade-in" data-product-id="${product.id}">
+                    <div class="product-image">
+                        <img src="${product.image}" alt="${product.name}" loading="lazy">
+                        ${product.badge ? `<span class="product-badge ${product.badgeClass}">${product.badge}</span>` : ''}
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">${product.name}</h3>
+                        <div class="product-price">
+                            <span class="current">${formatPrice(product.price)}</span>
+                            ${product.originalPrice ? `<span class="original">${formatPrice(product.originalPrice)}</span>` : ''}
+                            ${discount ? `<span class="discount">${discount}% OFF</span>` : ''}
+                        </div>
+                        <div class="product-sizes">
+                            ${product.sizes.map(s => `<span>${s}</span>`).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // Re-observe fade-in
+        grid.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+
+        // Click navigates to product detail page
+        grid.querySelectorAll('.product-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const id = card.getAttribute('data-product-id');
+                window.location.href = `product.html?id=${id}`;
             });
-            // Select with brand maroon
-            sizeBtn.style.borderColor = BRAND_MAROON;
-            sizeBtn.style.color = BRAND_MAROON;
-            sizeBtn.style.background = 'rgba(107, 15, 43, 0.08)';
         });
-    });
+    }
 
-    // ── 8. Contact Form Validation ──
-    contactForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const name = document.getElementById('contactName').value.trim();
-        const email = document.getElementById('contactEmail').value.trim();
-        const message = document.getElementById('contactMessage').value.trim();
+    renderProducts();
 
-        if (!name || !email || !message) {
-            showToast('Please fill in all fields');
-            return;
-        }
+    // ── 8. Contact Form ──
+    if (contactForm) {
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('contactName').value.trim();
+            const email = document.getElementById('contactEmail').value.trim();
+            const message = document.getElementById('contactMessage').value.trim();
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            showToast('Please enter a valid email address');
-            return;
-        }
+            if (!name || !email || !message) {
+                showToast('Please fill in all fields');
+                return;
+            }
 
-        showToast('Message sent successfully!');
-        contactForm.reset();
-    });
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showToast('Please enter a valid email address');
+                return;
+            }
+
+            showToast('Message sent successfully!');
+            contactForm.reset();
+        });
+    }
 
     // ── 9. Newsletter Form ──
-    newsletterForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const input = newsletterForm.querySelector('input');
-        const email = input.value.trim();
+    if (newsletterForm) {
+        newsletterForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const input = newsletterForm.querySelector('input');
+            const email = input.value.trim();
 
-        if (!email) {
-            showToast('Please enter your email');
-            return;
-        }
+            if (!email) {
+                showToast('Please enter your email');
+                return;
+            }
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            showToast('Please enter a valid email address');
-            return;
-        }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showToast('Please enter a valid email address');
+                return;
+            }
 
-        showToast('Welcome to the DeVASTHRA family!');
-        input.value = '';
-    });
+            showToast('Welcome to the DeVASTHRA family!');
+            input.value = '';
+        });
+    }
 
-    // ── 10. Active Nav Link on Scroll ──
+    // ── 10. Active Nav Link ──
     const sections = document.querySelectorAll('section[id]');
     const navAnchors = document.querySelectorAll('.nav-links a');
 
