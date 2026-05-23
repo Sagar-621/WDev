@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart — DEVASTHRA</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="backend/images/Fashion logo.jfif">
+</head>
+
+<body>
+
+    <!-- ===== SHARED HEADER ===== -->
+    <div id="site-header"></div>
+
+    <!-- CART PAGE -->
+    <main class="cart-page">
+        <div class="container">
+            <nav class="pdp-breadcrumb">
+                <a href="index.html">Home</a>
+                <span>›</span>
+                <span>Your Cart</span>
+            </nav>
+
+            <h1 class="cart-page-title">Shopping Cart</h1>
+           
+            <div class="cart-layout" id="cartLayout">
+                <!-- Cart items + address loaded by cart.js -->
+                <div class="cart-loading">
+                    <div class="spinner"></div>
+                    <p>Loading your cart...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- Pre-payment Details Modal -->
+    <div class="checkout-overlay" id="checkoutOverlay"></div>
+    <div class="checkout-modal" id="checkoutModal" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle">
+        <button class="checkout-close" id="checkoutCloseBtn" aria-label="Close">&times;</button>
+        <div class="checkout-modal-header">
+            <p class="checkout-kicker">Review details</p>
+            <h2 id="checkoutTitle">Confirm your details before payment</h2>
+            <p>Review the delivery address, order summary, and payment method before continuing.</p>
+        </div>
+
+        <div class="checkout-modal-body">
+            <div class="checkout-review-stack">
+                <section class="checkout-review-card">
+                    <h3>Delivery Address</h3>
+                    <div class="checkout-review-copy" id="checkoutAddressSummary"></div>
+                </section>
+                <section class="checkout-review-card">
+                    <h3>Order Summary</h3>
+                    <div class="checkout-review-copy" id="checkoutOrderSummary"></div>
+                </section>
+                <section class="checkout-review-card">
+                    <h3>Payment Method</h3>
+                    <div class="checkout-review-copy" id="checkoutPaymentSummary"></div>
+                </section>
+            </div>
+
+            <p class="checkout-msg" id="checkoutMessage"></p>
+        </div>
+
+        <div class="checkout-modal-actions">
+            <button class="btn btn-outline" id="checkoutCancelBtn" type="button">Cancel</button>
+            <button class="btn btn-primary" id="checkoutConfirmBtn" type="button">Proceed to Payment</button>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <span class="toast-icon">✓</span>
+        <span id="toastMessage">Done</span>
+    </div>
+
+    <!-- ===== SHARED FOOTER ===== -->
+    <div id="site-footer"></div>
+
+    <script src="site-header.js"></script>
+    <script src="site-footer.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="header-category-drawer.js"></script>
+    <script src="chat-widget.js"></script>
+</body>
+
+</html>
+

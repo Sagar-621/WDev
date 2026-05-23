@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Address — DEVASTHRA</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="backend/images/Fashion logo.jfif">
+</head>
+
+<body>
+
+    <!-- ===== SHARED HEADER ===== -->
+    <div id="site-header"></div>
+<main class="address-page">
+        <div class="container">
+            <nav class="pdp-breadcrumb">
+                <a href="index.html">Home</a><span>›</span>
+                <a href="cart.html">Cart</a><span>›</span>
+                <span>Delivery Address</span>
+            </nav>
+
+            <h1 class="cart-page-title">Delivery Addresses</h1>
+
+            <div class="address-form-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 id="formTitle" style="margin: 0; font-size: 1.3rem;">Add New Address</h2>
+                    <button type="button" id="cancelEditBtn"
+                        style="display: none; padding: 8px 16px; background: #fee2e2; color: #dc2626; border: 1.5px solid #fecaca; border-radius: 4px; cursor: pointer; font-weight: 600;">Cancel</button>
+                </div>
+                <form id="addressForm" novalidate>
+                    <!-- Ordering Option Toggle -->
+                    <div class="order-mode-toggle">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="orderForSomeone" name="order_for_someone" class="checkbox-input">
+                            <span class="checkbox-text">Ordering for someone else?</span>
+                        </label>
+                    </div>
+
+                    <!-- Main Address Grid (First 4 Columns - Fixed) -->
+                    <div class="addr-main-grid" id="addrMainGrid">
+                        <div class="form-group addr-full-width">
+                            <label for="addrLine">Address Line <span class="required-star">*</span></label>
+                            <input type="text" id="addrLine" name="address_line" placeholder="House no., street, area, landmark" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="addrPincode">Pincode <span class="required-star">*</span></label>
+                            <input type="text" id="addrPincode" name="pincode" placeholder="6-digit pincode" maxlength="6" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="addrCity">City <span class="required-star">*</span></label>
+                            <input type="text" id="addrCity" name="city" placeholder="City" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="addrState">State <span class="required-star">*</span></label>
+                            <input type="text" id="addrState" name="state" placeholder="State" required>
+                        </div>
+                    </div>
+
+                    <!-- Recipient Details Grid (Shown when ordering for someone) -->
+                    <div class="addr-recipient-grid" id="addrRecipientGrid" style="display: none;">
+                        <div class="form-group">
+                            <label for="recipientName">Recipient Name <span class="required-star">*</span></label>
+                            <input type="text" id="recipientName" name="recipient_name" placeholder="Full name of recipient">
+                        </div>
+                        <div class="form-group">
+                            <label for="recipientPhone">Recipient Mobile <span class="required-star">*</span></label>
+                            <input type="tel" id="recipientPhone" name="recipient_phone" placeholder="10-digit mobile" maxlength="10">
+                        </div>
+                    </div>
+
+                    <p class="form-error" id="addrError"></p>
+                    <button type="submit" class="btn btn-primary addr-submit-btn" id="addrSubmitBtn">
+                        Save Address &amp; Continue
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <div class="toast" id="toast"><span class="toast-icon">✓</span><span id="toastMessage"></span></div>
+
+    <script>
+        const API_BASE = window.__API_BASE || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:' ? 'http://localhost:5000' : window.location.origin);
+        const getToken = () => localStorage.getItem('DEVASTHRA_token');
+        const getUser = () => { try { return JSON.parse(localStorage.getItem('DEVASTHRA_user')); } catch { return null; } };
+
+        const form = document.getElementById('addressForm');
+        const errorEl = document.getElementById('addrError');
+        const submitBtn = document.getElementById('addrSubmitBtn');
+        const toast = document.getElementById('toast');
+        const toastMsg = document.getElementById('toastMessage');
+
+        // Header and Mobile Menu Elements
+        const header = document.getElementById('header');
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+        const cartCount = document.getElementById('cartCount');
+        const mobileCartCount = document.querySelector('.mobile-cart-count');
+        const userBtn = document.getElementById('userIconBtn');
+        const userDrop = document.getElementById('userDropdown');
+        const guestMenu = document.getElementById('guestMenu');
+        const loggedMenu = document.getElementById('loggedMenu');
+        const mobileGuestMenu = document.getElementById('mobileGuestMenu');
+        const mobileLoggedMenu = document.getElementById('mobileLoggedMenu');
+        const mobileLoginBtn = document.getElementById('mobileLoginBtn');
+        const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
+
+        // ── Sticky Header ──
+        window.addEventListener('scroll', () => {
+            header?.classList.toggle('scrolled', window.pageYOffset > 10);
+        }, { passive: true });
+
+        // ── Mobile Hamburger ──
+        function openMenu() {
+            hamburger?.classList.add('active');
+            navLinks?.classList.add('open');
+            mobileOverlay?.classList.add('visible');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeMenu() {
+            hamburger?.classList.remove('active');
+            navLinks?.classList.remove('open');
+            mobileOverlay?.classList.remove('visible');
+            document.body.style.overflow = '';
+        }
+        hamburger?.addEventListener('click', () => navLinks?.classList.contains('open') ? closeMenu() : openMenu());
+        mobileOverlay?.addEventListener('click', closeMenu);
+
+        // ── User Dropdown ──
+        userBtn?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userDrop?.classList.toggle('open');
+        });
+        document.addEventListener('click', () => userDrop?.classList.remove('open'));
+
+        // ── Auth Synchronization ──
+        function updateUserUI() {
+            const user = getUser();
+            if (user && getToken()) {
+                if (guestMenu) guestMenu.style.display = 'none';
+                if (loggedMenu) {
+                    loggedMenu.style.display = 'block';
+                    const displayName = user.name || user.mobile || 'User';
+                    loggedMenu.innerHTML = `
+                        <div class="dropdown-user-info">${displayName}</div>
+                        <a href="cart.html" class="dropdown-item">Cart</a>
+                        <a href="my-orders.html" class="dropdown-item">Orders</a>
+                        <a href="dashboard.html" class="dropdown-item">Profile</a>
+                    `;
+                }
+                if (mobileGuestMenu) mobileGuestMenu.style.display = 'none';
+                if (mobileLoggedMenu) mobileLoggedMenu.style.display = 'block';
+                refreshCartCount();
+            } else {
+                if (guestMenu) guestMenu.style.display = 'block';
+                if (loggedMenu) loggedMenu.style.display = 'none';
+                if (mobileGuestMenu) mobileGuestMenu.style.display = 'block';
+                if (mobileLoggedMenu) mobileLoggedMenu.style.display = 'none';
+            }
+        }
+
+        function updateCartBadge(count) {
+            if (cartCount) {
+                cartCount.textContent = count > 0 ? count : '';
+                cartCount.style.display = count > 0 ? 'flex' : 'none';
+            }
+            if (mobileCartCount) {
+                mobileCartCount.textContent = count > 0 ? `(${count})` : '';
+                mobileCartCount.style.display = count > 0 ? 'inline' : 'none';
+            }
+        }
+
+        async function refreshCartCount() {
+            if (!getToken()) return;
+            try {
+                const res = await fetch(`${API_BASE}/cart/count`, {
+                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                });
+                const data = await res.json();
+                if (data.success) updateCartBadge(data.count);
+            } catch { }
+        }
+
+        mobileLoginBtn?.addEventListener('click', () => { closeMenu(); window.location.href = 'index.html'; });
+        mobileLogoutBtn?.addEventListener('click', () => {
+            localStorage.removeItem('DEVASTHRA_token');
+            localStorage.removeItem('DEVASTHRA_user');
+            closeMenu();
+            updateUserUI();
+            showToast('Logged out successfully', 'success');
+            window.location.href = 'index.html';
+        });
+
+        updateUserUI();
+
+        const orderForSomeoneCheckbox = document.getElementById('orderForSomeone');
+        const addrRecipientGrid = document.getElementById('addrRecipientGrid');
+        const recipientNameInput = document.getElementById('recipientName');
+        const recipientPhoneInput = document.getElementById('recipientPhone');
+
+        let userProfile = {}; // Will store user's profile data
+        let editingAddressId = null; // Track if editing an existing address
+
+        if (!getToken()) { window.location.href = 'index.html'; }
+
+        // Load saved addresses on page load
+        async function loadSavedAddresses() {
+            try {
+                const res = await fetch(`${API_BASE}/addresses`, {
+                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                });
+                const data = await res.json();
+                if (data.success && data.addresses.length > 0) {
+                    // Check if editing from cart page
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const editId = urlParams.get('edit');
+                    if (editId) {
+                        const addrToEdit = data.addresses.find(a => Number(a.id) === Number(editId));
+                        if (addrToEdit) {
+                            editAddress(Number(editId), addrToEdit);
+                        } else {
+                            showToast('Address not found', 'error');
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to load addresses:', err);
+                showToast('Failed to load addresses', 'error');
+            }
+        }
+
+        function setRecipientMode(enabled) {
+            if (enabled) {
+                addrRecipientGrid.style.display = 'grid';
+                recipientNameInput.setAttribute('required', 'required');
+                recipientPhoneInput.setAttribute('required', 'required');
+            } else {
+                addrRecipientGrid.style.display = 'none';
+                recipientNameInput.removeAttribute('required');
+                recipientPhoneInput.removeAttribute('required');
+                recipientNameInput.value = '';
+                recipientPhoneInput.value = '';
+            }
+        }
+
+        function editAddress(addressId, address) {
+            editingAddressId = Number(addressId);
+            document.getElementById('formTitle').textContent = 'Edit Address';
+            document.getElementById('cancelEditBtn').style.display = 'inline-block';
+            document.getElementById('addrSubmitBtn').textContent = 'Update Address';
+
+            document.getElementById('addrLine').value = address?.address_line || '';
+            document.getElementById('addrPincode').value = address?.pincode || '';
+            document.getElementById('addrCity').value = address?.city || '';
+            document.getElementById('addrState').value = address?.state || '';
+
+            const hasRecipient = Boolean((address?.recipient_name || '').trim() || (address?.recipient_phone || '').trim());
+            orderForSomeoneCheckbox.checked = hasRecipient;
+            setRecipientMode(hasRecipient);
+            if (hasRecipient) {
+                recipientNameInput.value = address?.recipient_name || '';
+                recipientPhoneInput.value = address?.recipient_phone || '';
+            }
+
+            window.history.replaceState({}, document.title, `address.html?edit=${addressId}`);
+        }
+
+        // Cancel edit mode
+        document.getElementById('cancelEditBtn').addEventListener('click', () => {
+            editingAddressId = null;
+            document.getElementById('formTitle').textContent = 'Add New Address';
+            document.getElementById('cancelEditBtn').style.display = 'none';
+            document.getElementById('addrSubmitBtn').textContent = 'Save Address & Continue';
+            document.getElementById('addressForm').reset();
+            document.getElementById('orderForSomeone').checked = false;
+            setRecipientMode(false);
+            // Clear URL parameters
+            window.history.replaceState({}, document.title, 'address.html');
+        });
+
+        let toastTimer;
+        function showToast(msg, type = 'error') {
+            clearTimeout(toastTimer);
+            toastMsg.textContent = msg;
+            toast.className = `toast show ${type}`;
+            toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
+        }
+
+        // Pincode auto-population
+        const pincodeInput = document.getElementById('addrPincode');
+        const cityInput = document.getElementById('addrCity');
+        const stateInput = document.getElementById('addrState');
+
+        pincodeInput.addEventListener('input', async () => {
+            const pincode = pincodeInput.value.trim();
+
+            if (pincode.length === 6 && /^\d{6}$/.test(pincode)) {
+                try {
+                    // Show a subtle loading state if possible or just fetch
+                    cityInput.placeholder = 'Fetching...';
+                    stateInput.placeholder = 'Fetching...';
+
+                    const res = await fetch(`${API_BASE}/pincode/${pincode}`);
+                    const data = await res.json();
+
+                    if (data.success) {
+                        cityInput.value = data.city;
+                        stateInput.value = data.state;
+                        showToast('Location populated!', 'success');
+                    } else {
+                        // Reset placeholders if failed
+                        cityInput.placeholder = 'City';
+                        stateInput.placeholder = 'State';
+                    }
+                } catch (err) {
+                    console.error('Failed to fetch pincode data:', err);
+                    cityInput.placeholder = 'City';
+                    stateInput.placeholder = 'State';
+                }
+            }
+        });
+
+        orderForSomeoneCheckbox.addEventListener('change', () => {
+            setRecipientMode(orderForSomeoneCheckbox.checked);
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorEl.textContent = '';
+
+            const isOrderingForSomeone = orderForSomeoneCheckbox.checked;
+            const address_line = document.getElementById('addrLine').value.trim();
+            const city = document.getElementById('addrCity').value.trim();
+            const state = document.getElementById('addrState').value.trim();
+            const pincode = document.getElementById('addrPincode').value.trim();
+
+            // Validate address fields (always required)
+            if (!address_line || !city || !state || !pincode) {
+                errorEl.textContent = 'Address line, city, state, and pincode are required';
+                return;
+            }
+
+            if (!/^\d{6}$/.test(pincode)) {
+                errorEl.textContent = 'Pincode must be 6 digits';
+                return;
+            }
+
+            let recipientName = '';
+            let recipientPhone = '';
+
+            if (isOrderingForSomeone) {
+                recipientName = recipientNameInput.value.trim();
+                recipientPhone = recipientPhoneInput.value.trim();
+
+                if (!recipientName) {
+                    errorEl.textContent = 'Recipient name is required';
+                    return;
+                }
+                if (!recipientPhone) {
+                    errorEl.textContent = 'Recipient mobile number is required';
+                    return;
+                }
+                if (!/^[6-9]\d{9}$/.test(recipientPhone)) {
+                    errorEl.textContent = 'Enter a valid 10-digit mobile number';
+                    return;
+                }
+            }
+
+            submitBtn.textContent = editingAddressId ? 'Updating...' : 'Saving...';
+            submitBtn.disabled = true;
+
+            try {
+                const payload = {
+                    name: userProfile.name || '',
+                    mobile: userProfile.mobile_number || '',
+                    address_line,
+                    city,
+                    state,
+                    pincode,
+                    ...(isOrderingForSomeone && { recipient_name: recipientName, recipient_phone: recipientPhone })
+                };
+
+                let url = `${API_BASE}/save-address`;
+                let method = 'POST';
+
+                // If editing, use PUT endpoint
+                if (editingAddressId) {
+                    url = `${API_BASE}/addresses/${editingAddressId}`;
+                    method = 'PUT';
+                }
+
+                const res = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    if (editingAddressId) {
+                        showToast('Address updated!', 'success');
+                        // Reset form to create mode
+                        editingAddressId = null;
+                        document.getElementById('formTitle').textContent = 'Add New Address';
+                        document.getElementById('cancelEditBtn').style.display = 'none';
+                        document.getElementById('addrSubmitBtn').textContent = 'Save Address & Continue';
+                        document.getElementById('addressForm').reset();
+                        document.getElementById('orderForSomeone').checked = false;
+                        setRecipientMode(false);
+                        // Clear URL parameters
+                        window.history.replaceState({}, document.title, 'address.html');
+                        // Reload addresses list
+                        loadSavedAddresses();
+                    } else {
+                        showToast('Address saved!', 'success');
+                        if (data.addressId) {
+                            sessionStorage.setItem('selectedAddressId', String(data.addressId));
+                            setTimeout(() => window.location.href = `cart.html?selectedAddress=${data.addressId}`, 600);
+                        } else {
+                            setTimeout(() => window.location.href = 'cart.html', 600);
+                        }
+                    }
+                } else {
+                    errorEl.textContent = data.message || 'Failed to save address';
+                }
+            } catch {
+                errorEl.textContent = 'Cannot connect to server';
+            } finally {
+                submitBtn.textContent = editingAddressId ? 'Update Address' : 'Save Address & Continue';
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Fetch user profile and load addresses on page load
+        async function fetchUserProfile() {
+            try {
+                const res = await fetch(`${API_BASE}/user/profile`, {
+                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    userProfile = data.user;
+                }
+            } catch (err) {
+                console.error('Failed to fetch user profile:', err);
+            }
+        }
+
+        fetchUserProfile();
+        loadSavedAddresses(); // Load saved addresses on page load
+    </script>
+
+    <!-- ===== SHARED FOOTER ===== -->
+    <div id="site-footer"></div>
+    <script src="chat-widget.js"></script>
+    <script src="site-header.js"></script>
+    <script src="site-footer.js"></script>
+    <script src="header-category-drawer.js"></script>
+</body>
+
+</html>
+

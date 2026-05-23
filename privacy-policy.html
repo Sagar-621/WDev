@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Privacy Policy — DEVASTHRA</title>
+    <meta name="description" content="Privacy Policy for DEVASTHRA">
+    <script src="runtime-env.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="backend/images/Fashion logo.jfif">
+</head>
+
+<body>
+    <div id="site-header"></div>
+
+    <main class="container legal-page">
+        <h1 id="privacyPolicyHeading">Privacy Policy</h1>
+        <p id="privacyPolicyUpdated">Last updated: March 27, 2026</p>
+        <div id="privacyPolicyDocumentLink" hidden></div>
+        <div id="privacyPolicyContent">
+            <section>
+                <h2>Introduction</h2>
+                <p>DEVASTHRA respects your privacy and is committed to protecting your personal data.</p>
+            </section>
+        </div>
+    </main>
+
+        <div id="site-footer"></div>
+
+    <script src="site-header.js"></script>
+    <script src="site-footer.js"></script>
+    <script src="header-category-drawer.js"></script>
+    <script src="chat-widget.js"></script>
+    <script>
+        (async function loadPrivacyPolicy() {
+            try {
+                const res = await fetch(`${window.__API_BASE || window.location.origin}/api/policies/privacy`);
+                const data = await res.json();
+                if (!data.success || !data.policy) return;
+
+                const heading = document.getElementById('privacyPolicyHeading');
+                const updated = document.getElementById('privacyPolicyUpdated');
+                const content = document.getElementById('privacyPolicyContent');
+                const docLink = document.getElementById('privacyPolicyDocumentLink');
+
+                if (heading) heading.textContent = data.policy.title || 'Privacy Policy';
+                if (updated) updated.textContent = data.policy.last_updated
+                    ? `Last updated: ${data.policy.last_updated}`
+                    : '';
+                if (content && data.policy.content) {
+                    content.textContent = data.policy.content;
+                    content.style.whiteSpace = 'pre-wrap';
+                }
+                if (docLink && data.policy.document_url) {
+                    docLink.hidden = false;
+                    docLink.innerHTML = `<p><a href="${data.policy.document_url}" target="_blank" rel="noopener">View source document</a></p>`;
+                }
+            } catch (error) {
+                console.warn('Unable to load admin-managed privacy policy:', error.message);
+            }
+        })();
+    </script>
+</body>
+
+</html>
+

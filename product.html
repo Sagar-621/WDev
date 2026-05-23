@@ -4,36 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Detail — DeVASTHRA</title>
-    <meta name="description" content="DeVASTHRA product detail page — premium fashion celebrating culture in motion.">
+    <title>Product Detail  DEVASTHRA</title>
+    <meta name="description" content="DEVASTHRA product detail page  premium fashion celebrating culture in motion.">
     <link rel="stylesheet" href="styles.css">
-    <link rel="icon" href="Fashion logo.jfif">
+    <link rel="icon" href="backend/images/Fashion logo.jfif">
 </head>
 
 <body>
 
-    <!-- ===== HEADER / NAVBAR ===== -->
-    <header class="header" id="header">
-        <div class="container">
-            <a href="index.html" class="logo">
-                <img src="Fashion logo.jfif" alt="DeVASTHRA Logo" class="logo-img">
-                <span class="logo-text">De<span class="logo-v">V</span>ASTHRA</span>
-            </a>
-            <nav class="nav-links" id="navLinks">
-                <a href="index.html#home">Home</a>
-                <a href="index.html#collections">Collections</a>
-                <a href="index.html#products">Products</a>
-                <a href="index.html#about">About</a>
-                <a href="index.html#contact">Contact</a>
-            </nav>
-            <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-        </div>
-        <div class="mobile-overlay" id="mobileOverlay"></div>
-    </header>
+    <!-- ===== SHARED HEADER ===== -->
+    <div id="site-header"></div>
 
     <!-- ===== PRODUCT DETAIL PAGE ===== -->
     <main class="pdp-page">
@@ -41,9 +21,9 @@
             <!-- Breadcrumb -->
             <nav class="pdp-breadcrumb" id="pdpBreadcrumb">
                 <a href="index.html">Home</a>
-                <span>›</span>
-                <a href="index.html#products">Products</a>
-                <span>›</span>
+                <span>&rsaquo;</span>
+                <a href="index.html#categories">Categories</a>
+                <span>&rsaquo;</span>
                 <span id="breadcrumbName">Product</span>
             </nav>
 
@@ -64,7 +44,16 @@
                     <span class="pdp-badge" id="pdpBadge"></span>
                     <h1 class="pdp-product-name" id="pdpName"></h1>
                     <div class="pdp-price" id="pdpPrice"></div>
-                    <p class="pdp-description" id="pdpDesc"></p>
+                    <div id="pdpMetaRating" style="display:none; margin-top: 10px;"></div>
+                    <div class="pdp-desc-inline" id="pdpDescInline">
+                        <p class="pdp-description" id="pdpDesc"></p>
+                        <button type="button" class="pdp-desc-toggle" id="pdpDescToggle" hidden>See more</button>
+                    </div>
+
+                    <div class="pdp-section" id="pdpColorsSection" style="display:none;">
+                        <h4>Available Colors</h4>
+                        <div class="pdp-colors" id="pdpColors"></div>
+                    </div>
 
                     <!-- Highlights -->
                     <div class="pdp-highlights" id="pdpHighlights">
@@ -76,19 +65,33 @@
 
                     <!-- Size Selector -->
                     <div class="pdp-section">
-                        <h4>Select Size</h4>
+                        <div class="pdp-section-head">
+                            <h4>Select Size</h4>
+                            <button type="button" class="pdp-size-guide-trigger" id="pdpSizeGuideBtn">Size Guide</button>
+                        </div>
                         <div class="pdp-sizes" id="pdpSizes"></div>
+                        <p id="pdpSizeAvailability" style="margin-top:10px;color:var(--color-dark-gray);font-size:.9rem;"></p>
+                    </div>
+
+                    <div class="pdp-section" id="pdpSubcategorySizeGuideSection" style="display:none;">
+                        <div class="pdp-section-head">
+                            <h4 id="pdpSubcategorySizeGuideTitle">Size Guide for This Subcategory</h4>
+                        </div>
+                        <p id="pdpSubcategorySizeGuideNote" style="margin:0 0 12px;color:var(--color-dark-gray);font-size:.9rem;line-height:1.6;"></p>
+                        <div id="pdpSubcategorySizeGuideTableWrap"></div>
                     </div>
 
                     <!-- Quantity -->
                     <div class="pdp-section">
                         <h4>Quantity</h4>
-                        <div class="pdp-qty">
-                            <div class="qty-picker">
-                                <button class="qty-btn" id="qtyMinus" aria-label="Decrease quantity">−</button>
-                                <span class="qty-value" id="qtyValue">1</span>
-                                <button class="qty-btn" id="qtyPlus" aria-label="Increase quantity">+</button>
-                            </div>
+                        <div class="quantity-selector">
+                            <button class="qty-decrease" id="qtyMinus" aria-label="Decrease quantity">
+                                <span>-</span>
+                            </button>
+                            <input type="number" class="qty-input" id="qtyValue" value="1" min="1" max="999" readonly>
+                            <button class="qty-increase" id="qtyPlus" aria-label="Increase quantity">
+                                <span>+</span>
+                            </button>
                         </div>
                     </div>
 
@@ -100,134 +103,127 @@
 
                     <!-- Delivery Info -->
                     <div class="pdp-delivery">
-                        <div class="pdp-delivery-item">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M5 12h14" />
-                                <path d="m12 5 7 7-7 7" />
-                            </svg>
-                            <span><strong>Free Delivery</strong> on orders above ₹999</span>
-                        </div>
-                        <div class="pdp-delivery-item">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0" />
-                                <path d="m9 12 2 2 4-4" />
-                            </svg>
-                            <span><strong>10 Days</strong> Easy Return & Exchange</span>
-                        </div>
+                        
                         <div class="pdp-delivery-item">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                 stroke-linecap="round" stroke-linejoin="round">
                                 <rect width="20" height="14" x="2" y="5" rx="2" />
                                 <line x1="2" x2="22" y1="10" y2="10" />
                             </svg>
-                            <span><strong>Pay on Delivery</strong> available</span>
+                            <span><strong>Cash on Delivery</strong> available</span>
+                        </div>
+                        <div class="pdp-delivery-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 12h18" />
+                                <path d="M12 3v18" />
+                            </svg>
+                            <span><strong>Estimated Delivery</strong> Hyderabad: 2-3 business days, other cities: 3-5 business days</span>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Customer Reviews Section -->
+            <section class="pdp-reviews-section" id="pdpReviewsSection" style="display:none;">
+                <div class="pdp-reviews-header">
+                    <h2 class="pdp-reviews-title" id="pdpReviewsTitle">Customer Reviews</h2>
+                </div>
+                <div id="pdpReviewsSummary"></div>
+                <div class="pdp-reviews-sort" id="pdpReviewsSort" style="display:none;">
+                    <label for="pdpReviewSortSelect">Sort by:</label>
+                    <select id="pdpReviewSortSelect">
+                        <option value="newest">Most Recent</option>
+                        <option value="rating_desc">Highest Rated</option>
+                        <option value="rating_asc">Lowest Rated</option>
+                        <option value="helpful">Most Helpful</option>
+                    </select>
+                </div>
+                <div id="pdpReviewsList"></div>
+                <button class="pdp-reviews-load-more" id="pdpReviewsLoadMore" style="display:none;">Load More Reviews</button>
+            </section>
+
+            <!-- <section class="pdp-related-section" style="margin-top: 56px;">
+                <div id="relatedProductsNav" style="display:none; margin-bottom: 20px;"></div>
+                <div id="relatedProductsSection" style="display:none;">
+                    <div style="display:flex; justify-content:space-between; align-items:end; gap:16px; margin-bottom:20px; flex-wrap:wrap;">
+                        <div>
+                            <p style="margin:0; color:var(--color-dark-gray); text-transform:uppercase; letter-spacing:1px; font-size:.8rem;">Related Products</p>
+                            <h2 style="margin:6px 0 0; font-family:var(--font-heading);">More In This Collection</h2>
+                        </div>
+                    </div>
+                    <div id="relatedProductsGrid" class="products-grid"></div>
+                </div>
+            </section> -->
         </div>
     </main>
 
-    <!-- ===== FOOTER ===== -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-grid">
-                <!-- Brand -->
-                <div class="footer-brand">
-                    <a href="index.html" class="logo">
-                        <img src="Fashion logo.jfif" alt="DeVASTHRA" class="logo-img">
-                        <span class="logo-text">De<span class="logo-v">V</span>ASTHRA</span>
-                    </a>
-                    <p>Culture in Motion. Fashion that celebrates heritage and modern elegance, crafted for those who
-                        wear their identity with pride.</p>
-                    <div class="footer-social">
-                        <a href="https://www.instagram.com/devasthra_official?utm_source=qr&igsh=eXV4emFnOWdsMjBz"
-                            target="_blank" rel="noopener" aria-label="Instagram">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-                            </svg>
-                        </a>
-                        <a href="#" aria-label="Twitter / X">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M4 4l11.733 16h4.267l-11.733 -16z" />
-                                <path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772" />
-                            </svg>
-                        </a>
-                        <a href="#" aria-label="Facebook">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-                            </svg>
-                        </a>
-                    </div>
-                    <!-- Powered by NatooKart -->
-                    <div style="margin-top: 20px; opacity: 0.5; display: flex; align-items: center; gap: 8px;">
-                        <span style="font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase;">Powered
-                            by</span>
-                        <img src="Company logo.jpeg" alt="NatooKart" class="company-badge">
-                    </div>
-                </div>
-
-                <!-- Quick Links -->
-                <div class="footer-col">
-                    <h4>Quick Links</h4>
-                    <ul>
-                        <li><a href="index.html#home">Home</a></li>
-                        <li><a href="index.html#collections">Collections</a></li>
-                        <li><a href="index.html#products">Products</a></li>
-                        <li><a href="index.html#about">About Us</a></li>
-                        <li><a href="index.html#contact">Contact</a></li>
-                    </ul>
-                </div>
-
-                <!-- Customer Care -->
-                <div class="footer-col">
-                    <h4>Customer Care</h4>
-                    <ul>
-                        <li><a href="#">Size Guide</a></li>
-                        <li><a href="#">Shipping & Returns</a></li>
-                        <li><a href="#">Order Tracking</a></li>
-                        <li><a href="#">FAQ</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                    </ul>
-                </div>
-
-                <!-- Newsletter -->
-                <div class="footer-col footer-newsletter">
-                    <h4>Stay Updated</h4>
-                    <p>Subscribe to receive exclusive offers, early access to new collections, and style inspiration
-                        directly to your inbox.</p>
-                    <form class="newsletter-form" id="newsletterForm">
-                        <input type="email" placeholder="Enter your email" required>
-                        <button type="submit">Join</button>
-                    </form>
-                </div>
-            </div>
-
-            <div class="footer-bottom">
-                <p>&copy; 2026 DeVASTHRA. All rights reserved.</p>
-                <div class="footer-bottom-links">
-                    <a href="#">Terms of Service</a>
-                    <a href="#">Privacy Policy</a>
-                    <a href="#">Cookie Policy</a>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <!-- ===== SHARED FOOTER ===== -->
+    <div id="site-footer"></div>
 
     <!-- Toast notification -->
     <div class="toast" id="toast">
-        <span class="toast-icon">✦</span>
         <span id="toastMessage">Item added to cart</span>
     </div>
 
-    <script src="product-detail.js"></script>
+    <div class="size-guide-modal-overlay" id="sizeGuideOverlay">
+        <div class="size-guide-modal" role="dialog" aria-modal="true" aria-labelledby="sizeGuideTitle">
+            <button class="size-guide-close" id="sizeGuideClose" aria-label="Close size guide">&times;</button>
+            <div class="size-guide-modal-head">
+                <p class="section-subtitle">Fit & Measurements</p>
+                <h2 id="sizeGuideTitle">Size Guide</h2>
+                <p>Use the measurements for this selected tshirt subcategory.</p>
+            </div>
+            <div class="size-guide-modal-body">
+                <div class="track-empty-note" style="margin:0;">
+                    Select a tshirt with a configured size guide to view the exact measurements here.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- OTP Modal Overlay -->
+    <div class="otp-overlay" id="otpOverlay"></div>
+
+    <!-- OTP Login Modal -->
+    <div class="otp-modal" id="otpModal" role="dialog" aria-modal="true" aria-label="Login with OTP">
+        <button class="otp-close" id="otpCloseBtn" aria-label="Close">&times;</button>
+        <div class="otp-modal-header">
+            <h2>Login to Continue</h2>
+            <p>Enter your mobile number or email address to receive a verification code</p>
+        </div>
+        <div id="otpStep1">
+            <div class="otp-field-group">
+                <label for="otpMobile">Mobile Number <span class="required-star">*</span></label>
+                <div class="otp-phone-input">
+                    <span class="otp-flag"> +91</span>
+                    <input type="tel" id="otpMobile" placeholder="Enter 10-digit number" maxlength="10"
+                        autocomplete="tel">
+                </div>
+            </div>
+            <p class="otp-msg" id="otpMessage"></p>
+            <button class="btn btn-primary otp-action-btn" id="sendOtpBtn">Send OTP</button>
+        </div>
+        <div id="otpStep2" style="display:none">
+            <p class="otp-msg" id="otpMessage2"></p>
+            <div class="otp-field-group">
+                <label for="otpInput">OTP <span class="required-star">*</span></label>
+                <input type="text" id="otpInput" placeholder="Enter 6-digit OTP" maxlength="6"
+                    autocomplete="one-time-code" inputmode="numeric">
+            </div>
+            <button class="btn btn-primary otp-action-btn" id="verifyOtpBtn">Sign In</button>
+            <button class="otp-resend-btn" id="resendOtpBtn" disabled>Resend OTP</button>
+        </div>
+        <p class="otp-terms">By continuing, you agree to our <a href="privacy-policy.html">Privacy Policy</a> &amp;
+            Terms</p>
+    </div>
+
+    <script src="site-header.js"></script>
+    <script src="site-footer.js"></script>
+    <script src="js/product-detail.js"></script>
+    <script src="header-category-drawer.js"></script>
+    <script src="chat-widget.js"></script>
 </body>
 
 </html>
+

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Placed! — DEVASTHRA</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="backend/images/Fashion logo.jfif">
+</head>
+
+<body>
+    <div id="site-header"></div>
+
+    <main class="success-page">
+        <div class="success-card">
+            <div class="success-icon">✅</div>
+            <h1>Order Placed Successfully!</h1>
+            <p class="success-sub">Thank you for shopping with DEVASTHRA.</p>
+            <p class="success-sub">A confirmation email have been sent to your registered account details.</p>
+            <div class="return-info-box" id="successInlineMessage" style="display:none;margin:16px 0 0;text-align:left;"></div>
+            <div class="success-order-id" id="successOrderId"></div>
+            <div class="success-order-meta" id="successOrderMeta"></div>
+            <div class="success-actions">
+                <a href="index.html#products" class="btn btn-primary">Continue Shopping</a>
+                <a href="track-order.html" class="btn btn-outline" id="trackOrderLink">Track Shipment</a>
+            </div>
+        </div>
+    </main>
+
+    <div class="toast" id="successToast">
+        <span class="toast-icon">✓</span>
+        <span id="successToastMessage">Order placed successfully!</span>
+    </div>
+
+    <script>
+        const API_BASE = window.__API_BASE || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:' ? 'http://localhost:5000' : window.location.origin);
+        const pageParams = new URLSearchParams(window.location.search);
+        const paymentStatus = pageParams.get('payment');
+        const paymentSource = pageParams.get('source');
+        const orderReference = pageParams.get('orderRef');
+        const orderId = pageParams.get('orderId');
+        const awbCode = pageParams.get('awb');
+        const token = localStorage.getItem('DEVASTHRA_token');
+        const visibleOrderRef = orderReference || '';
+        const orderIdContainer = document.getElementById('successOrderId');
+        const orderMetaContainer = document.getElementById('successOrderMeta');
+        const trackOrderLink = document.getElementById('trackOrderLink');
+        const successInlineMessage = document.getElementById('successInlineMessage');
+        const successToast = document.getElementById('successToast');
+        const successToastMessage = document.getElementById('successToastMessage');
+        let successToastTimer;
+
+        function showSuccessToast(message) {
+            if (!successToast || !successToastMessage) return;
+            clearTimeout(successToastTimer);
+            successToastMessage.textContent = message;
+            successToast.className = 'toast show success';
+            successToastTimer = setTimeout(() => successToast.classList.remove('show'), 3500);
+        }
+
+        function formatReference(value) {
+            const ref = String(value || '').trim().replace(/^#/, '');
+            return ref ? `#${ref.toUpperCase()}` : '';
+        }
+
+        function updateTrackLink(ref, id) {
+            const url = new URL('track-order.html', window.location.href);
+            if (ref) url.searchParams.set('orderRef', ref);
+            if (id) url.searchParams.set('orderId', id);
+            trackOrderLink.href = url.pathname + url.search;
+        }
+
+        function getDeliveryEstimateText(city) {
+            const normalizedCity = String(city || '').trim().toLowerCase();
+            if (!normalizedCity) {
+                return 'Estimated delivery: Hyderabad orders usually arrive in 2-3 business days, and other cities in 3-5 business days.';
+            }
+            return normalizedCity.includes('hyderabad')
+                ? 'Estimated delivery: 2-3 business days within Hyderabad.'
+                : 'Estimated delivery: 3-5 business days outside Hyderabad.';
+        }
+
+        if (visibleOrderRef) {
+            orderIdContainer.innerHTML = `<span>Order Reference: <strong>${formatReference(visibleOrderRef)}</strong></span>`;
+        }
+        updateTrackLink(orderReference, orderId);
+
+        function renderMeta(details) {
+            const lines = [];
+            if (details.orderReference) lines.push(`<span><strong>Reference Number:</strong> ${formatReference(details.orderReference)}</span>`);
+            if (details.awbCode) lines.push(`<span><strong>AWB Number:</strong> ${details.awbCode}</span>`);
+            if (details.deliveryEstimate) lines.push(`<span><strong>${details.deliveryEstimate}</strong></span>`);
+            if (!lines.length) {
+                lines.push('<span>Your AWB number will appear here once the courier record is ready.</span>');
+            }
+            orderMetaContainer.innerHTML = lines.join('');
+        }
+
+        function renderSuccessState() {
+            const sourceLabel = paymentSource === 'payu'
+                ? 'Your PayU payment was completed successfully.'
+                : paymentSource === 'cod'
+                    ? 'Your cash on delivery order was placed successfully.'
+                    : 'Your order was placed successfully.';
+
+            if (!successInlineMessage) return;
+            successInlineMessage.style.display = 'block';
+            successInlineMessage.innerHTML = paymentStatus === 'success'
+                ? `<strong>Order confirmed:</strong> ${sourceLabel}`
+                : '<strong>Order confirmed:</strong> Your order has been received successfully.';
+        }
+
+        renderMeta({
+            orderReference,
+            awbCode,
+            deliveryEstimate: getDeliveryEstimateText('')
+        });
+
+        async function loadLatestOrderDetails() {
+            if (!orderId || !token) return;
+            try {
+                const res = await fetch(`${API_BASE}/orders/${orderId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                const data = await res.json();
+                if (!data.success || !data.order) return;
+
+                let order = data.order;
+                if (
+                    paymentSource === 'payu' &&
+                    order.payment_method === 'Prepaid' &&
+                    !order.shiprocket_order_id &&
+                    !order.shiprocket_shipment_id &&
+                    !order.shiprocket_awb_code
+                ) {
+                    try {
+                        const reconcileRes = await fetch(`${API_BASE}/orders/${orderId}/reconcile-shiprocket`, {
+                            method: 'POST',
+                            headers: {
+                                Authorization: `Bearer ${token}`
+                            }
+                        });
+                        const reconcileData = await reconcileRes.json();
+                        if (reconcileData.success) {
+                            const refreshed = await fetch(`${API_BASE}/orders/${orderId}`, {
+                                headers: {
+                                    Authorization: `Bearer ${token}`
+                                }
+                            });
+                            const refreshedData = await refreshed.json();
+                            if (refreshedData.success && refreshedData.order) {
+                                order = refreshedData.order;
+                            }
+                        }
+                    } catch (reconcileErr) {
+                        console.warn('Could not reconcile Shiprocket order:', reconcileErr.message);
+                    }
+                }
+
+                if (order.invoice_number) {
+                    orderIdContainer.innerHTML = `<span>Order Reference: <strong>${formatReference(order.invoice_number)}</strong></span>`;
+                }
+                updateTrackLink(order.invoice_number || orderReference, order.order_id || orderId);
+
+                renderMeta({
+                    orderReference: order.invoice_number || orderReference,
+                    awbCode: order.shiprocket_awb_code || awbCode,
+                    deliveryEstimate: getDeliveryEstimateText(order.city)
+                });
+            } catch (err) {
+                console.warn('Could not load latest order summary:', err.message);
+            }
+        }
+
+        window.addEventListener('load', () => {
+            renderSuccessState();
+            const message = visibleOrderRef
+                ? `Order ${formatReference(visibleOrderRef)} placed successfully!`
+                : 'Order placed successfully!';
+            setTimeout(() => showSuccessToast(message), 150);
+        });
+
+        async function firePixelPurchaseEvent() {
+            /**
+             * Fire Meta Pixel Purchase event with complete order data and Shiprocket tracking
+             */
+            if (!orderId || !token || !window.firePixelPurchase) return;
+            
+            try {
+                const res = await fetch(`${API_BASE}/orders/${orderId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                const data = await res.json();
+                if (!data.success || !data.order) return;
+
+                const order = data.order;
+                const orderItems = (JSON.parse(order.order_items_json || '[]')).map(item => ({
+                    product_id: item.product_id || `PROD-${item.id}`,
+                    sku: `SKU-${item.product_id || item.id}`,
+                    name: item.name,
+                    price: parseFloat(item.price) || 0,
+                    quantity: Number(item.quantity) || 1,
+                    category: item.category || 'Product'
+                }));
+
+                const purchaseData = {
+                    order_id: order.order_id,
+                    order_reference: order.invoice_number,
+                    items: orderItems,
+                    total: parseFloat(order.total_amount) || 0,
+                    payment_method: order.payment_method,
+                    shiprocket_order_id: order.shiprocket_order_id || '',
+                    shiprocket_shipment_id: order.shiprocket_shipment_id || '',
+                    awb_code: order.shiprocket_awb_code || ''
+                };
+
+                window.firePixelPurchase(purchaseData);
+                console.log('[Order Success] Meta Pixel Purchase event fired:', purchaseData);
+            } catch (error) {
+                console.warn('[Order Success] Could not fire Purchase event:', error.message);
+            }
+        }
+
+        loadLatestOrderDetails();
+
+        // Fire pixel event after a short delay to ensure pixel is initialized
+        setTimeout(() => firePixelPurchaseEvent(), 500);
+    </script>
+
+    <script src="chat-widget.js"></script>
+    <script src="site-header.js"></script>
+    <script src="site-footer.js"></script>
+    <script src="header-category-drawer.js"></script>
+
+    <div id="site-footer"></div>
+</body>
+
+</html>
+

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Exchange Policy - DEVASTHRA</title>
+    <meta name="description" content="Exchange Policy for DEVASTHRA">
+    <script src="runtime-env.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="backend/images/Fashion logo.jfif">
+</head>
+
+<body>
+    <div id="site-header"></div>
+
+    <main class="container legal-page">
+        <h1 id="exchangePolicyHeading">Exchange Policy</h1>
+        <p id="exchangePolicyUpdated">Last updated: May 14, 2026</p>
+        <div id="exchangePolicyDocumentLink" hidden></div>
+        <div id="exchangePolicyContent">
+            <section>
+                <h2>Exchange Conditions</h2>
+                <p>The product must be returned in its original condition, with all tags, packaging, and accessories.</p>
+                <p>Once we receive the returned item and verify the issue, we will initiate the replacement process. If a replacement is not available, a refund will be issued as per the refund policy.</p>
+                <p>Replacement or exchanges will be delivered within 7-10 working days.</p>
+            </section>
+        </div>
+    </main>
+
+    <div id="site-footer"></div>
+
+    <script src="site-header.js"></script>
+    <script src="site-footer.js"></script>
+    <script src="header-category-drawer.js"></script>
+    <script src="chat-widget.js"></script>
+    <script>
+        (async function loadExchangePolicy() {
+            try {
+                const res = await fetch(`${window.__API_BASE || window.location.origin}/api/policies/exchange`);
+                const data = await res.json();
+                if (!data.success || !data.policy) return;
+
+                const heading = document.getElementById('exchangePolicyHeading');
+                const updated = document.getElementById('exchangePolicyUpdated');
+                const content = document.getElementById('exchangePolicyContent');
+                const docLink = document.getElementById('exchangePolicyDocumentLink');
+
+                if (heading) heading.textContent = data.policy.title || 'Exchange Policy';
+                if (updated) updated.textContent = data.policy.last_updated
+                    ? `Last updated: ${data.policy.last_updated}`
+                    : '';
+                if (content && data.policy.content) {
+                    content.textContent = data.policy.content;
+                    content.style.whiteSpace = 'pre-wrap';
+                }
+                if (docLink && data.policy.document_url) {
+                    docLink.hidden = false;
+                    docLink.innerHTML = `<p><a href="${data.policy.document_url}" target="_blank" rel="noopener">View source document</a></p>`;
+                }
+            } catch (error) {
+                console.warn('Unable to load admin-managed exchange policy:', error.message);
+            }
+        })();
+    </script>
+</body>
+
+</html>

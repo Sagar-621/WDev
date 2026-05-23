@@ -1,0 +1,883 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Order - DEVASTHRA</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="backend/images/Fashion logo.jfif">
+    <script src="runtime-env.js"></script>
+    <style>
+        /* ═══ TRACK RESULT WRAPPER ═══ */
+        .track-result {
+            display: none;
+            margin-top: 24px;
+        }
+        .track-result.show { display: block; }
+
+        /* This is the JS render target — must be block so hero stacks above body */
+        .track-result-grid {
+            display: block !important;
+        }
+
+        .track-result-card {
+            border-radius: 20px;
+            background: #fff;
+            box-shadow: 0 8px 40px rgba(10, 2, 6, 0.12);
+            overflow: hidden;
+            border: 1px solid rgba(107, 15, 43, 0.08);
+        }
+
+        /* ═══ HERO — full width across top ═══ */
+        .trk-hero {
+            padding: 26px 28px;
+            background: linear-gradient(120deg, #3e0618 0%, #6b0f2b 60%, #91213f 100%);
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .trk-hero::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle at 80% 50%, rgba(255,200,100,0.06) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .trk-hero-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.1);
+            border: 1.5px solid rgba(255,255,255,0.18);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .trk-hero-icon svg {
+            width: 26px;
+            height: 26px;
+            stroke: #fff;
+            fill: none;
+        }
+
+        .trk-hero-text { flex: 1; min-width: 0; }
+
+        .trk-hero-eyebrow {
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .trk-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 0.65rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .trk-status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #fbbf24;
+            flex-shrink: 0;
+            animation: trkPulse 1.8s ease-in-out infinite;
+        }
+
+        @keyframes trkPulse {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0.4; }
+        }
+
+        .trk-hero-title {
+            margin: 0 0 4px;
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: #fff;
+            font-family: var(--font-heading, Georgia, serif);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .trk-hero-meta {
+            margin: 0;
+            font-size: 0.84rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* ═══ BODY — hero is ABOVE, 2 cols BELOW ═══ */
+        .trk-body {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            align-items: start;
+            gap: 0;
+            border-top: 1px solid rgba(107,15,43,0.07);
+        }
+
+        /* ═══ LEFT COL — Order Journey stepper ═══ */
+        .trk-journey {
+            padding: 22px 20px;
+            border-right: 1px solid rgba(107,15,43,0.07);
+            background: #fdf9f7;
+        }
+
+        /* ═══ RIGHT COL — Shipment details ═══ */
+        .trk-details {
+            padding: 22px 22px;
+            background: #fff;
+        }
+
+        .trk-col-title {
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #9ca3af;
+            margin: 0 0 18px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        /* ═══ STEPPER ═══ */
+        .trk-stepper {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .trk-step {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .trk-step-left {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 20px;
+            flex-shrink: 0;
+        }
+
+        .trk-step-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid #d1d5db;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            font-weight: 900;
+            color: transparent;
+            flex-shrink: 0;
+        }
+
+        .trk-step-line {
+            width: 2px;
+            flex: 1;
+            min-height: 28px;
+            background: #e5e7eb;
+            margin: 3px 0;
+            border-radius: 2px;
+        }
+
+        .trk-step-content {
+            padding-bottom: 22px;
+            flex: 1;
+        }
+
+        .trk-step-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #6b7280;
+            line-height: 1.3;
+        }
+
+        .trk-step-sub {
+            font-size: 0.79rem;
+            color: #9ca3af;
+            margin-top: 3px;
+            line-height: 1.4;
+        }
+
+        /* done step */
+        .trk-step.done .trk-step-dot {
+            background: #6b0f2b;
+            border-color: #6b0f2b;
+            color: #fff;
+        }
+        .trk-step.done .trk-step-line  { background: #6b0f2b; }
+        .trk-step.done .trk-step-label { color: #6b0f2b; font-weight: 700; }
+
+        /* active step */
+        .trk-step.active .trk-step-dot {
+            background: #f59e0b;
+            border-color: #f59e0b;
+            color: #fff;
+            box-shadow: 0 0 0 4px rgba(245,158,11,0.18);
+        }
+        .trk-step.active .trk-step-line  { background: linear-gradient(to bottom, #f59e0b 0%, #e5e7eb 100%); }
+        .trk-step.active .trk-step-label { color: #b45309; font-weight: 700; }
+
+        /* ═══ ALERT ═══ */
+        .trk-alert {
+            background: #fefce8;
+            border: 1px solid #fde68a;
+            border-radius: 10px;
+            padding: 11px 14px;
+            font-size: 0.83rem;
+            color: #854d0e;
+            line-height: 1.55;
+            margin-top: 4px;
+        }
+
+        /* ═══ DETAIL CHIPS GRID ═══ */
+        .trk-chips {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .trk-chip {
+            background: #f9f9f9;
+            border: 1px solid #efefef;
+            border-radius: 10px;
+            padding: 11px 13px;
+        }
+
+        .trk-chip-label {
+            display: block;
+            font-size: 0.62rem;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #6b0f2b;
+            margin-bottom: 4px;
+        }
+
+        .trk-chip-value {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #111827;
+            word-break: break-word;
+            line-height: 1.4;
+        }
+
+        /* ═══ ACTIONS ═══ */
+        .trk-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .trk-actions a { text-decoration: none; font-size: 0.86rem; }
+
+        /* ═══ RESPONSIVE ═══ */
+        @media (max-width: 700px) {
+            .trk-body {
+                grid-template-columns: 1fr;
+            }
+            .trk-journey {
+                border-right: none;
+                border-bottom: 1px solid rgba(107,15,43,0.07);
+            }
+            .trk-hero { padding: 20px 16px; gap: 14px; }
+            .trk-hero-icon { width: 46px; height: 46px; border-radius: 12px; }
+            .trk-hero-title { font-size: 1.2rem; }
+            .trk-details { padding: 18px 16px; }
+            .trk-journey { padding: 18px 16px; }
+        }
+
+        @media (max-width: 460px) {
+            .trk-chips { grid-template-columns: 1fr; }
+            .trk-hero-title { font-size: 1.05rem; }
+        }
+
+        /* ═══ FORM ACTIONS ═══ */
+        .track-form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .track-form-actions .btn {
+            flex: 1;
+            text-align: center;
+            justify-content: center;
+        }
+
+        @media (max-width: 600px) {
+            .track-form-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="site-header"></div>
+
+    <main class="track-page">
+        <div class="container">
+            <nav class="pdp-breadcrumb">
+                <a href="index.html">Home</a>
+                <span>›</span>
+                <span>Track Order</span>
+            </nav>
+
+            <div class="track-shell">
+                <div class="track-card">
+                    <div class="track-card-header">
+                        <p class="section-subtitle">Order Tracking</p>
+                        <h1 class="cart-page-title" style="margin-bottom: 0;">Track Your Shipment</h1>
+                        <p>Check your shipment progress right here on DEVASTHRA. No third-party tracking page is exposed to customers.</p>
+                    </div>
+
+                    <div class="track-card-body">
+                        <form id="trackOrderForm" class="track-form">
+                            <div class="form-group">
+                                <label for="trackOrderReference">Order Reference</label>
+                                <input id="trackOrderReference" type="text" placeholder="e.g. Natdev001" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="trackEmail">Email Used For Order</label>
+                                <input id="trackEmail" type="email" placeholder="you@example.com">
+                            </div>
+                            <div class="form-group form-group-full">
+                                <label for="trackMobile">Or Mobile Used For Order</label>
+                                <input id="trackMobile" type="tel" inputmode="numeric" placeholder="Enter your 10-digit mobile number">
+                            </div>
+                            <div class="track-form-actions">
+                                <button type="submit" class="btn btn-primary">Track Order</button>
+                                <a href="my-orders.html" class="btn btn-outline">View My Orders</a>
+                            </div>
+                        </form>
+
+                        <div id="trackMessage" class="track-empty-note" style="display:none;"></div>
+
+                        <div id="trackResult" class="track-result">
+                            <div class="track-result-card">
+                                <div class="track-result-grid" id="trackResultGrid"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="site-footer"></div>
+
+    <script src="site-header.js"></script>
+    <script src="site-footer.js"></script>
+    <script>
+        const API_BASE = window.__API_BASE || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:' ? 'http://localhost:5000' : window.location.origin);
+        const token = localStorage.getItem('DEVASTHRA_token');
+        const params = new URLSearchParams(window.location.search);
+
+        const form = document.getElementById('trackOrderForm');
+        const message = document.getElementById('trackMessage');
+        const resultWrap = document.getElementById('trackResult');
+        const resultGrid = document.getElementById('trackResultGrid');
+        const orderReferenceInput = document.getElementById('trackOrderReference');
+        const emailInput = document.getElementById('trackEmail');
+        const mobileInput = document.getElementById('trackMobile');
+
+        const ORDER_STEPS = ['Ordered', 'Packed', 'Shipped', 'Out for delivery', 'Delivered'];
+        const STATUS_INDEX = { Ordered: 0, Packed: 1, Shipped: 2, 'Out for delivery': 3, Delivered: 4 };
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function showMessage(text, tone = 'info') {
+            message.style.display = 'block';
+            message.textContent = text;
+            message.style.background = tone === 'error' ? '#fef2f2' : '#f8f7f4';
+            message.style.color = tone === 'error' ? '#991b1b' : '#42342c';
+        }
+
+        function hideMessage() {
+            message.style.display = 'none';
+        }
+
+        function formatDateTime(value) {
+            if (!value) return 'Not available yet';
+            return new Date(value).toLocaleString('en-IN', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit'
+            });
+        }
+
+        function mapShipmentPresentation(orderStatus, shipmentStatus) {
+            const normalizedShipment = String(shipmentStatus || '').trim().toUpperCase();
+            const normalizedOrder = String(orderStatus || '').trim().toUpperCase();
+
+            if (normalizedOrder === 'CANCELLED' || normalizedShipment.includes('CANCEL')) {
+                return { orderLabel: 'Cancelled', shipmentLabel: 'Cancelled', stepStatus: 'Cancelled' };
+            }
+            if (normalizedOrder === 'DELIVERED' || normalizedShipment === 'DELIVERED') {
+                return { orderLabel: 'Delivered', shipmentLabel: 'Delivered', stepStatus: 'Delivered' };
+            }
+            if (normalizedShipment.includes('RTO') || normalizedShipment.includes('RETURNING')) {
+                return { orderLabel: 'Returning to seller', shipmentLabel: 'Returning to seller', stepStatus: 'Returning to seller' };
+            }
+            if (normalizedOrder === 'SHIPPED' || normalizedShipment === 'OUT FOR DELIVERY') {
+                return { orderLabel: normalizedShipment === 'OUT FOR DELIVERY' ? 'Out for delivery' : 'Shipped', shipmentLabel: normalizedShipment === 'OUT FOR DELIVERY' ? 'Out for delivery' : 'Shipped', stepStatus: normalizedShipment === 'OUT FOR DELIVERY' ? 'Out for delivery' : 'Shipped' };
+            }
+            if (normalizedOrder === 'PACKED' || normalizedShipment.includes('AWB') || normalizedShipment.includes('MANIFEST') || normalizedShipment.includes('PICKUP') || normalizedShipment.includes('PACKED') || normalizedShipment.includes('CONFIRMED') || normalizedShipment.includes('READY TO SHIP')) {
+                return { orderLabel: 'Packed', shipmentLabel: 'Packed', stepStatus: 'Packed' };
+            }
+            if (normalizedOrder === 'PAID') {
+                return { orderLabel: 'Paid', shipmentLabel: shipmentStatus || 'Paid', stepStatus: 'Ordered' };
+            }
+            if (normalizedOrder === 'PENDING') {
+                return { orderLabel: 'Pending', shipmentLabel: shipmentStatus || 'Pending', stepStatus: 'Ordered' };
+            }
+            if (normalizedShipment === 'NEW' || normalizedShipment.includes('NEW')) {
+                return { orderLabel: 'Ordered', shipmentLabel: 'Ordered', stepStatus: 'Ordered' };
+            }
+            return {
+                orderLabel: orderStatus || 'Ordered',
+                shipmentLabel: shipmentStatus || 'Tracking pending',
+                stepStatus: 'Ordered'
+            };
+        }
+
+        function buildStepper(presentation, latestActivity, shipmentLabel) {
+            if (presentation.orderLabel === 'Cancelled') {
+                return `<div class="trk-alert">&#x26A0; This order was cancelled. ${latestActivity ? escapeHtml(latestActivity) : 'We will update this page if any refund activity is recorded.'}</div>`;
+            }
+            if (presentation.orderLabel === 'Returning to seller') {
+                return `<div class="trk-alert">&#x1F4E6; This order is returning to the seller. ${latestActivity ? escapeHtml(latestActivity) : 'Return movement is being processed.'}</div>`;
+            }
+
+            const currentIndex = STATUS_INDEX[presentation.stepStatus] ?? 0;
+            const steps = ORDER_STEPS.map((step, index) => {
+                const cls = index < currentIndex ? 'done' : index === currentIndex ? 'active' : '';
+                const dot = index < currentIndex ? '&#10003;' : index === currentIndex ? '&#8226;' : '';
+                const isLast = index === ORDER_STEPS.length - 1;
+                return `
+                    <div class="trk-step ${cls}">
+                        <div class="trk-step-left">
+                            <div class="trk-step-dot">${dot}</div>
+                            ${!isLast ? '<div class="trk-step-line"></div>' : ''}
+                        </div>
+                        <div class="trk-step-content">
+                            <div class="trk-step-label">${escapeHtml(step)}</div>
+                            ${index === currentIndex && shipmentLabel ? `<div class="trk-step-sub">${escapeHtml(shipmentLabel)}</div>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            return `
+                <div class="trk-stepper">
+                    ${steps}
+                </div>
+                ${latestActivity ? `<div class="trk-alert" style="margin-top:12px;">Latest update: ${escapeHtml(latestActivity)}</div>` : ''}
+            `;
+        }
+
+        function renderTracking(tracking) {
+            const presentation = mapShipmentPresentation(tracking.orderStatus, tracking.displayStatus || tracking.trackingStatus || tracking.shipmentStatus || '');
+            const progressHtml = buildStepper(presentation, tracking.latestActivity || '', presentation.shipmentLabel || '');
+            const courierTrackUrl = tracking.awbCode ? `https://shiprocket.co/tracking/${encodeURIComponent(tracking.awbCode)}` : '';
+
+            resultGrid.innerHTML = `
+                <div class="trk-hero">
+                    <div class="trk-hero-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="1" y="3" width="15" height="13" rx="2"></rect>
+                            <path d="M16 8h4l3 5v3h-7V8z"></path>
+                            <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                            <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                        </svg>
+                    </div>
+                    <div class="trk-hero-text">
+                        <div class="trk-hero-eyebrow">Live Shipment
+                            <span class="trk-status-badge"><span class="trk-status-dot"></span>${escapeHtml(presentation.orderLabel)}</span>
+                        </div>
+                        <h2 class="trk-hero-title">Order ${escapeHtml(tracking.orderReference || 'Track Order')}</h2>
+                        <p class="trk-hero-meta">${escapeHtml(formatDateTime(tracking.latestActivityAt))} &nbsp;&middot;&nbsp; ${escapeHtml(tracking.courierName || 'Courier pending')}</p>
+                    </div>
+                </div>
+                <div class="trk-body">
+                    <div class="trk-journey">
+                        <div class="trk-col-title">Order Journey</div>
+                        ${progressHtml}
+                    </div>
+                    <div class="trk-details">
+                        <div class="trk-col-title">Shipment Details</div>
+                        <div class="trk-chips">
+                            ${[
+                                ['Order Ref', tracking.orderReference],
+                                ['Order Status', tracking.orderStatus],
+                                ['Shipment Status', tracking.displayStatus || tracking.trackingStatus || tracking.shipmentStatus],
+                                ['Courier', tracking.courierName || 'Awaiting assignment'],
+                                ['Shipment ID', tracking.shipmentId || null],
+                                ['Shiprocket Order ID', tracking.shiprocketOrderId || null],
+                                ['AWB Code', tracking.awbCode || null],
+                                ['Payment Method', tracking.paymentMethod || 'Prepaid'],
+                                ['Latest Activity', tracking.latestActivity || 'Will update as shipment moves'],
+                                ['Updated At', formatDateTime(tracking.latestActivityAt)],
+                                ['Total Amount', tracking.totalAmount ? '\u20b9' + tracking.totalAmount : null]
+                            ].filter(([, v]) => v).map(([label, value]) => `
+                                <div class="trk-chip">
+                                    <span class="trk-chip-label">${escapeHtml(label)}</span>
+                                    <div class="trk-chip-value">${escapeHtml(value)}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="trk-actions">
+                            ${courierTrackUrl ? `<a class="btn btn-primary" href="${courierTrackUrl}" target="_blank" rel="noopener noreferrer">Track on Shiprocket</a>` : ''}
+                            <a href="my-orders.html" class="btn btn-outline">View My Orders</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+            resultWrap.classList.add('show');
+        }
+
+        async function loadOrderById(orderId) {
+            if (!token || !orderId) return false;
+
+            const res = await fetch(`${API_BASE}/api/orders/${encodeURIComponent(orderId)}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await res.json();
+
+            if (!data.success) {
+                return false;
+            }
+
+            const order = data.order || {};
+            orderReferenceInput.value = order.invoice_number || '';
+            renderTracking({
+                orderReference: order.invoice_number || '',
+                orderStatus: order.status || '',
+                paymentMethod: order.payment_method || '',
+                shipmentId: order.shiprocket_shipment_id || '',
+                shiprocketOrderId: order.shiprocket_order_id || '',
+                awbCode: order.shiprocket_awb_code || '',
+                courierName: order.shiprocket_courier_name || '',
+                shipmentStatus: order.shiprocket_status || '',
+                trackingStatus: order.shiprocket_tracking_status || '',
+                latestActivity: order.shiprocket_latest_activity || '',
+                latestActivityAt: order.shiprocket_latest_activity_at || null,
+                customerName: order.name || '',
+                addressLine: order.address_line || '',
+                city: order.city || '',
+                state: order.state || '',
+                pincode: order.pincode || '',
+                totalAmount: order.total_amount || ''
+            });
+            showMessage('Showing the latest shipment details from your account.', 'info');
+            return true;
+        }
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            hideMessage();
+            resultWrap.classList.remove('show');
+
+            const order_reference = orderReferenceInput.value.trim();
+            const email = emailInput.value.trim();
+            const mobile = mobileInput.value.trim();
+
+            if (!order_reference) {
+                showMessage('Enter your order reference to continue.', 'error');
+                return;
+            }
+
+            if (!email && !mobile) {
+                showMessage('Enter the email or mobile used for the order.', 'error');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/api/track-order`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ order_reference, email, mobile })
+                });
+                const data = await res.json();
+
+                if (!data.success) {
+                    showMessage(data.message || 'Unable to fetch tracking details right now.', 'error');
+                    return;
+                }
+
+                renderTracking({
+                    ...data.tracking,
+                    customerName: data.tracking.customerName || '',
+                    addressLine: data.tracking.addressLine || '',
+                    city: data.tracking.city || '',
+                    state: data.tracking.state || '',
+                    pincode: data.tracking.pincode || '',
+                    totalAmount: data.tracking.totalAmount || ''
+                });
+                showMessage('Tracking details securely from DEVASTHRA.', 'info');
+            } catch (error) {
+                showMessage('Unable to  tracking details right now.', 'error');
+            }
+        });
+
+        (async function init() {
+            const orderId = params.get('orderId');
+            const orderRef = params.get('orderRef');
+
+            if (orderRef) {
+                orderReferenceInput.value = orderRef;
+            }
+
+            if (orderId) {
+                const loaded = await loadOrderById(orderId);
+                if (loaded) return;
+            }
+
+            showMessage('Enter your order reference with the email or mobile used for the order to track it safely on DEVASTHRA.', 'info');
+        })();
+    </script>
+    <script>
+        const TRACK_STEPS = ['Ordered', 'Packed', 'Shipped', 'Out for delivery', 'Delivered'];
+        const TRACK_STATUS_INDEX = { Ordered: 0, Packed: 1, Shipped: 2, 'Out for delivery': 3, Delivered: 4 };
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function mapShipmentPresentation(orderStatus, shipmentStatus) {
+            const normalizedShipment = String(shipmentStatus || '').trim().toUpperCase();
+            const normalizedOrder = String(orderStatus || '').trim().toUpperCase();
+
+            if (normalizedOrder === 'CANCELLED' || normalizedShipment.includes('CANCEL')) {
+                return { orderLabel: 'Cancelled', shipmentLabel: 'Cancelled', stepStatus: 'Cancelled' };
+            }
+            if (normalizedOrder === 'DELIVERED' || normalizedShipment === 'DELIVERED') {
+                return { orderLabel: 'Delivered', shipmentLabel: 'Delivered', stepStatus: 'Delivered' };
+            }
+            if (normalizedShipment.includes('RTO') || normalizedShipment.includes('RETURNING')) {
+                return { orderLabel: 'Returning to seller', shipmentLabel: 'Returning to seller', stepStatus: 'Returning to seller' };
+            }
+            if (normalizedOrder === 'SHIPPED' || normalizedShipment === 'OUT FOR DELIVERY') {
+                return {
+                    orderLabel: normalizedShipment === 'OUT FOR DELIVERY' ? 'Out for delivery' : 'Shipped',
+                    shipmentLabel: normalizedShipment === 'OUT FOR DELIVERY' ? 'Out for delivery' : 'Shipped',
+                    stepStatus: normalizedShipment === 'OUT FOR DELIVERY' ? 'Out for delivery' : 'Shipped'
+                };
+            }
+            if (
+                normalizedOrder === 'PACKED' ||
+                normalizedShipment.includes('AWB') ||
+                normalizedShipment.includes('MANIFEST') ||
+                normalizedShipment.includes('PICKUP') ||
+                normalizedShipment.includes('PACKED') ||
+                normalizedShipment.includes('CONFIRMED') ||
+                normalizedShipment.includes('READY TO SHIP')
+            ) {
+                return { orderLabel: 'Packed', shipmentLabel: 'Packed', stepStatus: 'Packed' };
+            }
+            if (normalizedOrder === 'PAID') {
+                return { orderLabel: 'Paid', shipmentLabel: shipmentStatus || 'Paid', stepStatus: 'Ordered' };
+            }
+            if (normalizedOrder === 'PENDING') {
+                return { orderLabel: 'Pending', shipmentLabel: shipmentStatus || 'Pending', stepStatus: 'Ordered' };
+            }
+            if (normalizedShipment === 'NEW' || normalizedShipment.includes('NEW')) {
+                return { orderLabel: 'Ordered', shipmentLabel: 'Ordered', stepStatus: 'Ordered' };
+            }
+            return {
+                orderLabel: orderStatus || 'Ordered',
+                shipmentLabel: shipmentStatus || 'Tracking pending',
+                stepStatus: 'Ordered'
+            };
+        }
+
+        function buildStepper(presentation, latestActivity, shipmentLabel) {
+            if (presentation.orderLabel === 'Cancelled') {
+                return `<div class="trk-alert">&#x26A0; This order was cancelled. ${latestActivity ? escapeHtml(latestActivity) : 'We will update this page if any refund activity is recorded.'}</div>`;
+            }
+            if (presentation.orderLabel === 'Returning to seller') {
+                return `<div class="trk-alert">&#x1F4E6; This order is returning to the seller. ${latestActivity ? escapeHtml(latestActivity) : 'Return movement is being processed.'}</div>`;
+            }
+
+            const currentIndex = TRACK_STATUS_INDEX[presentation.stepStatus] ?? 0;
+            const steps = TRACK_STEPS.map((step, index) => {
+                const cls = index < currentIndex ? 'done' : index === currentIndex ? 'active' : '';
+                const dot = index < currentIndex ? '&#10003;' : index === currentIndex ? '&#8226;' : '';
+                const isLast = index === TRACK_STEPS.length - 1;
+                return `
+                    <div class="trk-step ${cls}">
+                        <div class="trk-step-left">
+                            <div class="trk-step-dot">${dot}</div>
+                            ${!isLast ? '<div class="trk-step-line"></div>' : ''}
+                        </div>
+                        <div class="trk-step-content">
+                            <div class="trk-step-label">${escapeHtml(step)}</div>
+                            ${index === currentIndex && shipmentLabel ? `<div class="trk-step-sub">${escapeHtml(shipmentLabel)}</div>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            return `
+                <div class="trk-stepper">
+                    ${steps}
+                </div>
+                ${latestActivity ? `<div class="trk-alert" style="margin-top:12px;">Latest update: ${escapeHtml(latestActivity)}</div>` : ''}
+            `;
+        }
+
+        function renderTracking(tracking) {
+            const resultGrid = document.getElementById('trackResultGrid');
+            const resultWrap = document.getElementById('trackResult');
+            if (!resultGrid || !resultWrap) return;
+
+            const presentation = mapShipmentPresentation(tracking.orderStatus, tracking.displayStatus || tracking.trackingStatus || tracking.shipmentStatus || '');
+            const progressHtml = buildStepper(presentation, tracking.latestActivity || '', presentation.shipmentLabel || '');
+            const courierTrackUrl = tracking.awbCode ? `https://shiprocket.co/tracking/${encodeURIComponent(tracking.awbCode)}` : '';
+
+            resultGrid.innerHTML = `
+                <div class="trk-hero">
+                    <div class="trk-hero-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="1" y="3" width="15" height="13" rx="2"></rect>
+                            <path d="M16 8h4l3 5v3h-7V8z"></path>
+                            <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                            <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                        </svg>
+                    </div>
+                    <div class="trk-hero-text">
+                        <div class="trk-hero-eyebrow">Live Shipment
+                            <span class="trk-status-badge"><span class="trk-status-dot"></span>${escapeHtml(presentation.orderLabel)}</span>
+                        </div>
+                        <h2 class="trk-hero-title">Order ${escapeHtml(tracking.orderReference || 'Track Order')}</h2>
+                        <p class="trk-hero-meta">${escapeHtml(formatDateTime(tracking.latestActivityAt))} &nbsp;&middot;&nbsp; ${escapeHtml(tracking.courierName || 'Courier pending')}</p>
+                    </div>
+                </div>
+                <div class="trk-body">
+                    <div class="trk-journey">
+                        <div class="trk-col-title">Order Journey</div>
+                        ${progressHtml}
+                    </div>
+                    <div class="trk-details">
+                        <div class="trk-col-title">Shipment Details</div>
+                        <div class="trk-chips">
+                            ${[
+                                ['Order Ref', tracking.orderReference],
+                                ['Order Status', tracking.orderStatus],
+                                ['Shipment Status', tracking.displayStatus || tracking.trackingStatus || tracking.shipmentStatus],
+                                ['Courier', tracking.courierName || 'Awaiting assignment'],
+                                ['Shipment ID', tracking.shipmentId || null],
+                                ['Shiprocket Order ID', tracking.shiprocketOrderId || null],
+                                ['AWB Code', tracking.awbCode || null],
+                                ['Payment Method', tracking.paymentMethod || 'Prepaid'],
+                                ['Latest Activity', tracking.latestActivity || 'Will update as shipment moves'],
+                                ['Updated At', formatDateTime(tracking.latestActivityAt)],
+                                ['Total Amount', tracking.totalAmount ? '\u20b9' + tracking.totalAmount : null]
+                            ].filter(([, v]) => v).map(([label, value]) => `
+                                <div class="trk-chip">
+                                    <span class="trk-chip-label">${escapeHtml(label)}</span>
+                                    <div class="trk-chip-value">${escapeHtml(value)}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="trk-actions">
+                            ${courierTrackUrl ? `<a class="btn btn-primary" href="${courierTrackUrl}" target="_blank" rel="noopener noreferrer">Track on Shiprocket</a>` : ''}
+                            <a href="my-orders.html" class="btn btn-outline">View My Orders</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+            resultWrap.classList.add('show');
+        }
+
+        async function loadOrderById(orderId) {
+            const token = localStorage.getItem('DEVASTHRA_token');
+            if (!token || !orderId) return false;
+
+            const res = await fetch(`${API_BASE}/api/orders/${encodeURIComponent(orderId)}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await res.json();
+
+            if (!data.success) {
+                return false;
+            }
+
+            const order = data.order || {};
+            document.getElementById('trackOrderReference').value = order.invoice_number || '';
+            renderTracking({
+                orderReference: order.invoice_number || '',
+                orderStatus: order.status || '',
+                paymentMethod: order.payment_method || '',
+                shipmentId: order.shiprocket_shipment_id || '',
+                shiprocketOrderId: order.shiprocket_order_id || '',
+                awbCode: order.shiprocket_awb_code || '',
+                courierName: order.shiprocket_courier_name || '',
+                shipmentStatus: order.shiprocket_status || '',
+                trackingStatus: order.shiprocket_tracking_status || '',
+                latestActivity: order.shiprocket_latest_activity || '',
+                latestActivityAt: order.shiprocket_latest_activity_at || null,
+                customerName: order.name || '',
+                addressLine: order.address_line || '',
+                city: order.city || '',
+                state: order.state || '',
+                pincode: order.pincode || '',
+                totalAmount: order.total_amount || ''
+            });
+            return true;
+        }
+
+        const retryOrderId = params.get('orderId');
+        if (retryOrderId) {
+            setTimeout(() => {
+                loadOrderById(retryOrderId).catch(() => {});
+            }, 0);
+        }
+    </script>
+</body>
+
+</html>
+

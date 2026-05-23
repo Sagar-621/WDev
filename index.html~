@@ -71,18 +71,17 @@
         </form>
     </div>
 
-    <!-- ===== CORNER POPUPS ===== -->
     <aside class="corner-popup corner-popup-left" id="cornerPopupLeft" hidden>
         <button class="corner-popup-close" id="cornerPopupLeftClose" type="button" aria-label="Close left corner popup">&times;</button>
         <div class="corner-popup-media" id="cornerPopupLeftMedia" hidden>
             <img id="cornerPopupLeftImage" src="" alt="Left corner promo">
         </div>
-        <div class="corner-popup-copy">
-            <p class="corner-popup-kicker" id="cornerPopupLeftKicker" hidden></p>
+        <!-- <div class="corner-popup-copy">
+            <p class="corner-popup-kicker" id="cornerPopupLeftKicker"></p>
             <h3 class="corner-popup-title" id="cornerPopupLeftTitle"></h3>
             <p class="corner-popup-description" id="cornerPopupLeftDescription"></p>
-            <a class="corner-popup-cta" id="cornerPopupLeftCta" href="#" hidden>Shop Now</a>
-        </div>
+            <a class="corner-popup-cta" id="cornerPopupLeftCta" href="#"></a>
+        </div> -->
     </aside>
 
     <aside class="corner-popup corner-popup-right" id="cornerPopupRight" hidden>
@@ -90,12 +89,12 @@
         <div class="corner-popup-media" id="cornerPopupRightMedia" hidden>
             <img id="cornerPopupRightImage" src="" alt="Right corner promo">
         </div>
-        <div class="corner-popup-copy">
-            <p class="corner-popup-kicker" id="cornerPopupRightKicker" hidden></p>
+        <!-- <div class="corner-popup-copy">
+            <p class="corner-popup-kicker" id="cornerPopupRightKicker"></p>
             <h3 class="corner-popup-title" id="cornerPopupRightTitle"></h3>
             <p class="corner-popup-description" id="cornerPopupRightDescription"></p>
-            <a class="corner-popup-cta" id="cornerPopupRightCta" href="#" hidden>Shop Now</a>
-        </div>
+            <a class="corner-popup-cta" id="cornerPopupRightCta" href="#"></a>
+        </div> -->
     </aside>
 
     <!-- ===== HERO SECTION (3-Slide Carousel) ===== -->
@@ -423,7 +422,7 @@
             <div class="otp-field-group">
                 <label for="otpMobile">Mobile Number <span class="required-star">*</span></label>
                 <div class="otp-phone-input">
-
+                   
                     <span class="otp-flag">+91</span>
                     <input type="tel" id="otpMobile" placeholder="Enter your 10-digit mobile number" maxlength="10" inputmode="numeric" autocomplete="tel-national">
                 </div>
@@ -493,3 +492,4 @@
 </body>
 
 </html>
+

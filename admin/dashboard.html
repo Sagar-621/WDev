@@ -1,0 +1,2152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEVASTHRA</title>
+    <meta name="description" content="DEVASTHRA Admin Dashboard — Manage orders, products, customers, and more.">
+    <script src="https://devasthra.com/runtime-env.js"></script>
+    <link rel="icon" href="" id="brandFavicon">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin-styles.css">
+</head>
+
+<body>
+    <!-- ════════ Sidebar ════════ -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <img src="" alt="DEVASTHRA" id="brandSidebarLogo">
+            <div>
+                <h1>DEVASTHRA</h1>
+                <span>Admin Portal</span>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <span class="nav-section-label">Main</span>
+            <a href="#" class="nav-item active" data-page="dashboard">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7" rx="1" />
+                    <rect x="14" y="3" width="7" height="7" rx="1" />
+                    <rect x="3" y="14" width="7" height="7" rx="1" />
+                    <rect x="14" y="14" width="7" height="7" rx="1" />
+                </svg>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item" data-page="orders">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <path d="M16 10a4 4 0 01-8 0" />
+                </svg>
+                <span>Orders</span>
+            </a>
+            <a href="#" class="nav-item" data-page="products">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" />
+                    <line x1="7" y1="7" x2="7.01" y2="7" />
+                </svg>
+                <span>Products</span>
+            </a>
+
+            <span class="nav-section-label">Management</span>
+            <a href="#" class="nav-item" data-page="customers">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M23 21v-2a4 4 0 00-3-3.87" />
+                    <path d="M16 3.13a4 4 0 010 7.75" />
+                </svg>
+                <span>Customers</span>
+            </a>
+            <a href="#" class="nav-item" data-page="shipment">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="1" y="3" width="15" height="13" />
+                    <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+                    <circle cx="5.5" cy="18.5" r="2.5" />
+                    <circle cx="18.5" cy="18.5" r="2.5" />
+                </svg>
+                <span>Shipment</span>
+            </a>
+            <a href="#" class="nav-item" data-page="support">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+                </svg>
+                <span>Support</span>
+            </a>
+            <a href="#" class="nav-item" data-page="coupons">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 12 20 22 4 22 4 12" />
+                    <rect x="2" y="7" width="20" height="5" />
+                    <line x1="12" y1="22" x2="12" y2="7" />
+                    <path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z" />
+                    <path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z" />
+                </svg>
+                <span>Coupons</span>
+            </a>
+            <a href="#" class="nav-item" data-page="banners">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 5h16v14H4z" />
+                    <path d="M4 9h16" />
+                    <path d="m8 13 2 2 4-4 4 4" />
+                </svg>
+                <span>Banners</span>
+            </a>
+            <a href="#" class="nav-item" data-page="returns">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="1 4 1 10 7 10" />
+                    <path d="M3.51 15a9 9 0 102.13-9.36L1 10" />
+                </svg>
+                <span>Returns</span>
+            </a>
+            <a href="#" class="nav-item" data-page="exchanges">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 12l1.35 2.7a9 9 0 0 0 16.3 0L21 12" />
+                    <path d="M3 12l1.35-2.7a9 9 0 0 1 16.3 0L21 12" />
+                </svg>
+                <span>Exchanges</span>
+            </a>
+            <a href="#" class="nav-item" data-page="refunds">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 9V7a5 5 0 0 0-10 0v2" />
+                    <rect x="3" y="9" width="18" height="11" rx="2" />
+                    <path d="M12 13v3" />
+                </svg>
+                <span>Refunds</span>
+            </a>
+            <a href="#" class="nav-item" data-page="payment-history">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                    <line x1="1" y1="10" x2="23" y2="10"/>
+                    <circle cx="6" cy="15" r="1"/>
+                    <line x1="10" y1="15" x2="18" y2="15"/>
+                </svg>
+                <span>Payment History</span>
+            </a>
+
+            <span class="nav-section-label">System</span>
+            <a href="#" class="nav-item" data-page="settings">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3" />
+                    <path
+                        d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+                </svg>
+                <span>Settings</span>
+            </a>
+            <a href="#" class="nav-item" data-page="audit">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" y1="13" x2="8" y2="13" />
+                    <line x1="16" y1="17" x2="8" y2="17" />
+                    <polyline points="10 9 9 9 8 9" />
+                </svg>
+                <span>Audit Logs</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="admin-info">
+                <div class="admin-avatar" id="adminAvatar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+                <div>
+                    <div id="adminName">Admin</div>
+                    <div>Administrator</div>
+                </div>
+                <!-- <div class="online-dot"></div> -->
+            </div>
+            <button class="logout-btn" id="logoutBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- Mobile topbar -->
+    <div class="mobile-topbar">
+        <button class="hamburger" id="hamburgerBtn">☰</button>
+        <span>DEVASTHRA</span>
+        <button class="logout-btn-sm" id="logoutBtnMobile">Logout</button>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ════════ Main Content ════════ -->
+    <main class="main-content">
+
+        <!-- ===== DASHBOARD PAGE ===== -->
+        <div class="page active" id="page-dashboard">
+            <!-- Greeting -->
+            <div class="dashboard-greeting">
+                <div class="greeting-row">
+                    <div class="greeting-text">
+                        <h2><span class="wave">👋</span> <span id="greetingText">Good evening</span>, <span
+                                id="greetingName">Admin</span>!</h2>
+                        <p>Here's what's happening with your store today.</p>
+                    </div>
+                    <div class="greeting-meta">
+                        <div class="live-clock">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <polyline points="12 6 12 12 16 14" />
+                            </svg>
+                            <span id="liveClock">—</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <div class="stat-icon gradient-blue">📦</div>
+                        <span class="stat-trend">↑</span>
+                    </div>
+                    <div class="stat-value" id="statTotal">—</div>
+                    <div class="stat-label">Total Orders</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <div class="stat-icon gradient-green">💰</div>
+                        <span class="stat-trend">↑</span>
+                    </div>
+                    <div class="stat-value" id="statRevenue">—</div>
+                    <div class="stat-label">Total Revenue</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <div class="stat-icon gradient-orange">⏳</div>
+                        <span class="stat-trend">—</span>
+                    </div>
+                    <div class="stat-value" id="statPending">—</div>
+                    <div class="stat-label">Cancelled Orders</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <div class="stat-icon gradient-purple">✅</div>
+                        <span class="stat-trend">↑</span>
+                    </div>
+                    <div class="stat-value" id="statPaid">—</div>
+                    <div class="stat-label">Paid Orders</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <div class="stat-icon gradient-teal">👥</div>
+                        <span class="stat-trend">↑</span>
+                    </div>
+                    <div class="stat-value" id="statUsers">—</div>
+                    <div class="stat-label">Total Customers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <div class="stat-icon gradient-pink">🏷️</div>
+                        <span class="stat-trend">↑</span>
+                    </div>
+                    <div class="stat-value" id="statProducts">—</div>
+                    <div class="stat-label">Active Products</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <div class="stat-icon gradient-orange">↩️</div>
+                        <span class="stat-trend">—</span>
+                    </div>
+                    <div class="stat-value" id="statReturns">—</div>
+                    <div class="stat-label">Pending Returns</div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <button class="quick-action-btn" data-action="orders">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+                        <line x1="3" y1="6" x2="21" y2="6" />
+                    </svg>
+                    View Orders
+                </button>
+                <button class="quick-action-btn" data-action="add-product">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                    Add Product
+                </button>
+                <button class="quick-action-btn" data-action="customers">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                    </svg>
+                    Customers
+                </button>
+                <button class="quick-action-btn" data-action="audit">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                    </svg>
+                    Audit Logs
+                </button>
+            </div>
+
+            <!-- Recent Orders Widget -->
+            <div class="dashboard-widgets">
+                <div class="widget-card">
+                    <div class="widget-header">
+                        <h3>Recent Orders</h3>
+                        <button class="widget-action" data-action="orders">View all →</button>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#Order</th>
+                                    <th>Customer</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentOrdersBody">
+                                <tr>
+                                    <td colspan="5" class="loading-row">
+                                        <div class="spinner"></div>Loading recent orders...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== ORDERS PAGE ===== -->
+        <div class="page" id="page-orders">
+            <div class="page-header">
+                <div>
+                    <h2>Orders Management</h2>
+                    <p class="page-subtitle">Track and manage all customer orders</p>
+                </div>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                    <button class="btn-outline" id="exportOrdersCsvBtn">Export CSV</button>
+                    <button class="btn-outline" id="exportOrdersExcelBtn">Export Excel</button>
+                    <button class="btn-primary" id="refreshOrdersBtn">⟳ Refresh</button>
+                </div>
+            </div>
+            <div class="filters" id="filtersBar">
+                <button class="filter-btn active" data-status="all">All Orders</button>
+                <button class="filter-btn" data-status="Pending">Pending</button>
+                <button class="filter-btn" data-status="Paid">Paid</button>
+                <button class="filter-btn" data-status="Packed">Packed</button>
+                <button class="filter-btn" data-status="Shipped">Shipped</button>
+                <button class="filter-btn" data-status="Delivered">Delivered</button>
+                <button class="filter-btn" data-status="Cancelled">Cancelled</button>
+            </div>
+            <div class="card">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#Order</th>
+                                <th>Customer</th>
+                                <th>Products</th>
+                                <th>Amount</th>
+                                <th>Payment</th>
+                                <th>Address</th>
+                                <th>Date</th>
+                                <th>Order Status</th>
+                                <th>Shipment Status</th>
+                                <th>Latest Tracking Update</th>
+                                <th>Cancel Request</th>
+                                <th>Return Request</th>
+                                <th>Exchange Request</th>
+                                <th>Refund Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersBody">
+                            <tr>
+                                <td colspan="15" class="loading-row">
+                                    <div class="spinner"></div>Loading...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== PRODUCTS PAGE ===== -->
+        <div class="page" id="page-products">
+            <div class="page-header">
+                <div>
+                    <h2>Products & Inventory</h2>
+                    <p class="page-subtitle">Manage your product catalog and stock levels</p>
+                </div>
+                <button class="btn-primary" id="addProductBtn">+ Add Product</button>
+            </div>
+            <div class="products-toolbar">
+                <input type="text" id="productSearch" class="search-input" placeholder="Search by name, SKU, brand...">
+                <select id="productStatusFilter" class="select-input">
+                    <option value="">All Status</option>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                    <option value="Draft">Draft</option>
+                </select>
+                <select id="productSortFilter" class="select-input">
+                    <option value="newest">Newest First</option>
+                    <option value="price_asc">Price: Low → High</option>
+                    <option value="price_desc">Price: High → Low</option>
+                    <option value="stock_low">Stock: Low → High</option>
+                </select>
+            </div>
+            <div class="card">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Product Name</th>
+                                <th>SKU</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsBody">
+                            <tr>
+                                <td colspan="8" class="loading-row">
+                                    <div class="spinner"></div>Loading...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== PRODUCT FORM MODAL ===== -->
+        <div class="modal-overlay" id="productModalOverlay"></div>
+        <div class="modal" id="productModal">
+            <div class="modal-header">
+                <h3 id="productModalTitle">Add New Product</h3>
+                <button class="modal-close" id="closeProductModal">✕</button>
+            </div>
+            <form id="productForm" enctype="multipart/form-data">
+                <input type="hidden" id="editProductId" value="">
+                <div class="form-grid">
+                    <div class="form-section product-section-category">
+                        <h4>Category & Attributes</h4>
+                        <div class="form-row">
+                            <div class="form-group"><label>Audience *</label>
+                                <select id="pf_ideal_for" required>
+                                    <option value="Men">Men</option>
+                                    <option value="Women">Women</option>
+                                    <option value="Kids">Kids</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label>Fashion Group *</label>
+                                <select id="pf_fashion" required>
+                                    <option value="">Select fashion group</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="taxonomy-selection-summary" id="productTaxonomySummary">
+                            <span class="taxonomy-selection-pill">Gender: <strong id="taxonomySummaryAudience">Men</strong></span>
+                            <span class="taxonomy-selection-pill">Fashion: <strong id="taxonomySummaryFashion">Not selected</strong></span>
+                            <span class="taxonomy-selection-pill">Category: <strong id="taxonomySummaryCategory">Not selected</strong></span>
+                            <span class="taxonomy-selection-pill">Subcategory: <strong id="taxonomySummarySubcategory">Not selected</strong></span>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>Main Category *</label>
+                                <select id="pf_category" required>
+                                    <option value="">Select main category</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label>Subcategory *</label>
+                                <select id="pf_subcategory" required>
+                                    <option value="">Select subcategory</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group full">
+                                <label>Colors *</label>
+                                <div class="color-selector-shell">
+                                    <div class="color-selector-head">
+                                        <span>Pick one or more colors from the category settings</span>
+                                        <span id="pf_color_count" class="color-selector-count">0 selected</span>
+                                    </div>
+                                    <div id="pf_color_options" class="color-option-grid"></div>
+                                </div>
+                                <small class="field-help">Color choices are controlled from Settings when creating categories and subcategories.</small>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>Website Badge / Homepage Label</label>
+                                <select id="pf_badge">
+                                    <option value="">None</option>
+                                    <option value="Trending">Trending</option>
+                                    <option value="New">New</option>
+                                    <option value="Bestseller">Bestseller</option>
+                                    <option value="Sale">Sale</option>
+                                </select>
+                                <small class="field-help">Choose <strong>Bestseller</strong> here to show the Best Seller badge on website product cards.</small>
+                            </div>
+                            <div class="form-group"><label>Initial Rating ⭐</label>
+                                <select id="pf_initial_rating">
+                                    <option value="">No Rating</option>
+                                    <option value="3.5">3.5 Stars</option>
+                                    <option value="4.0">4.0 Stars</option>
+                                    <option value="4.2">4.2 Stars</option>
+                                    <option value="4.5">4.5 Stars</option>
+                                    <option value="4.8">4.8 Stars</option>
+                                    <option value="5.0">5.0 Stars</option>
+                                </select>
+                                <small class="field-help">Set a starting rating for new products. Will be replaced by real customer reviews over time.</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section product-section-basic">
+                        <h4>Basic Information</h4>
+                        <div class="form-row">
+                            <div class="form-group full"><label>Product Name *</label><input type="text" id="pf_name"
+                                    required></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group full"><label>Description</label><textarea id="pf_description"
+                                    rows="3"></textarea></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>SKU <span style="font-size: 0.8rem; color: var(--text-secondary);">(Auto-generated if empty)</span></label><input type="text" id="pf_sku"
+                                    placeholder="Leave empty for auto-generation or enter custom SKU"></div>
+                            <div class="form-group"><label>Brand</label><input type="text" id="pf_brand"
+                                    placeholder="e.g. DEVASTHRA"></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Product Role</label>
+                                <select id="pf_product_role">
+                                    <option value="main">Main Product</option>
+                                    <option value="related">Related Product</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Display Order</label>
+                                <input type="number" id="pf_display_order" value="0" min="0" placeholder="0">
+                            </div>
+                        </div>
+                        <div class="form-row" id="pf_parent_row" style="display:none">
+                            <div class="form-group full">
+                                <label>Parent Main Product</label>
+                                <select id="pf_parent_product_id">
+                                    <option value="">Select main product</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h4>Pricing & Inventory</h4>
+                        <div class="form-row">
+                            <div class="form-group"><label>Selling Price (₹) *</label><input type="number" id="pf_price"
+                                    step="0.01" required></div>
+                            <div class="form-group"><label>MRP / Original Price (₹)</label><input type="number"
+                                    id="pf_original_price" step="0.01"></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>Stock Quantity</label><input type="number" id="pf_stock"
+                                    value="0" min="0"></div>
+                            <div class="form-group"><label>Min Order Qty</label><input type="number"
+                                    id="pf_min_order_qty" value="1" min="1"></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>Listing Status</label>
+                                <select id="pf_listing_status">
+                                    <option value="Active">Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                    <option value="Draft">Draft</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h4>Sizes</h4>
+                        <p class="field-help">Select at least one size when creating a new product. Existing products will load their current size-wise stock here for editing.</p>
+                        <div class="sizes-checkboxes" id="sizesCheckboxes">
+                            <label class="size-check"><input type="checkbox" value="XS"> XS</label>
+                            <label class="size-check"><input type="checkbox" value="S"> S</label>
+                            <label class="size-check"><input type="checkbox" value="M"> M</label>
+                            <label class="size-check"><input type="checkbox" value="L"> L</label>
+                            <label class="size-check"><input type="checkbox" value="XL"> XL</label>
+                            <label class="size-check"><input type="checkbox" value="XXL"> XXL</label>
+                            <label class="size-check"><input type="checkbox" value="3XL"> 3XL</label>
+                        </div>
+                        <div id="sizeInventoryPanel" style="margin-top:16px;padding:14px;border:1px solid var(--border-color, #e5e7eb);border-radius:10px;background:var(--bg-input);display:none;">
+                            <div style="font-weight:600;margin-bottom:10px;">Size-wise Inventory</div>
+                            <div id="sizeInventorySummary" class="size-inventory-summary" style="display:none;"></div>
+                            <div id="sizeInventoryInputs" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;"></div>
+                            <p style="margin:10px 0 0;font-size:.82rem;color:var(--text-secondary);">Total stock will be calculated automatically from the sizes you set here.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h4>Highlights</h4>
+                        <div id="highlightsContainer"></div>
+                        <button type="button" class="btn-outline btn-sm" id="addHighlightBtn">+ Add Highlight</button>
+                    </div>
+
+                    <div class="form-section">
+                        <h4>📸 Product Images (ImageKit CDN)</h4>
+                        <div style="background: var(--bg-input); padding: 12px; border-radius: 6px; margin-bottom: 12px; font-size: 0.85rem; color: var(--text-secondary);">
+                            ✨ Images automatically uploaded to ImageKit CDN and optimized for all devices
+                        </div>
+
+                        <!-- ImageKit Format Info -->
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px;">
+                            <div style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: color-mix(in srgb, var(--color-success, #22c55e) 8%, var(--bg-card)); border: 1px solid color-mix(in srgb, var(--color-success, #22c55e) 30%, transparent); border-radius: 6px; font-size: 0.82rem; color: var(--text-secondary);">
+                                ✅ Supported Formats:
+                                <span style="display:inline-block;padding:2px 8px;background:var(--bg-table-alt);border-radius:4px;font-weight:600;font-size:0.75rem;color:var(--text-primary);">JPG</span>
+                                <span style="display:inline-block;padding:2px 8px;background:var(--bg-table-alt);border-radius:4px;font-weight:600;font-size:0.75rem;color:var(--text-primary);">PNG</span>
+                                <span style="display:inline-block;padding:2px 8px;background:var(--bg-table-alt);border-radius:4px;font-weight:600;font-size:0.75rem;color:var(--text-primary);">WebP</span>
+                                &nbsp;— Max 10MB each
+                            </div>
+                        </div>
+
+                        <!-- Main Featured Image -->
+                        <div class="form-row">
+                            <div class="form-group full">
+                                <label>🎯 Main Featured Image (Front View) *</label>
+                                <div class="upload-zone" id="mainImageZone" style="min-height: 120px;">
+                                    <input type="file" id="pf_main_image" accept=".jpg,.jpeg,.png,.webp" hidden>
+                                    <div class="upload-placeholder" id="mainImagePreview">
+                                        <span style="font-size: 2rem; display: block;">📷</span>
+                                        <p><strong>Click or drag</strong> to upload main image</p>
+                                        <small style="color: var(--text-secondary);">Only JPG, PNG, WebP (Max 10MB)</small>
+                                    </div>
+                                </div>
+                                <div id="mainImageActions" class="image-management-actions" style="display:none;">
+                                    <button type="button" class="btn-danger btn-sm" id="removeCurrentMainImageBtn">Remove Current Main Image</button>
+                                    <span class="field-help">You can remove the current image and upload a latest replacement before saving.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Multiple Angle Images -->
+                        <div class="form-row">
+                            <div class="form-group full">
+                                <label>🖼️ Different Angles (Back, Side, Close-up, etc.)</label>
+                                <div class="upload-zone" id="catalogImageZone" style="min-height: 120px;">
+                                    <input type="file" id="pf_catalog_images" accept=".jpg,.jpeg,.png,.webp" multiple hidden>
+                                    <div class="upload-placeholder" id="catalogImagePreview">
+                                        <span style="font-size: 2rem; display: block;">🖼️</span>
+                                        <p><strong>Click or drag</strong> to upload multiple angle photos</p>
+                                        <small style="color: var(--text-secondary);">Only JPG, PNG, WebP — Upload 2-5 images for best results</small>
+                                    </div>
+                                </div>
+                                <div id="currentCatalogImages" class="current-catalog-images" style="display:none;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Upload Progress -->
+                        <div id="imageUploadProgress" style="display: none; margin-top: 16px;">
+                            <div style="font-size: 0.85rem; font-weight: 500; margin-bottom: 8px;">
+                                📤 Uploading to ImageKit: <span id="uploadProgressPercent">0</span>%
+                            </div>
+                            <div style="width: 100%; height: 6px; background: var(--bg-input); border-radius: 3px; overflow: hidden;">
+                                <div id="uploadProgressBar" style="height: 100%; background: var(--accent); width: 0%; transition: width 0.3s ease;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Uploaded Images Display -->
+                        <div id="uploadedImagesDisplay" style="margin-top: 16px; display: none;">
+                            <div style="font-size: 0.9rem; font-weight: 600; margin-bottom: 12px; color: var(--color-success);">
+                                ✅ <span id="uploadedImageCount">0</span> image(s) ready to upload
+                            </div>
+                            <div id="uploadedImagesThumbs" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-outline" id="cancelProductBtn">Cancel</button>
+                    <button type="submit" class="btn-primary" id="saveProductBtn">Save Product</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- ===== PLACEHOLDER PAGES ===== -->
+        <div class="page" id="page-shipment">
+            <div class="page-header">
+                <div>
+                    <h2>Shipment Tracking</h2>
+                    <p class="page-subtitle">Monitor your logistics and delivery status</p>
+                </div>
+                <button class="btn-primary" id="refreshShipmentsBtn">⟳ Refresh</button>
+            </div>
+            <div class="shipment-summary-grid" id="shipmentSummaryGrid">
+                <div class="shipment-summary-card">
+                    <span class="shipment-summary-label">Shiprocket Orders</span>
+                    <strong id="shipmentStatTotal">0</strong>
+                </div>
+                <div class="shipment-summary-card">
+                    <span class="shipment-summary-label">AWB Assigned</span>
+                    <strong id="shipmentStatAwb">0</strong>
+                </div>
+                <div class="shipment-summary-card">
+                    <span class="shipment-summary-label">Pickup Scheduled</span>
+                    <strong id="shipmentStatPickup">0</strong>
+                </div>
+                <div class="shipment-summary-card">
+                    <span class="shipment-summary-label">In Transit / Shipped</span>
+                    <strong id="shipmentStatTransit">0</strong>
+                </div>
+            </div>
+            <div class="card">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order</th>
+                                <th>Customer</th>
+                                <th>Shiprocket</th>
+                                <th>Courier / AWB</th>
+                                <th>Tracking</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="shipmentsBody">
+                            <tr>
+                                <td colspan="7" class="loading-row">
+                                    <div class="spinner"></div>Loading shipments...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== CUSTOMERS PAGE ===== -->
+        <div class="page" id="page-customers">
+            <div class="page-header">
+                <div>
+                    <h2>Registered Customers</h2>
+                    <p class="page-subtitle">Manage, filter, and export customer records</p>
+                </div>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                    <button class="btn-outline" id="exportCustomersCsvBtn">Export CSV</button>
+                    <button class="btn-outline" id="exportCustomersExcelBtn">Export Excel</button>
+                </div>
+                <button class="btn-primary" id="refreshCustomersBtn">⟳ Refresh</button>
+            </div>
+            <div class="customers-toolbar">
+                <input type="text" id="customerSearch" class="search-input" placeholder="Search by name, email, or mobile...">
+                <select id="customerGenderFilter" class="select-input">
+                    <option value="">All Genders</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Others">Others</option>
+                </select>
+                <select id="customerOrderFilter" class="select-input">
+                    <option value="all">All Customers</option>
+                    <option value="with_orders">With Orders</option>
+                    <option value="repeat">Repeat Customers</option>
+                    <option value="without_orders">No Orders Yet</option>
+                </select>
+            </div>
+            <div class="card">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Avatar</th>
+                                <th>Customer Name</th>
+                                <th>Email</th>
+                                <th>Mobile Number</th>
+                                <th>Profile</th>
+                                <th>Orders</th>
+                                <th>Joined Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customersBody">
+                            <tr>
+                                <td colspan="8" class="loading-row">
+                                    <div class="spinner"></div>Loading...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="page" id="page-support">
+            <div class="page-header">
+                <div>
+                    <h2>Customer Support
+                        <span class="support-unread-badge" id="supportUnreadBadge" style="display:none;">0</span>
+                    </h2>
+                    <p class="page-subtitle">Respond to customer inquiries in real time</p>
+                </div>
+                <button class="btn-primary" id="refreshSupportBtn">⟳ Refresh</button>
+            </div>
+
+            <div class="support-shell">
+                <!-- ── Left: conversation list ── -->
+                <div class="support-sidebar" id="supportSidebar">
+                    <div class="support-sidebar-header">
+                        <span>Conversations</span>
+                        <span class="support-conv-count" id="supportConvCount">0</span>
+                    </div>
+                    <div class="support-conv-list" id="supportConversationList">
+                        <div class="support-empty-state">
+                            <div class="support-empty-icon">💬</div>
+                            <p>No conversations yet</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── Right: message thread ── -->
+                <div class="support-thread">
+                    <!-- Header bar -->
+                    <div class="support-thread-header" id="supportConversationHeader">
+                        <div class="support-thread-placeholder" id="supportThreadPlaceholder">
+                            <div style="font-size:2rem;margin-bottom:10px;">💬</div>
+                            <div style="font-weight:500;font-size:15px;margin-bottom:6px;">Select a conversation</div>
+                            <div style="font-size:13px;opacity:.6;">Choose a customer from the left to start replying</div>
+                        </div>
+                        <div class="support-thread-customer" id="supportThreadCustomer" style="display:none;">
+                            <div class="support-customer-avatar" id="supportCustomerAvatar">?</div>
+                            <div class="support-customer-info">
+                                <div class="support-customer-name" id="supportCustomerName">—</div>
+                                <div class="support-customer-meta" id="supportCustomerMeta">—</div>
+                            </div>
+                            <div class="support-thread-actions">
+                                <span class="support-status-pill" id="supportStatusPill">Active</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Messages area -->
+                    <div class="support-messages" id="supportMessages">
+                        <!-- messages rendered here -->
+                    </div>
+
+                    <!-- Reply form -->
+                    <form class="support-reply-form" id="supportReplyForm" style="display:none;">
+                        <div class="support-reply-wrap">
+                            <textarea id="supportReplyInput" rows="1" placeholder="Type your reply… (Enter to send, Shift+Enter for new line)" maxlength="2000"></textarea>
+                        </div>
+                        <button class="support-send-btn" type="submit" id="supportSendBtn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="card" style="margin-top:24px;">
+                <div class="page-header" style="padding:0 0 18px;margin:0 0 18px;border-bottom:1px solid var(--border);">
+                    <div>
+                        <h3 style="font-size:1.05rem;">Contact Form Submissions</h3>
+                        <p class="page-subtitle">Messages submitted from the storefront contact form</p>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Message</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="contactMessagesBody">
+                            <tr>
+                                <td colspan="7" class="loading-row">
+                                    <div class="spinner"></div>Loading...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="page" id="page-coupons">
+            <div class="page-header">
+                <div>
+                    <h2>Coupons &amp; Discounts</h2>
+                    <p class="page-subtitle">Create and manage promotional offers</p>
+                </div>
+                <button class="btn-primary" id="openCouponModalBtn">+ Add Coupon</button>
+            </div>
+            <div class="card">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Type</th>
+                                <th>Value</th>
+                                <th>Scope</th>
+                                <th>Min Order</th>
+                                <th>Usage</th>
+                                <th>Validity</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="couponsBody">
+                            <tr>
+                                <td colspan="9" class="loading-row">
+                                    <div class="spinner"></div>Loading...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- ===== COUPON FORM MODAL ===== -->
+        <div class="modal-overlay" id="couponModalOverlay"></div>
+        <div class="modal" id="couponModal">
+            <div class="modal-header">
+                <div class="coupon-modal-headline">
+                    <h3 id="couponModalTitle">Add Coupon</h3>
+                    <p>Create a discount that can be targeted by product, category, or site-wide scope.</p>
+                </div>
+                <button class="modal-close" id="closeCouponModal">&times;</button>
+            </div>
+            <form id="couponForm" autocomplete="off">
+                <div class="form-grid coupon-form-grid">
+                    <div class="form-group coupon-form-group">
+                        <label for="cf_code">Coupon Code *</label>
+                        <input type="text" id="cf_code" required placeholder="Customers enter this code at checkout, e.g. SUMMER20" style="text-transform:uppercase;">
+                        <small class="coupon-form-hint">Unique code customers type during checkout to get the discount.</small>
+                    </div>
+                    <div class="form-group coupon-form-group">
+                        <label for="cf_discount_type">Discount Type</label>
+                        <select id="cf_discount_type" class="select-input">
+                            <option value="percentage">Percentage (%) — e.g. 20% off</option>
+                            <option value="flat">Flat (₹) — e.g. ₹200 off</option>
+                        </select>
+                        <small class="coupon-form-hint">Percentage takes % off the cart total. Flat deducts a fixed ₹ amount.</small>
+                    </div>
+                    <div class="form-group coupon-form-group">
+                        <label for="cf_discount_value">Discount Value *</label>
+                        <input type="number" id="cf_discount_value" required step="0.01" min="0" placeholder="e.g. 20 means 20% or ₹20 based on type above">
+                        <small class="coupon-form-hint">Enter the number only. If type is %, enter 20 for 20% off. If flat, enter 200 for ₹200 off.</small>
+                    </div>
+                    <div class="form-group coupon-form-group">
+                        <label for="cf_max_discount">Max Discount Cap (₹)</label>
+                        <input type="number" id="cf_max_discount" step="0.01" min="0" placeholder="e.g. 500 — limits % discount to max ₹500">
+                        <small class="coupon-form-hint">Only for % coupons. Caps the maximum rupee saving. Leave blank for no cap. Disabled for flat coupons.</small>
+                    </div>
+                    <div class="form-group coupon-form-group">
+                        <label for="cf_min_order_value">Minimum Cart Value (₹)</label>
+                        <input type="number" id="cf_min_order_value" step="0.01" min="0" value="0" placeholder="e.g. 999 — coupon works only if cart ≥ ₹999">
+                        <small class="coupon-form-hint">Customer's cart must reach this amount before coupon can be applied. Set 0 for no minimum.</small>
+                    </div>
+                    <div class="form-group coupon-form-group">
+                        <label for="cf_scope">Applies To</label>
+                        <select id="cf_scope" class="select-input">
+                            <option value="all">All Products (site-wide)</option>
+                            <option value="category">Specific Category only</option>
+                            <option value="product">Specific Product only</option>
+                        </select>
+                        <small class="coupon-form-hint">Choose where this coupon works — all products, a specific category, or specific products.</small>
+                    </div>
+                    <div class="form-group coupon-form-group coupon-form-group-wide" id="cf_scope_ids_group" style="display:none;">
+                        <label for="cf_scope_ids">Select Target Items</label>
+                        <select id="cf_scope_ids" class="select-input coupon-scope-select" multiple size="6"></select>
+                        <div class="coupon-scope-summary" id="cf_scope_summary">No items selected yet.</div>
+                        <small class="coupon-form-hint">Hold Ctrl/Cmd and click to select multiple. The coupon only works if the customer's cart contains one of these items.</small>
+                    </div>
+                    <div class="form-group coupon-form-group">
+                        <label for="cf_usage_limit">Total Usage Limit</label>
+                        <input type="number" id="cf_usage_limit" min="0" placeholder="e.g. 100 — max 100 total uses. Blank = unlimited">
+                        <small class="coupon-form-hint">How many times this coupon can be used across ALL customers combined. Leave blank for unlimited.</small>
+                    </div>
+                    <div class="form-group coupon-form-group">
+                        <label for="cf_per_user_limit">Per Customer Limit</label>
+                        <input type="number" id="cf_per_user_limit" min="1" value="1" placeholder="e.g. 1 — each customer can use once">
+                        <small class="coupon-form-hint">How many times ONE customer can use this coupon. Default is 1 (one-time use per person).</small>
+                    </div>
+                    <div class="form-group coupon-form-group">
+                        <label for="cf_start_date">Coupon Starts From</label>
+                        <input type="datetime-local" id="cf_start_date">
+                        <small class="coupon-form-hint">Coupon won't work before this date. Leave blank to start immediately.</small>
+                    </div>
+                    <div class="form-group coupon-form-group">
+                        <label for="cf_end_date">Coupon Expires On</label>
+                        <input type="datetime-local" id="cf_end_date">
+                        <small class="coupon-form-hint">Coupon stops working after this date. Leave blank for no expiry.</small>
+                    </div>
+                    <div class="form-group coupon-form-group coupon-form-toggle">
+                        <input type="checkbox" id="cf_is_active" checked>
+                        <label for="cf_is_active" style="margin:0;">Active — visible and usable by customers</label>
+                    </div>
+                    <div class="form-group coupon-form-group coupon-form-toggle">
+                        <input type="checkbox" id="cf_send_in_newsletter">
+                        <label for="cf_send_in_newsletter" style="margin:0;">Include in newsletter emails to subscribers</label>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="cancelCouponBtn">Cancel</button>
+                    <button type="submit" class="btn-primary" id="saveCouponBtn">Save Coupon</button>
+                </div>
+            </form>
+        </div>
+        <div class="page" id="page-banners">
+            <div class="page-header">
+                <div>
+                    <h2>Homepage Fixed Slots</h2>
+                    <p class="page-subtitle">Manage the hero, festive, offer strip, and floating corner banners shown on the storefront homepage.</p>
+                </div>
+                <button class="btn-primary" id="openBannerModalBtn">+ Add Fixed Slot Banner</button>
+            </div>
+            <div class="card">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Preview</th>
+                                <th>Slot</th>
+                                <th>Content</th>
+                                <th>CTA</th>
+                                <th>Status</th>
+                                <th>Updated</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bannersBody">
+                            <tr>
+                                <td colspan="7" class="loading-row">
+                                    <div class="spinner"></div>Loading...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- ===== BANNER FORM MODAL ===== -->
+        <div class="modal-overlay" id="bannerModalOverlay"></div>
+        <div class="modal" id="bannerModal">
+            <div class="modal-header">
+                <h3 id="bannerModalTitle">Add Fixed Slot Banner</h3>
+                <button class="modal-close" id="closeBannerModal">✕</button>
+            </div>
+            <form id="bannerForm">
+                <input type="hidden" id="bf_image_url" value="">
+                <input type="hidden" id="bf_image_file_id" value="">
+                <input type="hidden" id="bf_mobile_image_url" value="">
+                <input type="hidden" id="bf_mobile_image_file_id" value="">
+                <input type="hidden" id="bf_display_order" value="0">
+                <input type="hidden" id="bf_subtitle" value="">
+                <div class="form-grid">
+                    <div class="form-section">
+                        <h4>Banner Slot &amp; Status</h4>
+                        <div class="field-help" id="bannerSlotHelp">Select one of the approved homepage banner surfaces: hero slider, offer strip, festive section, or floating corner popup.</div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Banner Location *</label>
+                                <select id="bf_slot_key" required>
+                                    <option value="">— Choose where this banner appears —</option>
+                                    <option value="hero_slide_1">Hero Slide 1 (main homepage slider)</option>
+                                    <option value="hero_slide_2">Hero Slide 2 (second slide)</option>
+                                    <option value="hero_slide_3">Hero Slide 3 (third slide)</option>
+                                    <option value="offer_strip">Offer Strip (scrolling text bar below hero)</option>
+                                    <option value="festive_drop">Festive Drop (campaign section with countdown)</option>
+                                    <option value="corner_popup_left">Corner Popup Left (floating card, bottom-left)</option>
+                                    <option value="corner_popup_right">Corner Popup Right (floating card, bottom-right)</option>
+                                </select>
+                                <small class="field-help">Each location can have only one active banner. If one already exists, edit it instead.</small>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label style="display:flex;align-items:center;gap:8px;">
+                                    <input type="checkbox" id="bf_is_active" checked style="width:auto;">
+                                    Active — show this banner on the live website
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <h4>Content</h4>
+                        <div class="form-row">
+                            <div class="form-group" id="bf_kicker_group">
+                                <label id="bf_kicker_label">Kicker / Badge Text</label>
+                                <input type="text" id="bf_kicker" placeholder="Small text above the title, e.g. Just Dropped, Limited Edition">
+                                <small class="field-help">Appears as a small label above the main title on the banner.</small>
+                            </div>
+                            <div class="form-group">
+                                <label id="bf_title_label">Title *</label>
+                                <input type="text" id="bf_title" required placeholder="Main heading shown on the banner, e.g. New Arrivals Are Here">
+                                <small class="field-help">The large, bold heading displayed on this banner section.</small>
+                            </div>
+                        </div>
+                        <div class="form-row" id="bf_countdown_row">
+                            <div class="form-group" id="bf_countdown_group" style="display:none">
+                                <label>Countdown End Date &amp; Time</label>
+                                <input type="datetime-local" id="bf_countdown_target">
+                                <small class="field-help">The timer counts down to this date/time on the website.</small>
+                            </div>
+                        </div>
+                        <div class="form-row" id="bf_countdown_toggle_row" style="display:none">
+                            <div class="form-group">
+                                <label style="display:flex;align-items:center;gap:8px;">
+                                    <input type="checkbox" id="bf_show_countdown" style="width:auto;">
+                                    Show countdown timer on storefront
+                                </label>
+                                <small class="field-help">When checked, a live countdown clock appears in the Festive Drop section.</small>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group full">
+                                <label id="bf_description_label">Description</label>
+                                <textarea id="bf_description" rows="2" placeholder="Supporting text below the title. For Offer Strip: separate messages with | symbol, e.g. Free Shipping | 20% Off | New Arrivals"></textarea>
+                                <small class="field-help">For Hero/Festive: tagline text below the title. For Offer Strip: scrolling messages separated by | symbol.</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-section" id="bf_cta_section">
+                        <h4>Call-to-Action</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Primary Button</label>
+                                <select id="bf_button_text">
+                                    <option value="">No primary button</option>
+                                    <option value="Shop Now">Shop Now</option>
+                                    <option value="Browse Categories">Browse Categories</option>
+                                    <option value="Explore Collection">Explore Collection</option>
+                                    <option value="View Best Sellers">View Best Sellers</option>
+                                    <option value="View Offers">View Offers</option>
+                                    <option value="Notify Me">Notify Me</option>
+                                    <option value="Contact Us">Contact Us</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Primary Target Page</label>
+                                <select id="bf_button_link">
+                                    <option value="">No target page</option>
+                                    <option value="catalog.html">Catalog</option>
+                                    <option value="catalog.html?gender=Men">Catalog - Men</option>
+                                    <option value="catalog.html?gender=Women">Catalog - Women</option>
+                                    <option value="catalog.html?gender=Kids">Catalog - Kids</option>
+                                    <option value="index.html#best-sellers">Homepage - Best Sellers</option>
+                                    <option value="index.html#categories">Homepage - Categories</option>
+                                    <option value="index.html#about">Homepage - About</option>
+                                    <option value="index.html#contact">Homepage - Contact</option>
+                                    <option value="cart.html">Cart</option>
+                                    <option value="dashboard.html">User Dashboard</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row" id="bf_secondary_cta_row">
+                            <div class="form-group">
+                                <label>Secondary Button</label>
+                                <select id="bf_secondary_button_text">
+                                    <option value="">No secondary button</option>
+                                    <option value="Browse Categories">Browse Categories</option>
+                                    <option value="Explore Collection">Explore Collection</option>
+                                    <option value="Learn More">Learn More</option>
+                                    <option value="Contact Us">Contact Us</option>
+                                    <option value="Join Now">Join Now</option>
+                                    <option value="Notify Me">Notify Me</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Secondary Target Page</label>
+                                <select id="bf_secondary_button_link">
+                                    <option value="">No target page</option>
+                                    <option value="catalog.html">Catalog</option>
+                                    <option value="catalog.html?gender=Men">Catalog - Men</option>
+                                    <option value="catalog.html?gender=Women">Catalog - Women</option>
+                                    <option value="catalog.html?gender=Kids">Catalog - Kids</option>
+                                    <option value="index.html#best-sellers">Homepage - Best Sellers</option>
+                                    <option value="index.html#categories">Homepage - Categories</option>
+                                    <option value="index.html#about">Homepage - About</option>
+                                    <option value="index.html#contact">Homepage - Contact</option>
+                                    <option value="cart.html">Cart</option>
+                                    <option value="dashboard.html">User Dashboard</option>
+                                </select>
+                            </div>
+                        </div>
+                        <p class="field-help">Choose predefined buttons and pages so banner actions stay consistent across the storefront.</p>
+                    </div>
+                    <div class="form-section" id="bf_images_section">
+                        <h4>📸 Banner Image (ImageKit CDN)</h4>
+                        <div class="banner-size-guide" id="bannerSizeGuide">
+                            <strong>📐 Recommended Sizes:</strong>
+                            <span>Hero Slide: <b>1920 × 800px</b></span>
+                            <span>Corner Popup: <b>300 × 400px</b></span>
+                            <span>Festive Drop: <b>1920 × 500px</b></span>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group full">
+                                <label id="bf_image_label">Banner Image <span style="color:var(--danger)">*</span></label>
+                                <input type="file" id="bf_image_file" accept=".jpg,.jpeg,.png,.webp">
+                                <div id="bannerImagePreviewBox" style="margin-top:8px"></div>
+                                <div id="bannerImageActions" style="margin-top:8px;display:none;">
+                                    <button type="button" class="btn-danger btn-sm" id="removeBannerImageBtn">Remove Current Image</button>
+                                </div>
+                                <small class="field-help">Shown on both desktop and mobile. Use recommended size for best results.</small>
+                            </div>
+                        </div>
+                        <input type="file" id="bf_mobile_image_file" style="display:none;">
+                        <div id="bannerMobileImagePreviewBox" style="display:none;"></div>
+                        <div id="bannerMobileImageActions" style="display:none;"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-outline" id="cancelBannerBtn">Cancel</button>
+                    <button type="submit" class="btn-primary" id="saveBannerBtn">Save Banner</button>
+                </div>
+            </form>
+        </div>
+        <div class="page" id="page-settings">
+            <div class="page-header">
+                <div>
+                    <h2>Settings</h2>
+                    <p class="page-subtitle">Configure store master data and admin preferences</p>
+                </div>
+                <button class="btn-primary" id="openTaxonomyModalBtn">+ Add New Category</button>
+            </div>
+            <div class="settings-tab-nav" id="settingsTabNav">
+                <button class="settings-tab active" data-settings-tab="categories">📂 Categories</button>
+                <button class="settings-tab" data-settings-tab="privacy">🔒 Privacy Policy</button>
+                <button class="settings-tab" data-settings-tab="terms">📋 Terms of Service</button>
+                <button class="settings-tab" data-settings-tab="refundreplacement">↩️ Refund &amp; Replacement</button>
+                <button class="settings-tab" data-settings-tab="exchange">🔁 Exchange</button>
+                <button class="settings-tab" data-settings-tab="shipping">🚚 Shipping</button>
+                <button class="settings-tab" data-settings-tab="admincredentials">🔑 Admin Login</button>
+                <button class="settings-tab" data-settings-tab="storeconfig">🏪 Store Config</button>
+            </div>
+            <div class="placeholder-content" style="display:none;">
+                <div class="placeholder-icon">⚙️</div>
+                <h3>Coming Soon</h3>
+                <p>Store settings, payment configuration, and admin preferences.</p>
+            </div>
+            <div id="settingsSection_categories" class="settings-section">
+            <div class="card settings-taxonomy-card">
+                <div class="settings-taxonomy-hero">
+                    <div class="settings-taxonomy-copy">
+                        <span class="settings-taxonomy-eyebrow">Catalog Control Center</span>
+                        <h3>Category Settings</h3>
+                        <p>Manage fashion groups, categories, subcategories, and color palettes that feed both the storefront catalog and the product form.</p>
+                    </div>
+                    <div class="settings-taxonomy-stats">
+                        <div class="settings-taxonomy-stat">
+                            <span class="settings-taxonomy-stat-label">Audiences</span>
+                            <strong id="taxonomyStatAudiences">0</strong>
+                        </div>
+                        <div class="settings-taxonomy-stat">
+                            <span class="settings-taxonomy-stat-label">Categories</span>
+                            <strong id="taxonomyStatCategories">0</strong>
+                        </div>
+                        <div class="settings-taxonomy-stat">
+                            <span class="settings-taxonomy-stat-label">Color Sets</span>
+                            <strong id="taxonomyStatColorSets">0</strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-taxonomy-toolbar">
+                    <div class="settings-taxonomy-toolbar-copy">
+                        <strong>Visual color management</strong>
+                        <span>Colors now render as swatches so admins can validate the catalog experience before saving.</span>
+                    </div>
+                </div>
+                <div id="catalogTaxonomyPreview" class="taxonomy-preview-shell">Loading categories...</div>
+            </div>
+            </div>
+            <div id="settingsSection_privacy" class="settings-section" style="display:none;">
+            <div class="card legal-settings-card">
+                <div class="legal-settings-head">
+                    <div>
+                        <span class="settings-taxonomy-eyebrow">Legal Content</span>
+                        <h3>Privacy Policy</h3>
+                        <p>Manage the privacy policy directly from admin so the website always shows the latest approved version.</p>
+                    </div>
+                </div>
+                <form id="privacyPolicyForm" class="legal-settings-form">
+                    <div class="form-grid legal-settings-grid">
+                        <div class="form-group">
+                            <label for="privacyPolicyTitle">Policy Title</label>
+                            <input type="text" id="privacyPolicyTitle" placeholder="Privacy Policy">
+                        </div>
+                        <div class="form-group">
+                            <label for="privacyPolicyLastUpdated">Last Updated Label</label>
+                            <input type="text" id="privacyPolicyLastUpdated" placeholder="March 27, 2026">
+                        </div>
+                        <div class="form-group full">
+                            <label>Upload Policy Document (PDF / DOC / DOCX)</label>
+                            <div class="policy-upload-zone" id="policyUploadZone">
+                                <input type="file" id="policyFileInput" accept=".pdf,.doc,.docx" style="display:none;">
+                                <div id="policyUploadPreview">
+                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                                    <p><strong>Click to upload</strong> policy document</p>
+                                    <small>PDF, DOC, DOCX (Max 10MB)</small>
+                                </div>
+                            </div>
+                            <div id="policyCurrentDoc" style="display:none; margin-top:10px;"></div>
+                            <small class="field-help">Upload the official policy document. Customers can download this directly.</small>
+                        </div>
+                        <div class="form-group full">
+                            <label for="privacyPolicyDocumentUrl">Document URL</label>
+                            <input type="url" id="privacyPolicyDocumentUrl" placeholder="Auto-filled after upload, or paste an external link">
+                            <small class="field-help">Auto-populated when you upload a file, or enter an external hosted URL.</small>
+                        </div>
+                        <div class="form-group full">
+                            <label for="privacyPolicyContent">Website Policy Content (Plain Text)</label>
+                            <textarea id="privacyPolicyContent" rows="16" placeholder="Enter the privacy policy text here"></textarea>
+                            <small class="field-help">Upload a document to auto-fill this field, then edit the plain text before publishing.</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer legal-settings-actions">
+                        <button type="submit" class="btn-primary" id="savePrivacyPolicyBtn">Publish Latest Privacy Policy</button>
+                    </div>
+                </form>
+                <div class="legal-policy-history">
+                    <div class="legal-policy-history-head">
+                        <h4>Version History</h4>
+                        <p>Review previously published privacy policy versions and republish when needed.</p>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Version</th>
+                                    <th>Title</th>
+                                    <th>Last Updated</th>
+                                    <th>Published By</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="privacyPolicyHistoryBody">
+                                <tr>
+                                    <td colspan="7" class="loading-row">
+                                        <div class="spinner"></div>Loading...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            </div>
+            <div id="settingsSection_terms" class="settings-section" style="display:none;">
+            <div class="card legal-settings-card">
+                <div class="legal-settings-head">
+                    <div>
+                        <span class="settings-taxonomy-eyebrow">Legal Content</span>
+                        <h3>Terms of Service</h3>
+                        <p>Manage the terms of service directly from admin so the website always shows the latest approved version.</p>
+                    </div>
+                </div>
+                <form id="termsOfServiceForm" class="legal-settings-form">
+                    <div class="form-grid legal-settings-grid">
+                        <div class="form-group">
+                            <label for="termsOfServiceTitle">Policy Title</label>
+                            <input type="text" id="termsOfServiceTitle" placeholder="Terms of Service">
+                        </div>
+                        <div class="form-group">
+                            <label for="termsOfServiceLastUpdated">Last Updated Label</label>
+                            <input type="text" id="termsOfServiceLastUpdated" placeholder="February 24, 2026">
+                        </div>
+                        <div class="form-group full">
+                            <label>Upload Policy Document (PDF / DOC / DOCX)</label>
+                            <div class="policy-upload-zone" id="tosUploadZone">
+                                <input type="file" id="tosFileInput" accept=".pdf,.doc,.docx" style="display:none;">
+                                <div id="tosUploadPreview">
+                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                                    <p><strong>Click to upload</strong> policy document</p>
+                                    <small>PDF, DOC, DOCX (Max 10MB)</small>
+                                </div>
+                            </div>
+                            <div id="tosCurrentDoc" style="display:none; margin-top:10px;"></div>
+                            <small class="field-help">Upload the official policy document. Customers can download this directly.</small>
+                        </div>
+                        <div class="form-group full">
+                            <label for="termsOfServiceDocumentUrl">Document URL</label>
+                            <input type="url" id="termsOfServiceDocumentUrl" placeholder="Auto-filled after upload, or paste an external link">
+                            <small class="field-help">Auto-populated when you upload a file, or enter an external hosted URL.</small>
+                        </div>
+                        <div class="form-group full">
+                            <label for="termsOfServiceContent">Website Policy Content (Plain Text)</label>
+                            <textarea id="termsOfServiceContent" rows="16" placeholder="Enter the terms of service text here"></textarea>
+                            <small class="field-help">Upload a document to auto-fill this field, then edit the plain text before publishing.</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer legal-settings-actions">
+                        <button type="submit" class="btn-primary" id="saveTermsOfServiceBtn">Publish Latest Terms of Service</button>
+                    </div>
+                </form>
+                <div class="legal-policy-history">
+                    <div class="legal-policy-history-head">
+                        <h4>Version History</h4>
+                        <p>Review previously published terms of service versions and republish when needed.</p>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Version</th>
+                                    <th>Title</th>
+                                    <th>Last Updated</th>
+                                    <th>Published By</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="termsOfServiceHistoryBody">
+                                <tr>
+                                    <td colspan="7" class="loading-row">
+                                        <div class="spinner"></div>Loading...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            </div>
+            <div id="settingsSection_refundreplacement" class="settings-section" style="display:none;">
+            <div class="card legal-settings-card">
+                <div class="legal-settings-head">
+                    <div>
+                        <span class="settings-taxonomy-eyebrow">Legal Content</span>
+                        <h3>Refund and Replacement Policy</h3>
+                        <p>Manage the refund and replacement policy directly from admin so the website always shows the latest approved version.</p>
+                    </div>
+                </div>
+                <form id="refundReplacementPolicyForm" class="legal-settings-form">
+                    <div class="form-grid legal-settings-grid">
+                        <div class="form-group">
+                            <label for="refundReplacementPolicyTitle">Policy Title</label>
+                            <input type="text" id="refundReplacementPolicyTitle" placeholder="Refund and Replacement Policy">
+                        </div>
+                        <div class="form-group">
+                            <label for="refundReplacementPolicyLastUpdated">Last Updated Label</label>
+                            <input type="text" id="refundReplacementPolicyLastUpdated" placeholder="May 14, 2026">
+                        </div>
+                        <div class="form-group full">
+                            <label>Upload Policy Document (PDF / DOC / DOCX)</label>
+                            <div class="policy-upload-zone" id="refundReplacementUploadZone">
+                                <input type="file" id="refundReplacementFileInput" accept=".pdf,.doc,.docx" style="display:none;">
+                                <div id="refundReplacementUploadPreview">
+                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                                    <p><strong>Click to upload</strong> policy document</p>
+                                    <small>PDF, DOC, DOCX (Max 10MB)</small>
+                                </div>
+                            </div>
+                            <div id="refundReplacementCurrentDoc" style="display:none; margin-top:10px;"></div>
+                            <small class="field-help">Upload the official policy document. Customers can download this directly.</small>
+                        </div>
+                        <div class="form-group full">
+                            <label for="refundReplacementPolicyDocumentUrl">Document URL</label>
+                            <input type="url" id="refundReplacementPolicyDocumentUrl" placeholder="Auto-filled after upload, or paste an external link">
+                            <small class="field-help">Auto-populated when you upload a file, or enter an external hosted URL.</small>
+                        </div>
+                        <div class="form-group full">
+                            <label for="refundReplacementPolicyContent">Website Policy Content (Plain Text)</label>
+                            <textarea id="refundReplacementPolicyContent" rows="16" placeholder="Enter the refund and replacement policy text here"></textarea>
+                            <small class="field-help">Upload a document to auto-fill this field, then edit the plain text before publishing.</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer legal-settings-actions">
+                        <button type="submit" class="btn-primary" id="saveRefundReplacementPolicyBtn">Publish Latest Refund and Replacement Policy</button>
+                    </div>
+                </form>
+                <div class="legal-policy-history">
+                    <div class="legal-policy-history-head">
+                        <h4>Version History</h4>
+                        <p>Review previously published refund and replacement policy versions and republish when needed.</p>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Version</th>
+                                    <th>Title</th>
+                                    <th>Last Updated</th>
+                                    <th>Published By</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="refundReplacementPolicyHistoryBody">
+                                <tr>
+                                    <td colspan="7" class="loading-row">
+                                        <div class="spinner"></div>Loading...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            </div>
+            <div id="settingsSection_exchange" class="settings-section" style="display:none;">
+            <div class="card legal-settings-card">
+                <div class="legal-settings-head">
+                    <div>
+                        <span class="settings-taxonomy-eyebrow">Legal Content</span>
+                        <h3>Exchange Policy</h3>
+                        <p>Manage the exchange policy directly from admin so the website always shows the latest approved version.</p>
+                    </div>
+                </div>
+                <form id="exchangePolicyForm" class="legal-settings-form">
+                    <div class="form-grid legal-settings-grid">
+                        <div class="form-group">
+                            <label for="exchangePolicyTitle">Policy Title</label>
+                            <input type="text" id="exchangePolicyTitle" placeholder="Exchange Policy">
+                        </div>
+                        <div class="form-group">
+                            <label for="exchangePolicyLastUpdated">Last Updated Label</label>
+                            <input type="text" id="exchangePolicyLastUpdated" placeholder="May 14, 2026">
+                        </div>
+                        <div class="form-group full">
+                            <label>Upload Policy Document (PDF / DOC / DOCX)</label>
+                            <div class="policy-upload-zone" id="exchangeUploadZone">
+                                <input type="file" id="exchangeFileInput" accept=".pdf,.doc,.docx" style="display:none;">
+                                <div id="exchangeUploadPreview">
+                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                                    <p><strong>Click to upload</strong> policy document</p>
+                                    <small>PDF, DOC, DOCX (Max 10MB)</small>
+                                </div>
+                            </div>
+                            <div id="exchangeCurrentDoc" style="display:none; margin-top:10px;"></div>
+                            <small class="field-help">Upload the official policy document. Customers can download this directly.</small>
+                        </div>
+                        <div class="form-group full">
+                            <label for="exchangePolicyDocumentUrl">Document URL</label>
+                            <input type="url" id="exchangePolicyDocumentUrl" placeholder="Auto-filled after upload, or paste an external link">
+                            <small class="field-help">Auto-populated when you upload a file, or enter an external hosted URL.</small>
+                        </div>
+                        <div class="form-group full">
+                            <label for="exchangePolicyContent">Website Policy Content (Plain Text)</label>
+                            <textarea id="exchangePolicyContent" rows="16" placeholder="Enter the exchange policy text here"></textarea>
+                            <small class="field-help">Upload a document to auto-fill this field, then edit the plain text before publishing.</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer legal-settings-actions">
+                        <button type="submit" class="btn-primary" id="saveExchangePolicyBtn">Publish Latest Exchange Policy</button>
+                    </div>
+                </form>
+                <div class="legal-policy-history">
+                    <div class="legal-policy-history-head">
+                        <h4>Version History</h4>
+                        <p>Review previously published exchange policy versions and republish when needed.</p>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Version</th>
+                                    <th>Title</th>
+                                    <th>Last Updated</th>
+                                    <th>Published By</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="exchangePolicyHistoryBody">
+                                <tr>
+                                    <td colspan="7" class="loading-row">
+                                        <div class="spinner"></div>Loading...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            </div>
+            <div id="settingsSection_shipping" class="settings-section" style="display:none;">
+            <div class="card legal-settings-card">
+                <div class="legal-settings-head">
+                    <div>
+                        <span class="settings-taxonomy-eyebrow">Legal Content</span>
+                        <h3>Shipping Policy</h3>
+                        <p>Manage the shipping policy directly from admin so the website always shows the latest approved version.</p>
+                    </div>
+                </div>
+                <form id="shippingPolicyForm" class="legal-settings-form">
+                    <div class="form-grid legal-settings-grid">
+                        <div class="form-group">
+                            <label for="shippingPolicyTitle">Policy Title</label>
+                            <input type="text" id="shippingPolicyTitle" placeholder="Shipping Policy">
+                        </div>
+                        <div class="form-group">
+                            <label for="shippingPolicyLastUpdated">Last Updated Label</label>
+                            <input type="text" id="shippingPolicyLastUpdated" placeholder="May 14, 2026">
+                        </div>
+                        <div class="form-group full">
+                            <label>Upload Policy Document (PDF / DOC / DOCX)</label>
+                            <div class="policy-upload-zone" id="shippingUploadZone">
+                                <input type="file" id="shippingFileInput" accept=".pdf,.doc,.docx" style="display:none;">
+                                <div id="shippingUploadPreview">
+                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                                    <p><strong>Click to upload</strong> policy document</p>
+                                    <small>PDF, DOC, DOCX (Max 10MB)</small>
+                                </div>
+                            </div>
+                            <div id="shippingCurrentDoc" style="display:none; margin-top:10px;"></div>
+                            <small class="field-help">Upload the official policy document. Customers can download this directly.</small>
+                        </div>
+                        <div class="form-group full">
+                            <label for="shippingPolicyDocumentUrl">Document URL</label>
+                            <input type="url" id="shippingPolicyDocumentUrl" placeholder="Auto-filled after upload, or paste an external link">
+                            <small class="field-help">Auto-populated when you upload a file, or enter an external hosted URL.</small>
+                        </div>
+                        <div class="form-group full">
+                            <label for="shippingPolicyContent">Website Policy Content (Plain Text)</label>
+                            <textarea id="shippingPolicyContent" rows="16" placeholder="Enter the shipping policy text here"></textarea>
+                            <small class="field-help">Upload a document to auto-fill this field, then edit the plain text before publishing.</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer legal-settings-actions">
+                        <button type="submit" class="btn-primary" id="saveShippingPolicyBtn">Publish Latest Shipping Policy</button>
+                    </div>
+                </form>
+                <div class="legal-policy-history">
+                    <div class="legal-policy-history-head">
+                        <h4>Version History</h4>
+                        <p>Review previously published shipping policy versions and republish when needed.</p>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Version</th>
+                                    <th>Title</th>
+                                    <th>Last Updated</th>
+                                    <th>Published By</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="shippingPolicyHistoryBody">
+                                <tr>
+                                    <td colspan="7" class="loading-row">
+                                        <div class="spinner"></div>Loading...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            </div>
+            <div id="settingsSection_admincredentials" class="settings-section" style="display:none;">
+                <div class="card legal-settings-card">
+                    <div class="legal-settings-head">
+                        <div>
+                            <span class="settings-taxonomy-eyebrow">Admin Login</span>
+                            <h3>Email &amp; Password</h3>
+                            <p>Update the mailbox used for admin OTP delivery and the app password used by DEVASTHRA email notifications.</p>
+                        </div>
+                    </div>
+                    <form id="adminCredentialsForm" class="legal-settings-form">
+                        <div class="form-grid legal-settings-grid">
+                            <div class="form-group full">
+                                <label for="adminSupportEmailInput">Support Email</label>
+                                <input type="email" id="adminSupportEmailInput" placeholder="support@devasthra.com">
+                            </div>
+                            <div class="form-group full">
+                                <label for="adminSmtpPasswordInput">SMTP App Password</label>
+                                <div style="position:relative;display:flex;align-items:stretch;">
+                                    <input type="password" id="adminSmtpPasswordInput" placeholder="App password for the mailbox" style="padding-right:52px;">
+                                    <button type="button" id="adminSmtpPasswordToggle" aria-label="Show password" aria-pressed="false" style="position:absolute;right:1px;top:1px;bottom:1px;width:46px;border:0;background:transparent;color:#7b1735;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+                                        <svg id="adminSmtpPasswordToggleIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20" aria-hidden="true">
+                                            <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer legal-settings-actions">
+                            <button type="submit" class="btn-primary" id="saveAdminCredentialsBtn">Save Admin Credentials</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div id="settingsSection_storeconfig" class="settings-section" style="display:none;">
+                <div class="card legal-settings-card">
+                    <div class="legal-settings-head">
+                        <div>
+                            <span class="settings-taxonomy-eyebrow">Checkout &amp; Availability Settings</span>
+                            <h3>Store Configuration</h3>
+                            <p>Control delivery rules, COD availability, and temporary maintenance mode from one place.</p>
+                        </div>
+                    </div>
+                    <div class="form-grid legal-settings-grid" style="padding:24px;">
+                        <div class="form-group" style="display:flex;align-items:center;gap:16px;">
+                            <label for="codEnabledToggle" style="margin:0;white-space:nowrap;">Cash on Delivery</label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="codEnabledToggle">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="form-group" style="display:flex;align-items:center;gap:16px;">
+                            <label for="maintenanceEnabledToggle" style="margin:0;white-space:nowrap;">Website Maintenance</label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="maintenanceEnabledToggle">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                         <div class="form-group">
+                            <label for="codMinOrderValueInput">COD Minimum Order Value (Rs.)</label>
+                            <input type="number" id="codMinOrderValueInput" min="0" step="1" placeholder="e.g. 499">
+                            <small class="field-help">Customers will see COD only when the order amount is at least this value. Set 0 for no COD amount restriction.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="minOrderValueInput">Free Shipping Above (Rs.)</label>
+                            <input type="number" id="minOrderValueInput" min="0" step="1" placeholder="e.g. 299">
+                            <small class="field-help">If the payable amount reaches this value, delivery charges are waived off. Below this amount, the shipping charge below will be added.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="shippingChargeInput">Shipping Charge Below Threshold (Rs.)</label>
+                            <input type="number" id="shippingChargeInput" min="0" step="1" placeholder="e.g. 79">
+                            <small class="field-help">Flat delivery charge to add when the cart total is below the free shipping threshold.</small>
+                        </div>
+                        <div class="form-group full">
+                            <label for="maintenanceMessageInput">Maintenance Message</label>
+                            <textarea id="maintenanceMessageInput" rows="4" placeholder="We're making a few improvements and will be back soon."></textarea>
+                            <small class="field-help">Shown to visitors while the site is offline. Keep it friendly and short.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="maintenanceExpectedBackAtInput">Expected Back Online</label>
+                            <input type="datetime-local" id="maintenanceExpectedBackAtInput">
+                            <small class="field-help">Add the estimated time the site should be available again.</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer legal-settings-actions">
+                        <button type="button" class="btn-primary" id="saveStoreConfigBtn">Save Store Config</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="taxonomyModalOverlay"></div>
+        <div class="modal" id="taxonomyModal">
+            <div class="modal-header">
+                <h3>Add Category Path</h3>
+                <button class="modal-close" id="closeTaxonomyModal">x</button>
+            </div>
+            <form id="catalogTaxonomyForm">
+                <div class="taxonomy-modal-intro">
+                    <h4>Category Setup</h4>
+                    <p>Create the exact category path your product form should use. Colors saved here will appear as multi-select options while adding products.</p>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Gender *</label>
+                        <select id="taxonomy_audience" required>
+                            <option value="Men">Men</option>
+                            <option value="Women">Women</option>
+                            <option value="Kids">Kids</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Fashion Group *</label>
+                        <input type="text" id="taxonomy_fashion_group" list="taxonomy_fashion_options" placeholder="e.g. Top Wear" required>
+                        <datalist id="taxonomy_fashion_options"></datalist>
+                    </div>
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <input type="text" id="taxonomy_category" list="taxonomy_category_options" placeholder="e.g. T-Shirts" required>
+                        <datalist id="taxonomy_category_options"></datalist>
+                    </div>
+                    <div class="form-group">
+                        <label>Subcategory</label>
+                        <input type="text" id="taxonomy_subcategory" list="taxonomy_subcategory_options" placeholder="e.g. Polo">
+                        <datalist id="taxonomy_subcategory_options"></datalist>
+                    </div>
+                    <div class="form-group full">
+                        <label>Available Colors</label>
+                        <div class="taxonomy-color-manager">
+                            <div class="taxonomy-color-manager-head">
+                                <div>
+                                    <strong>Choose from swatches</strong>
+                                    <p>Select the colors customers should see for this category path.</p>
+                                </div>
+                                <span class="taxonomy-color-selection-count" id="taxonomyColorSelectionCount">0 selected</span>
+                            </div>
+                            <div id="taxonomy_color_palette" class="taxonomy-color-palette"></div>
+                            <div class="taxonomy-color-custom">
+                                <input type="text" id="taxonomy_custom_color" placeholder="Add a custom color name like Wine Red">
+                                <button type="button" class="btn-outline btn-sm" id="addTaxonomyCustomColorBtn">Add Color</button>
+                            </div>
+                            <div id="taxonomy_selected_colors" class="taxonomy-selected-colors"></div>
+                        </div>
+                        <textarea id="taxonomy_available_colors" rows="3" placeholder="Enter colors separated by commas. Example: Black, White, Olive, Navy Blue" hidden></textarea>
+                        <small class="field-help">These colors will be shown in the product form for the selected category or subcategory path.</small>
+                    </div>
+                    <div class="form-group full">
+                        <label for="taxonomy_size_guide_json">Size Guide JSON</label>
+                        <textarea id="taxonomy_size_guide_json" rows="8" placeholder='{"title":"T-Shirt Size Guide","columns":["Size","Chest (in)","Sleeve Length (in)","Length (in)","Shoulder (in)"],"rows":[["S","41","8.5","27","23.5"],["M","43","9.5","28","24.5"]],"note":"All measurements are in inches."}'></textarea>
+                        <small class="field-help">Optional. Save a size chart for this subcategory. Product pages will show it automatically when products belong to this path.</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-outline" id="cancelTaxonomyBtn">Cancel</button>
+                    <button type="submit" class="btn-primary" id="saveTaxonomyBtn">Save Category</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- ===== RETURNS MANAGEMENT PAGE ===== -->
+        <div class="page" id="page-returns">
+            <div class="page-header">
+                <div>
+                    <h2>Return Requests</h2>
+                    <p class="page-subtitle">Manage customer return requests and process refunds</p>
+                </div>
+                <button class="btn-primary" id="refreshReturnsBtn">⟳ Refresh</button>
+            </div>
+            <div class="products-toolbar">
+                <select id="returnStatusFilter" class="select-input">
+                    <option value="">All Statuses</option>
+                    <option value="Requested">Requested</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Rejected">Rejected</option>
+                    <option value="Pickup Scheduled">Pickup Scheduled</option>
+                    <option value="Picked Up">Picked Up</option>
+                    <option value="Refund Initiated">Refund Initiated</option>
+                    <option value="Refund Completed">Refund Completed</option>
+                    <option value="Refund Failed">Refund Failed</option>
+                    <option value="Closed">Closed</option>
+                </select>
+            </div>
+            <div class="card">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Order</th>
+                                <th>Customer</th>
+                                <th>Product</th>
+                                <th>Reason</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="returnsBody">
+                            <tr>
+                                <td colspan="9" class="loading-row">
+                                    <div class="spinner"></div>Loading...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="page" id="page-refunds">
+            <div class="page-header">
+                <div>
+                    <h2>Refund Management</h2>
+                    <p class="page-subtitle">Track refund initiated and completed requests separately from returns</p>
+                </div>
+                <button class="btn-primary" id="refreshRefundsBtn">⟳ Refresh</button>
+            </div>
+            <div class="products-toolbar">
+                <select id="refundStatusFilter" class="select-input">
+                    <option value="">All Refund Statuses</option>
+                    <option value="Refund Initiated">Refund Initiated</option>
+                    <option value="Refund Completed">Refund Completed</option>
+                    <option value="Refund Failed">Refund Failed</option>
+                </select>
+            </div>
+            <div class="card">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Order</th>
+                                <th>Customer</th>
+                                <th>Product</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="refundsBody">
+                            <tr>
+                                <td colspan="8" class="loading-row">
+                                    <div class="spinner"></div>Loading...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== EXCHANGES MANAGEMENT PAGE ===== -->
+        <div class="page" id="page-exchanges">
+            <div class="page-header">
+                <div>
+                    <h2>Exchange Requests</h2>
+                    <p class="page-subtitle">Manage customer exchange requests from Shiprocket</p>
+                </div>
+                <button class="btn-primary" id="refreshExchangesBtn">⟳ Refresh</button>
+            </div>
+            <div class="products-toolbar">
+                <select id="exchangeStatusFilter" class="select-input">
+                    <option value="">All Statuses</option>
+                    <option value="Requested">Requested</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Rejected">Rejected</option>
+                    <option value="Exchange Approved">Exchange Approved</option>
+                    <option value="Re-shipped">Re-shipped</option>
+                    <option value="Exchange Completed">Exchange Completed</option>
+                </select>
+            </div>
+            <div class="card">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Order</th>
+                                <th>Customer</th>
+                                <th>Product</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="exchangesBody">
+                            <tr>
+                                <td colspan="8" class="loading-row">
+                                    <div class="spinner"></div>Loading...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== PAYMENT HISTORY PAGE (NEW) ===== -->
+        <div class="page" id="page-payment-history">
+            <div class="page-header">
+                <div>
+                    <h2>Payment History</h2>
+                    <p class="page-subtitle">View all transactions and manage refunds directly from payment records</p>
+                </div>
+                <button class="btn-primary" id="refreshPaymentHistoryBtn">⟳ Refresh</button>
+            </div>
+            <div class="products-toolbar">
+                <input type="date" id="paymentFromDate" class="select-input" placeholder="From Date">
+                <input type="date" id="paymentToDate" class="select-input" placeholder="To Date">
+                <select id="paymentStatusFilter" class="select-input">
+                    <option value="">All Payment Statuses</option>
+                    <option value="Created">Created</option>
+                    <option value="Success">Success</option>
+                    <option value="Failed">Failed</option>
+                </select>
+                <button class="btn-secondary" id="exportPaymentHistoryBtn">📥 Export CSV</button>
+            </div>
+            <div class="card">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Transaction ID</th>
+                                <th>Order Reference</th>
+                                <th>Customer Name</th>
+                                <th>Mobile</th>
+                                <th>Amount (Rs.)</th>
+                                <th>Gateway</th>
+                                <th>Status</th>
+                                <th>Refund Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="paymentHistoryBody">
+                            <tr>
+                                <td colspan="10" class="loading-row">
+                                    <div class="spinner"></div>Loading...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination-controls" id="paymentHistoryPagination" style="display: none;">
+                    <button id="paymentPrevBtn" class="btn-secondary">← Previous</button>
+                    <span id="paymentPageInfo">Page 1</span>
+                    <button id="paymentNextBtn" class="btn-secondary">Next →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== PAYMENT DETAILS MODAL (NEW) ===== -->
+        <!-- ===== PAYMENT DETAILS MODAL ===== -->
+        <div class="modal-overlay" id="paymentDetailsModalOverlay"></div>
+        <div class="modal payment-details-modal" id="paymentDetailsModal">
+            <div class="modal-header">
+                <div>
+                    <h3>💳 Payment Details</h3>
+                </div>
+                <button class="modal-close" onclick="closePaymentDetailsModal()">&times;</button>
+            </div>
+            <div class="modal-body payment-details-body" id="paymentDetailsContent">
+                <!-- Payment details will be populated here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closePaymentDetailsModal()">Close</button>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <button class="btn-primary" id="syncPaymentStatusBtn" onclick="syncPaymentStatus()" title="Sync with payment gateway">📋 Sync Status</button>
+                    <button class="btn-success" id="initiateRefundBtn" onclick="openRefundModal()" title="Initiate a refund for this payment">↩️ Initiate Refund</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== INITIATE REFUND MODAL ===== -->
+        <div class="modal-overlay" id="refundModalOverlay"></div>
+        <div class="modal refund-modal" id="refundModal">
+            <div class="modal-header">
+                <div>
+                    <h3>↩️ Initiate Refund</h3>
+                    <p style="color:var(--text-secondary);font-size:0.85rem;margin-top:4px;">Process a refund for the customer</p>
+                </div>
+                <button class="modal-close" onclick="closeRefundModal()">&times;</button>
+            </div>
+            <div class="modal-body refund-body">
+                <div class="refund-form">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span>Refund Amount</span>
+                            <span class="text-muted" id="maxRefundText"></span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-prefix">₹</span>
+                            <input type="number" id="refundAmount" class="form-input" placeholder="0.00" min="0" step="0.01">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Refund Method</label>
+                        <select id="refundMethod" class="form-input form-select">
+                            <option value="Original Payment">💳 Original Payment (PayU Refund)</option>
+                            <option value="Store Credit">⭐ Store Credit</option>
+                            <option value="Manual Transfer">🏦 Manual Transfer</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Admin Remarks <span class="text-muted">(Optional)</span></label>
+                        <textarea id="refundRemarks" class="form-input form-textarea" placeholder="Add notes about this refund - e.g., reason for refund, customer communication notes..." rows="3"></textarea>
+                    </div>
+
+                    <div class="form-info-box">
+                        <div style="font-size:0.85rem;color:var(--text-secondary)">
+                            <strong>Note:</strong> This will trigger a refund request to the payment gateway and notify the customer via SMS and email.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeRefundModal()">Cancel</button>
+                <button class="btn-success" id="confirmRefundBtn" onclick="confirmRefund()">✓ Initiate Refund</button>
+            </div>
+        </div>
+
+        <!-- ===== AUDIT LOGS PAGE ===== -->
+        <div class="page" id="page-audit">
+            <div class="page-header">
+                <div>
+                    <h2>Audit Trails</h2>
+                    <p class="page-subtitle">Track all administrative activities and changes</p>
+                </div>
+                <button class="btn-primary" id="refreshAuditBtn">⟳ Refresh</button>
+            </div>
+            <div class="products-toolbar">
+                <select id="auditEntityFilter" class="select-input">
+                    <option value="">All Entities</option>
+                    <option value="product">Product</option>
+                    <option value="order">Order</option>
+                    <option value="admin">Admin</option>
+                    <option value="user">User</option>
+                </select>
+                <select id="auditActionFilter" class="select-input">
+                    <option value="">All Actions</option>
+                    <option value="LOGIN">Login</option>
+                    <option value="CREATE">Create</option>
+                    <option value="UPDATE">Update</option>
+                    <option value="DELETE">Delete</option>
+                    <option value="STATUS_CHANGE">Status Change</option>
+                </select>
+            </div>
+            <div class="card">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date & Time</th>
+                                <th>Actor</th>
+                                <th>Action</th>
+                                <th>Entity</th>
+                                <th>ID</th>
+                                <th>Description</th>
+                                <th>IP Address</th>
+                            </tr>
+                        </thead>
+                        <tbody id="auditBody">
+                            <tr>
+                                <td colspan="7" class="loading-row">
+                                    <div class="spinner"></div>Loading...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="toast" id="toast"><span id="toastMsg">Done</span></div>
+
+    <script>
+        const dashboardIsLocalEnv = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:';
+        const dashboardStaticBase = window.__STATIC_BASE || (dashboardIsLocalEnv ? (window.__API_BASE || 'http://localhost:5000') : 'https://devasthra.com');
+        document.getElementById('brandFavicon').href = `${dashboardStaticBase}/backend/images/Fashion%20logo.jfif`;
+        document.getElementById('brandSidebarLogo').src = `${dashboardStaticBase}/backend/images/Fashion%20logo.jfif`;
+    </script>
+    <script src="admin-app.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,2730 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account - DEVASTHRA</title>
+    <meta name="description" content="Manage your DEVASTHRA account - orders, payments, addresses, and profile.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="backend/images/Fashion logo.jfif">
+    <style>
+        /* ── Order Details Modal ── */
+        .dash-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .dash-modal-overlay.open {
+            display: flex;
+        }
+
+        .dash-modal {
+            background: linear-gradient(180deg, #ffffff 0%, #fffdfb 100%);
+            width: 92%;
+            max-width: 680px;
+            border-radius: 24px;
+            max-height: 85vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 24px 70px rgba(30, 18, 22, 0.24);
+            animation: dashModalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes dashModalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dash-modal-header {
+            padding: 22px 28px 18px;
+            border-bottom: 1px solid #f0ebe6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .dash-modal-header h3 {
+            margin: 0;
+            font-size: 1.35rem;
+            color: #24161c;
+            letter-spacing: -0.02em;
+        }
+
+        .dash-modal-kicker {
+            margin: 0 0 6px;
+            font-size: 0.72rem;
+            line-height: 1;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            font-weight: 800;
+            color: #8b1e33;
+        }
+
+        .dash-modal-close {
+            background: #f7f1eb;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+            flex: 0 0 auto;
+        }
+
+        .dash-modal-close:hover {
+            background: #efe2d8;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 16px rgba(30, 18, 22, 0.1);
+        }
+
+        .dash-modal-body {
+            padding: 24px 28px 28px;
+            overflow-y: auto;
+        }
+
+        .dash-modal-footer {
+            padding: 18px 28px 24px;
+            border-top: 1px solid #f0ebe6;
+            text-align: right;
+            background: linear-gradient(180deg, #fffdfb 0%, #faf6f1 100%);
+        }
+
+        .modal-item-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .modal-item {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .modal-item img {
+            width: 70px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+
+        .modal-item-info {
+            flex: 1;
+        }
+
+        .modal-item-info h4 {
+            margin: 0 0 6px;
+            font-size: 0.95rem;
+            color: #111;
+        }
+
+        .modal-item-info p {
+            margin: 0 0 4px;
+            font-size: 0.82rem;
+            color: #6b7280;
+        }
+
+        .modal-item-price {
+            font-weight: 700;
+            color: #1a1a2e;
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        .dash-modal-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .dash-modal-summary-card {
+            padding: 14px 16px;
+            border: 1px solid #ece7e1;
+            border-radius: 14px;
+            background: #faf8f5;
+        }
+
+        .dash-modal-summary-card span {
+            display: block;
+            font-size: 0.74rem;
+            color: #7b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 6px;
+        }
+
+        .dash-modal-summary-card strong {
+            color: #1a1a2e;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .dash-tracking-box {
+            margin-bottom: 18px;
+            padding: 16px 18px;
+            border: 1px solid #ece7e1;
+            border-radius: 16px;
+            background: linear-gradient(180deg, #fffdfb 0%, #faf7f3 100%);
+        }
+
+        .dash-tracking-box h4 {
+            margin: 0 0 12px;
+            color: #1a1a2e;
+            font-size: 1rem;
+        }
+
+        .dash-tracking-stepper {
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 8px;
+            margin: 4px 0 16px;
+        }
+
+        .dash-tracking-stepper::before {
+            content: '';
+            position: absolute;
+            left: 10%;
+            right: 10%;
+            top: 15px;
+            height: 4px;
+            border-radius: 999px;
+            background: #e8e1d8;
+            z-index: 0;
+        }
+
+        .dash-tracking-step {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .dash-tracking-step-dot {
+            width: 22px;
+            height: 22px;
+            margin: 0 auto 8px;
+            border-radius: 50%;
+            border: 3px solid #d9d0c7;
+            background: #fff;
+            transition: all 0.2s ease;
+        }
+
+        .dash-tracking-step-label {
+            font-size: 0.77rem;
+            line-height: 1.35;
+            color: #8b7f74;
+            font-weight: 600;
+        }
+
+        .dash-tracking-step.done .dash-tracking-step-dot {
+            background: #2563eb;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+        }
+
+        .dash-tracking-step.active .dash-tracking-step-dot {
+            background: #fff;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.18);
+        }
+
+        .dash-tracking-step.done .dash-tracking-step-label,
+        .dash-tracking-step.active .dash-tracking-step-label {
+            color: #1a1a2e;
+        }
+
+        .dash-tracking-stepper.fill-1::after,
+        .dash-tracking-stepper.fill-2::after,
+        .dash-tracking-stepper.fill-3::after,
+        .dash-tracking-stepper.fill-4::after,
+        .dash-tracking-stepper.fill-5::after {
+            content: '';
+            position: absolute;
+            left: 10%;
+            top: 15px;
+            height: 4px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
+            z-index: 0;
+        }
+
+        .dash-tracking-stepper.fill-1::after { width: 0%; }
+        .dash-tracking-stepper.fill-2::after { width: 20%; }
+        .dash-tracking-stepper.fill-3::after { width: 40%; }
+        .dash-tracking-stepper.fill-4::after { width: 60%; }
+        .dash-tracking-stepper.fill-5::after { width: 80%; }
+
+        .dash-tracking-alert {
+            margin: 4px 0 16px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            font-size: 0.92rem;
+            font-weight: 700;
+        }
+
+        .dash-tracking-alert.cancelled {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .dash-tracking-alert.rto {
+            background: #fff7ed;
+            color: #c2410c;
+            border: 1px solid #fed7aa;
+        }
+
+        .dash-tracking-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 12px;
+        }
+
+        .dash-tracking-meta {
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: #fff;
+            border: 1px solid #f0e7dd;
+        }
+
+        .dash-tracking-label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.73rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #8b7f74;
+        }
+
+        .dash-tracking-value {
+            color: #1a1a2e;
+            font-size: 0.92rem;
+            font-weight: 600;
+            line-height: 1.45;
+            word-break: break-word;
+        }
+
+        .dash-modal-footer .btn {
+            min-width: 150px;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            justify-content: center;
+        }
+
+        .dash-modal-footer .btn.btn-outline,
+        .dash-modal-footer .btn.btn-cancel-red {
+            color: #b91c1c;
+            border: 1px solid #f2b4b4;
+            background: #fff5f5;
+        }
+
+        .dash-modal-footer .btn.btn-outline:hover,
+        .dash-modal-footer .btn.btn-cancel-red:hover {
+            background: #fee2e2;
+            border-color: #ef9a9a;
+            color: #991b1b;
+        }
+
+        .dash-modal-footer .btn.btn-submit-green {
+            color: #ffffff;
+            border: 1px solid #15803d;
+            background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+            box-shadow: 0 10px 22px rgba(22, 163, 74, 0.16);
+        }
+
+        .dash-modal-footer .btn.btn-submit-green:hover {
+            background: linear-gradient(180deg, #16a34a 0%, #15803d 100%);
+            border-color: #15803d;
+            box-shadow: 0 12px 24px rgba(22, 163, 74, 0.2);
+        }
+
+        .dash-modal-footer .btn:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(139, 30, 51, 0.14);
+        }
+
+       
+
+        .dash-review-grid {
+            display: grid;
+            gap: 14px;
+        }
+
+        .dash-review-item {
+            padding: 16px;
+            border: 1px solid #ece5dd;
+            border-radius: 16px;
+            background: linear-gradient(180deg, #fff 0%, #fffaf7 100%);
+        }
+
+        .dash-review-item-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .dash-review-item-name {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+
+        .dash-review-item-meta {
+            margin-top: 4px;
+            font-size: 0.8rem;
+            color: #7a6f63;
+        }
+
+        .dash-review-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: #f8efe5;
+            color: #8b1e33;
+            font-size: 0.78rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .dash-review-action-btn {
+            border: 1px solid #8b1e33;
+            background: #8b1e33;
+            color: #fff;
+            border-radius: 999px;
+            padding: 9px 14px;
+            font-size: 0.84rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .dash-review-action-btn:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        .dash-review-modal-body {
+            display: grid;
+            gap: 14px;
+        }
+
+        .dash-review-target {
+            padding: 16px 18px;
+            border-radius: 18px;
+            border: 1px solid #eadfd6;
+            background: linear-gradient(180deg, #fffaf7 0%, #fff4ec 100%);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .dash-review-target h4 {
+            margin: 0 0 8px;
+            font-size: 1rem;
+            color: #24161c;
+        }
+
+        .dash-review-target p {
+            margin: 0;
+            color: #6c5a57;
+            line-height: 1.6;
+        }
+
+        .dash-request-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 14px;
+        }
+
+        .dash-review-stars {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .dash-review-star {
+            width: 44px;
+            height: 44px;
+            border: 1px solid #e4d9cf;
+            background: #fff;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #d6c8bb;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dash-review-star.active {
+            border-color: #8b1e33;
+            color: #8b1e33;
+            background: #fff4f6;
+        }
+
+        .dash-review-input,
+        .dash-review-textarea {
+            width: 100%;
+            border: 1px solid #dccdc0;
+            border-radius: 14px;
+            padding: 13px 14px;
+            font: inherit;
+            background: #fffdfb;
+            color: #24161c;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, background 0.2s ease;
+        }
+
+        .dash-review-textarea {
+            min-height: 126px;
+            resize: vertical;
+            line-height: 1.65;
+        }
+
+        .dash-review-select {
+            width: 100%;
+            border: 1px solid #dccdc0;
+            border-radius: 14px;
+            padding: 13px 14px;
+            font: inherit;
+            background: #fffdfb;
+            color: #24161c;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, background 0.2s ease;
+        }
+
+        .dash-review-select:focus,
+        .dash-review-input:focus,
+        .dash-review-textarea:focus {
+            outline: none;
+            border-color: #8b1e33;
+            box-shadow: 0 0 0 4px rgba(139, 30, 51, 0.1);
+            background: #fff;
+            transform: translateY(-1px);
+        }
+
+        .dash-form-group {
+            display: grid;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .dash-form-group label {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #2e1f24;
+            letter-spacing: 0.01em;
+        }
+
+        .dash-form-group label .required-star {
+            color: #b91c1c;
+        }
+
+        .dash-form-group input[type="text"],
+        .dash-form-group input[type="tel"],
+        .dash-form-group input[type="email"],
+        .dash-form-group input[type="date"],
+        .dash-form-group input[type="file"],
+        .dash-form-group select,
+        .dash-form-group textarea {
+            width: 100%;
+            border: 1px solid #dccdc0;
+            border-radius: 14px;
+            padding: 13px 14px;
+            font: inherit;
+            background: #fffdfb;
+            color: #24161c;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, background 0.2s ease;
+        }
+
+        .dash-form-group input[type="file"] {
+            padding: 10px 12px;
+            background: #fff;
+        }
+
+        .dash-form-group input[type="file"]::file-selector-button {
+            margin-right: 12px;
+            border: none;
+            background: #8b1e33;
+            color: #fff;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .dash-form-group input[type="file"]::file-selector-button:hover {
+            background: #7a172c;
+            transform: translateY(-1px);
+        }
+
+        .dash-form-group textarea {
+            min-height: 122px;
+            resize: vertical;
+            line-height: 1.65;
+        }
+
+        .dash-form-group input:focus,
+        .dash-form-group select:focus,
+        .dash-form-group textarea:focus {
+            outline: none;
+            border-color: #8b1e33;
+            box-shadow: 0 0 0 4px rgba(139, 30, 51, 0.1);
+            background: #fff;
+            transform: translateY(-1px);
+        }
+
+        .dash-form-group input::placeholder,
+        .dash-form-group textarea::placeholder {
+            color: #a5958e;
+        }
+
+        .dash-form-group select {
+            appearance: none;
+            background-image: linear-gradient(45deg, transparent 50%, #8b1e33 50%), linear-gradient(135deg, #8b1e33 50%, transparent 50%);
+            background-position: calc(100% - 20px) calc(50% - 3px), calc(100% - 14px) calc(50% - 3px);
+            background-size: 6px 6px, 6px 6px;
+            background-repeat: no-repeat;
+            padding-right: 40px;
+        }
+
+        .dash-form-help {
+            margin: -2px 0 0;
+            font-size: 0.8rem;
+            line-height: 1.6;
+            color: #7a6f63;
+        }
+
+        .return-info-box {
+            padding: 14px 16px;
+            border-radius: 16px;
+            border: 1px solid #eadfd6;
+            background: linear-gradient(180deg, #fffaf7 0%, #fdf7f2 100%);
+            color: #5f4a4c;
+            line-height: 1.65;
+            font-size: 0.92rem;
+        }
+
+        .dash-review-hint {
+            font-size: 0.82rem;
+            color: #7a6f63;
+            margin: 0;
+        }
+
+        .dash-order-list-item {
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .dash-order-list-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .dash-cancel-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 7px 14px;
+            border: 1px solid #fecaca;
+            border-radius: 999px;
+            background: #fee2e2;
+            color: #dc2626;
+            font-size: 0.78rem;
+            font-weight: 700;
+            line-height: 1;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        }
+
+        .dash-cancel-btn:hover {
+            background: #fecaca;
+            border-color: #dc2626;
+            color: #b91c1c;
+        }
+
+        .dash-reason-list {
+            display: grid;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .dash-reason-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border: 1px solid #eadfe2;
+            border-radius: 12px;
+            background: #fffaf8;
+        }
+
+        .dash-reason-option input {
+            accent-color: #8b1e33;
+        }
+
+        .dash-other-wrap {
+            margin-top: 14px;
+            display: none;
+        }
+
+        .dash-other-wrap.open {
+            display: block;
+        }
+
+        .dash-other-wrap textarea {
+            width: 100%;
+            min-height: 96px;
+            border: 1px solid #e5d7da;
+            border-radius: 12px;
+            padding: 12px 14px;
+            resize: vertical;
+        }
+
+        @media (max-width: 640px) {
+          
+            .dash-modal {
+                width: min(94vw, 680px);
+                max-height: 90vh;
+                border-radius: 20px;
+            }
+
+            .dash-modal-header,
+            .dash-modal-body,
+            .dash-modal-footer {
+                padding-left: 18px;
+                padding-right: 18px;
+            }
+
+            .dash-modal-header {
+                padding-top: 18px;
+                padding-bottom: 14px;
+            }
+
+            .dash-modal-header h3 {
+                font-size: 1.16rem;
+            }
+
+            .dash-request-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dash-modal-footer {
+                display: grid !important;
+                gap: 10px;
+            }
+
+            .dash-modal-footer .btn {
+                width: 100%;
+                
+            }
+
+        }
+    </style>
+</head>
+
+<body class="dashboard-body">
+
+    <!-- ===== SHARED HEADER ===== -->
+    <div id="site-header"></div>
+<div class="dash-layout">
+        <aside class="dash-sidebar" id="dashSidebar">
+            <nav class="dash-nav">
+                <button class="dash-nav-item active" data-section="orders">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    </svg>
+                    <span>My Orders</span>
+                </button>
+                <button class="dash-nav-item" data-section="payments">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                        <rect x="1" y="4" width="22" height="16" rx="2"></rect>
+                        <line x1="1" y1="10" x2="23" y2="10"></line>
+                    </svg>
+                    <span>My Payments</span>
+                </button>
+                <button class="dash-nav-item" data-section="addresses">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                    <span>My Addresses</span>
+                </button>
+                <button class="dash-nav-item" data-section="profile">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>Profile</span>
+                </button>
+                <button class="dash-nav-item" data-section="support">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <span>Support Chat</span>
+                </button>
+                <div class="dash-nav-divider"></div>
+                <button class="dash-nav-item dash-nav-logout" id="dashLogoutBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    <span>Logout</span>
+                </button>
+            </nav>
+        </aside>
+
+        <div class="dash-sidebar-overlay" id="dashSidebarOverlay"></div>
+
+        <main class="dash-content">
+            <div class="dash-mobile-tabs" role="tablist" aria-label="Dashboard sections">
+                <button class="dash-mobile-tab active" type="button" data-section="orders">Orders</button>
+                <button class="dash-mobile-tab" type="button" data-section="payments">Payments</button>
+                <button class="dash-mobile-tab" type="button" data-section="addresses">Addresses</button>
+                <button class="dash-mobile-tab" type="button" data-section="profile">Profile</button>
+                <button class="dash-mobile-tab" type="button" data-section="support">Support</button>
+            </div>
+
+            <section class="dash-section active" id="sec-orders">
+                <h2 class="dash-section-title">Recent Orders</h2>
+                <div id="dashOrdersList" class="dash-simple-list">
+                    <div class="dash-loading">
+                        <div class="spinner"></div>
+                        <p>Loading orders...</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="dash-section" id="sec-payments">
+                <h2 class="dash-section-title">My Payments</h2>
+                <div id="dashPaymentsList" class="dash-payments-list">
+                    <div class="dash-loading">
+                        <div class="spinner"></div>
+                        <p>Loading payments...</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="dash-section" id="sec-addresses">
+                <h2 class="dash-section-title">My Addresses</h2>
+                <div id="dashAddressContent" class="dash-address-content">
+                    <div class="dash-loading">
+                        <div class="spinner"></div>
+                        <p>Loading addresses...</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="dash-section" id="sec-profile">
+                <h2 class="dash-section-title">Profile</h2>
+                <form class="dash-profile-form" id="dashProfileForm">
+                    <div class="dash-form-row">
+                        <div class="dash-form-group">
+                            <label for="profileName">Full Name</label>
+                            <input type="text" id="profileName" placeholder="Enter your name">
+                        </div>
+                        <div class="dash-form-group">
+                            <label for="profileEmail">Email Address</label>
+                            <input type="email" id="profileEmail" placeholder="you@example.com">
+                        </div>
+                    </div>
+                    <div class="dash-form-row">
+                        <div class="dash-form-group">
+                            <label for="profileMobile">Mobile Number</label>
+                            <input type="text" id="profileMobile" disabled class="dash-input-disabled">
+                        </div>
+                        <div class="dash-form-group">
+                            <label>Gender</label>
+                            <div class="dash-gender-options">
+                                <label class="dash-gender-opt">
+                                    <input type="radio" name="profileGender" value="Male">
+                                    <span>Male</span>
+                                </label>
+                                <label class="dash-gender-opt">
+                                    <input type="radio" name="profileGender" value="Female">
+                                    <span>Female</span>
+                                </label>
+                                <label class="dash-gender-opt">
+                                    <input type="radio" name="profileGender" value="Others">
+                                    <span>Others</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dash-form-row">
+                        <div class="dash-form-group">
+                            <label for="profileDob">Date of Birth</label>
+                            <input type="date" id="profileDob">
+                        </div>
+                    </div>
+                    <div class="dash-form-row">
+                        <div class="dash-form-group">
+                            <label>Member Since</label>
+                            <input type="text" id="profileCreated" disabled class="dash-input-disabled">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary dash-save-btn" id="profileSaveBtn">Save
+                        Changes</button>
+                </form>
+            </section>
+
+            <section class="dash-section" id="sec-support">
+                <h2 class="dash-section-title">Support Chat</h2>
+                <div class="dash-support-card">
+                    <div id="userSupportHeader" class="dash-support-header">Talk to support</div>
+                    <div id="userSupportMessages" class="dash-support-messages"></div>
+                    <form id="userSupportForm" class="dash-support-form">
+                        <textarea id="userSupportInput" rows="2" placeholder="Type your message..." class="dash-support-input"></textarea>
+                        <button type="submit" class="btn btn-primary dash-support-send">Send</button>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Address Edit Modal -->
+    <div class="dash-modal-overlay" id="addressEditOverlay">
+        <div class="dash-modal">
+            <div class="dash-modal-header">
+                <h3 id="addressEditTitle">Edit Address</h3>
+                <button class="dash-modal-close" id="closeAddressEditModal">&times;</button>
+            </div>
+            <div class="dash-modal-body">
+                <form id="addressEditForm" style="display:flex;flex-direction:column;gap:16px">
+                    <div class="dash-form-group">
+                        <label for="editAddrName">Full Name</label>
+                        <input type="text" id="editAddrName" placeholder="Full name" required>
+                    </div>
+                    <div class="dash-form-group">
+                        <label for="editAddrMobile">Mobile</label>
+                        <input type="tel" id="editAddrMobile" placeholder="10-digit mobile" maxlength="10" required>
+                    </div>
+                    <div class="dash-form-group">
+                        <label for="editAddrLine">Address Line</label>
+                        <input type="text" id="editAddrLine" placeholder="House no, Street, Landmark" required>
+                    </div>
+                    <div style="display:flex;gap:12px">
+                        <div class="dash-form-group" style="flex:1">
+                            <label for="editAddrPincode">Pincode</label>
+                            <input type="text" id="editAddrPincode" placeholder="6-digit" maxlength="6" required>
+                        </div>
+                        <div class="dash-form-group" style="flex:1">
+                            <label for="editAddrCity">City</label>
+                            <input type="text" id="editAddrCity" placeholder="City" required>
+                        </div>
+                    </div>
+                    <div class="dash-form-group">
+                        <label for="editAddrState">State</label>
+                        <input type="text" id="editAddrState" placeholder="State" required>
+                    </div>
+                    <input type="hidden" id="editAddrId">
+                    <button type="submit" class="btn btn-primary" id="saveAddrBtn">Save Address</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Items Modal -->
+    <div class="dash-modal-overlay" id="orderItemsOverlay">
+        <div class="dash-modal">
+            <div class="dash-modal-header">
+                <h3 id="modalOrderTitle">Order Items</h3>
+                <button class="dash-modal-close" id="closeOrderModal">&times;</button>
+            </div>
+            <div class="dash-modal-body">
+                <div id="orderItemsList" class="modal-item-list">
+                    <!-- Items injected here -->
+                </div>
+            </div>
+            <div class="dash-modal-footer">
+                <button class="btn btn-outline" id="modalCloseBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="dash-modal-overlay" id="reviewOverlay">
+        <div class="dash-modal">
+            <div class="dash-modal-header">
+                <h3>Write a Review</h3>
+                <button class="dash-modal-close" id="closeReviewModal">&times;</button>
+            </div>
+            <div class="dash-modal-body">
+                <div class="dash-review-modal-body">
+                    <div class="dash-review-target" id="reviewTargetInfo"></div>
+                    <div class="dash-form-group" id="reviewProductGroup" style="display:none;">
+                        <label for="reviewProductSelect">Product</label>
+                        <select id="reviewProductSelect" class="dash-review-select"></select>
+                    </div>
+                    <div>
+                        <p class="dash-review-hint" style="margin-bottom:10px;">How would you rate this product?</p>
+                        <div class="dash-review-stars" id="reviewStarRow"></div>
+                    </div>
+                    <div class="dash-form-group">
+                        <label for="reviewText">Review text (optional)</label>
+                        <textarea id="reviewText" class="dash-review-textarea" placeholder="Tell other shoppers what you liked about it."></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="dash-modal-footer" style="display:flex;justify-content:flex-end;gap:10px;">
+                <button class="btn btn-cancel-red" id="cancelReviewModalBtn">Cancel</button>
+                <button class="btn btn-submit-green" id="submitReviewBtn">Submit Review</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="dash-modal-overlay" id="cancelRequestOverlay">
+        <div class="dash-modal">
+            <div class="dash-modal-header">
+                <h3>Request Order Cancellation</h3>
+                <button class="dash-modal-close" id="closeCancelRequestModal">&times;</button>
+            </div>
+            <div class="dash-modal-body">
+                <p style="margin:0 0 14px;color:#6b7280;">Select a reason for cancelling this order. The admin team will review your request before cancelling it.</p>
+                <div class="dash-reason-list" id="cancelReasonList">
+                    <label class="dash-reason-option"><input type="radio" name="cancelReason" value="Ordered by mistake"> <span>Ordered by mistake</span></label>
+                    <label class="dash-reason-option"><input type="radio" name="cancelReason" value="Found cheaper elsewhere"> <span>Found cheaper elsewhere</span></label>
+                    <label class="dash-reason-option"><input type="radio" name="cancelReason" value="Delivery time too long"> <span>Delivery time too long</span></label>
+                    <label class="dash-reason-option"><input type="radio" name="cancelReason" value="Change in address"> <span>Change in address</span></label>
+                    <label class="dash-reason-option"><input type="radio" name="cancelReason" value="Payment issue"> <span>Payment issue</span></label>
+                    <label class="dash-reason-option"><input type="radio" name="cancelReason" value="Other"> <span>Other</span></label>
+                </div>
+                <div class="dash-other-wrap" id="cancelOtherWrap">
+                    <textarea id="cancelOtherReason" placeholder="Please specify your reason"></textarea>
+                </div>
+                <input type="hidden" id="cancelRequestOrderId">
+            </div>
+            <div class="dash-modal-footer" style="display:flex;justify-content:flex-end;gap:10px;">
+                <button class="btn btn-cancel-red" id="cancelRequestDismissBtn">Close</button>
+                <button class="btn btn-submit-green" id="submitCancelRequestBtn">Submit Request</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="dash-modal-overlay" id="returnRequestOverlay">
+        <div class="dash-modal">
+            <div class="dash-modal-header">
+                <div>
+                    <p class="dash-modal-kicker">Return Request</p>
+                    <h3>Tell us what went wrong</h3>
+                </div>
+                <button class="dash-modal-close" id="closeReturnRequestModal">&times;</button>
+            </div>
+            <div class="dash-modal-body">
+                <div class="dash-review-target" id="returnProductInfo"></div>
+                <div class="dash-request-grid">
+                    <div class="dash-form-group" style="margin-top:0;">
+                        <label for="returnReason">Reason <span class="required-star">*</span></label>
+                        <select id="returnReason">
+                            <option value="">Select a reason</option>
+                            <option value="Size Issue">Size Issue</option>
+                            <option value="Defective">Defective</option>
+                            <option value="Wrong Product">Wrong Product</option>
+                            <option value="Not as Described">Not as Described</option>
+                            <option value="Quality Issue">Quality Issue</option>
+                            <option value="Changed Mind">Changed Mind</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <p class="dash-form-help">Choose the closest match. You can add more detail below.</p>
+                    </div>
+                    <div class="dash-form-group" style="margin-top:0;">
+                        <label for="returnImages">Proof Images</label>
+                        <input type="file" id="returnImages" accept="image/*" multiple>
+                        <p class="dash-form-help">Upload clear photos of the issue, size tag, or packaging if available.</p>
+                    </div>
+                </div>
+                <div class="dash-form-group">
+                    <label for="returnSubReason">Sub reason / details</label>
+                    <textarea id="returnSubReason" placeholder="Add any extra context for the return request"></textarea>
+                    <p class="dash-form-help">Example: smaller than expected, wrong color received, stitching issue, and so on.</p>
+                </div>
+                <div class="dash-form-group">
+                    <label for="returnDescription">Details</label>
+                    <textarea id="returnDescription" placeholder="Tell us more about the issue"></textarea>
+                    <p class="dash-form-help">The more context you share, the faster our team can review it.</p>
+                </div>
+                <div class="return-info-box" style="margin-top:14px;">
+                    Your return request can be initiated only after the order is delivered and the product's return window is still open.
+                </div>
+            </div>
+            <div class="dash-modal-footer" style="display:flex;justify-content:flex-end;gap:10px;">
+                <button class="btn btn-outline" id="cancelReturnRequestBtn">Close</button>
+                <button class="btn btn-submit-green" id="submitReturnBtn">Submit Return</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="dash-modal-overlay" id="exchangeRequestOverlay">
+        <div class="dash-modal">
+            <div class="dash-modal-header">
+                <div>
+                    <p class="dash-modal-kicker">Exchange Request</p>
+                    <h3>Request a better fit</h3>
+                </div>
+                <button class="dash-modal-close" id="closeExchangeRequestModal">&times;</button>
+            </div>
+            <div class="dash-modal-body">
+                <div class="dash-review-target" id="exchangeProductInfo"></div>
+                <div class="dash-request-grid">
+                    <div class="dash-form-group" style="margin-top:0;">
+                        <label for="exchangeRequestedSize">Requested Size</label>
+                        <input type="text" id="exchangeRequestedSize" placeholder="Enter the size you need">
+                        <p class="dash-form-help">Example: M, L, XL, or the exact fit you want.</p>
+                    </div>
+                    <div class="dash-form-group" style="margin-top:0;">
+                        <label for="exchangeReason">Reason <span class="required-star">*</span></label>
+                        <select id="exchangeReason">
+                            <option value="">Select a reason</option>
+                            <option value="Size Too Small">Size Too Small</option>
+                            <option value="Size Too Large">Size Too Large</option>
+                            <option value="Fit Issue">Fit Issue</option>
+                            <option value="Wrong Size Received">Wrong Size Received</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <p class="dash-form-help">Select the reason that best explains the exchange request.</p>
+                    </div>
+                </div>
+                <div class="dash-form-group">
+                    <label for="exchangeReasonDetail">Details</label>
+                    <textarea id="exchangeReasonDetail" placeholder="Tell us what size or variant you need"></textarea>
+                    <p class="dash-form-help">If you want a different size or a specific correction, note it here.</p>
+                </div>
+                <div class="return-info-box" style="margin-top:14px;">
+                    Exchange requests are allowed only for delivered orders within the product return window.
+                </div>
+            </div>
+            <div class="dash-modal-footer" style="display:flex;justify-content:flex-end;gap:10px;">
+                <button class="btn btn-outline" id="cancelExchangeRequestBtn">Close</button>
+                <button class="btn btn-submit-green" id="submitExchangeBtn">Submit Exchange</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">
+        <span class="toast-icon">✓</span>
+        <span id="toastMessage"></span>
+    </div>
+
+    <script>
+        const API_BASE = window.__API_BASE || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:' ? 'http://localhost:5000' : window.location.origin);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const getToken = () => localStorage.getItem('DEVASTHRA_token');
+            const getUser = () => { try { return JSON.parse(localStorage.getItem('DEVASTHRA_user')); } catch { return null; } };
+
+            if (!getToken() || !getUser()) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            const token = getToken();
+            const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
+
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            let toastTimeout;
+
+            function showToast(msg, type = 'info') {
+                clearTimeout(toastTimeout);
+                toastMessage.textContent = msg;
+                toast.className = `toast show ${type}`;
+                toastTimeout = setTimeout(() => toast.classList.remove('show'), 3200);
+            }
+
+            function escapeHtml(value) {
+                return String(value || '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
+            }
+
+            function normalizeAddressDisplay(address) {
+                const recipientName = String(address?.recipient_name || '').trim();
+                const recipientPhone = String(address?.recipient_phone || '').trim();
+                const fallbackName = String(address?.name || '').trim();
+                const fallbackPhone = String(address?.mobile || '').trim();
+
+                return {
+                    ...address,
+                    displayName: recipientName || fallbackName,
+                    displayPhone: recipientPhone || fallbackPhone
+                };
+            }
+
+            const getImageUrl = (url) => {
+                if (!url) return 'https://via.placeholder.com/300?text=No+Image';
+                if (url.startsWith('http')) return url;
+                // Handle both with and without leading slash
+                return url.startsWith('/') ? `${API_BASE}${url}` : `${API_BASE}/${url}`;
+            };
+
+            const fmt = value => '₹' + Number(value || 0).toLocaleString('en-IN');
+            const fmtDate = value => {
+                if (!value) return '—';
+                const date = new Date(value);
+                return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+            };
+            const statusClass = status => {
+                const s = String(status || '').toLowerCase();
+                if (['paid', 'delivered', 'success'].includes(s)) return 'dash-status-success';
+                if (['pending', 'created'].includes(s)) return 'dash-status-pending';
+                if (['shipped', 'packed'].includes(s)) return 'dash-status-info';
+                if (['cancelled', 'failed'].includes(s)) return 'dash-status-error';
+                return 'dash-status-default';
+            };
+
+            const fmtDateTime = value => {
+                if (!value) return 'Not available';
+                const date = new Date(value);
+                return date.toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' });
+            };
+
+            function mapShipmentPresentation(orderStatus, shipmentStatus) {
+                const normalizedShipment = String(shipmentStatus || '').trim().toUpperCase();
+                const normalizedOrder = String(orderStatus || '').trim().toUpperCase();
+
+                if (normalizedOrder === 'CANCELLED' || normalizedShipment.includes('CANCEL')) {
+                    return { orderLabel: 'Cancelled', shipmentLabel: 'Cancelled', stepIndex: -1 };
+                }
+                if (normalizedOrder === 'DELIVERED' || normalizedShipment === 'DELIVERED') {
+                    return { orderLabel: 'Delivered', shipmentLabel: 'Delivered', stepIndex: 4 };
+                }
+                if (normalizedOrder === 'SHIPPED') {
+                    return { orderLabel: 'Shipped', shipmentLabel: shipmentStatus || 'Shipped', stepIndex: 2 };
+                }
+                if (normalizedOrder === 'PACKED') {
+                    return { orderLabel: 'Packed', shipmentLabel: shipmentStatus || 'Packed', stepIndex: 1 };
+                }
+                if (normalizedOrder === 'PAID') {
+                    return { orderLabel: 'Paid', shipmentLabel: shipmentStatus || 'Paid', stepIndex: 0 };
+                }
+                if (normalizedOrder === 'PENDING') {
+                    return { orderLabel: 'Pending', shipmentLabel: shipmentStatus || 'Pending', stepIndex: 0 };
+                }
+                if (normalizedShipment.includes('RTO') || normalizedShipment.includes('RETURNING')) {
+                    return { orderLabel: 'Returning to seller', shipmentLabel: 'Returning to seller', stepIndex: -2 };
+                }
+                if (normalizedShipment === 'OUT FOR DELIVERY') {
+                    return { orderLabel: 'Out for delivery', shipmentLabel: 'Out for delivery', stepIndex: 3 };
+                }
+                if (
+                    normalizedShipment === 'PICKED UP' ||
+                    normalizedShipment === 'IN TRANSIT' ||
+                    normalizedShipment === 'REACHED DESTINATION CITY' ||
+                    normalizedShipment === 'REACHED DESTINATION HUB' ||
+                    normalizedShipment.includes('TRANSIT') ||
+                    normalizedShipment.includes('REACHED DESTINATION')
+                ) {
+                    return { orderLabel: 'Shipped', shipmentLabel: 'Shipped', stepIndex: 2 };
+                }
+                if (
+                    normalizedShipment === 'READY TO SHIP' ||
+                    normalizedShipment === 'CONFIRMED' ||
+                    normalizedShipment === 'PACKED' ||
+                    normalizedShipment === 'AWB ASSIGNED' ||
+                    normalizedShipment === 'MANIFEST GENERATED' ||
+                    normalizedShipment === 'PICKUP SCHEDULED' ||
+                    normalizedShipment.includes('READY TO SHIP') ||
+                    normalizedShipment.includes('AWB') ||
+                    normalizedShipment.includes('MANIFEST') ||
+                    normalizedShipment.includes('PICKUP')
+                ) {
+                    return { orderLabel: 'Packed', shipmentLabel: 'Packed', stepIndex: 1 };
+                }
+                if (normalizedShipment === 'NEW' || normalizedShipment.includes('NEW')) {
+                    return { orderLabel: 'Ordered', shipmentLabel: 'Ordered', stepIndex: 0 };
+                }
+
+                return {
+                    orderLabel: orderStatus || 'Ordered',
+                    shipmentLabel: shipmentStatus || 'Tracking pending',
+                    stepIndex: 0
+                };
+            }
+
+            function renderDashboardTrackingSummary(order) {
+                if (!order) return '';
+
+                const shipmentStatus = order.shiprocket_system_status || order.shiprocket_display_status || order.shiprocket_tracking_status || order.shiprocket_status || '';
+                const latestMessage = order.shiprocket_user_message || order.shiprocket_latest_activity || '';
+                const hasTracking = Boolean(order.shiprocket_shipment_id || order.shiprocket_awb_code || shipmentStatus || latestMessage);
+                if (!hasTracking) return '';
+
+                const steps = ['Ordered', 'Packed', 'Shipped', 'Out for delivery', 'Delivered'];
+                const presentation = mapShipmentPresentation(order.status, shipmentStatus);
+                const stepIndex = presentation.stepIndex;
+                let progressBlock = '';
+
+                if (stepIndex === -1) {
+                    progressBlock = `<div class="dash-tracking-alert cancelled">Order cancelled</div>`;
+                } else if (stepIndex === -2) {
+                    progressBlock = `<div class="dash-tracking-alert rto">Shipment is returning to seller</div>`;
+                } else {
+                    progressBlock = `
+                        <div class="dash-tracking-stepper fill-${Math.max(1, Math.min(stepIndex + 1, 5))}">
+                            ${steps.map((step, index) => {
+                                const stateClass = index < stepIndex ? 'done' : index === stepIndex ? 'active' : '';
+                                return `
+                                    <div class="dash-tracking-step ${stateClass}">
+                                        <div class="dash-tracking-step-dot"></div>
+                                        <div class="dash-tracking-step-label">${escapeHtml(step)}</div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    `;
+                }
+
+                const entries = [
+                    ['Order Status', presentation.orderLabel],
+                    ['Shipment Status', presentation.shipmentLabel],
+                    ['Shipment Update', latestMessage || 'We will update this here as soon as the shipment moves.'],
+                    ['Courier', order.shiprocket_courier_name || 'Awaiting assignment'],
+                    ['Shipment ID', order.shiprocket_shipment_id || 'Pending'],
+                    ['AWB', order.shiprocket_awb_code || 'Pending'],
+                    ['Updated At', fmtDateTime(order.shiprocket_latest_activity_at)]
+                ];
+
+                return `
+                    <div class="dash-tracking-box">
+                        <h4>Shipment Tracking</h4>
+                        ${progressBlock}
+                        <div class="dash-tracking-grid">
+                            ${entries.map(([label, value]) => `
+                                <div class="dash-tracking-meta">
+                                    <span class="dash-tracking-label">${escapeHtml(label)}</span>
+                                    <span class="dash-tracking-value">${escapeHtml(value)}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Sidebar navigation
+            const navItems = document.querySelectorAll('.dash-nav-item[data-section], .dash-mobile-tab[data-section]');
+            const sections = document.querySelectorAll('.dash-section');
+
+            async function switchSection(section) {
+                navItems.forEach(item => item.classList.toggle('active', item.dataset.section === section));
+                sections.forEach(node => node.classList.toggle('active', node.id === `sec-${section}`));
+
+                document.getElementById('dashSidebar').classList.remove('open');
+                document.getElementById('dashSidebarOverlay').classList.remove('visible');
+                document.body.style.overflow = '';
+
+                if (section === 'orders') await loadOrders();
+                if (section === 'payments') await loadPayments();
+                if (section === 'addresses') await loadAddresses();
+                if (section === 'profile') await loadProfile();
+                if (section === 'support') await loadSupportConversation();
+            }
+
+            navItems.forEach(item => {
+                item.addEventListener('click', () => switchSection(item.dataset.section));
+            });
+
+            // Header scroll behavior
+            window.addEventListener('scroll', () => {
+                document.getElementById('header')?.classList.toggle('scrolled', window.pageYOffset > 10);
+            }, { passive: true });
+
+            // User dropdown
+            const userBtn = document.getElementById('userIconBtn');
+            const userDrop = document.getElementById('userDropdown');
+            const guestMenu = document.getElementById('guestMenu');
+            const loggedMenu = document.getElementById('loggedMenu');
+
+            function updateHeaderUserUI() {
+                const user = getUser();
+                if (user && getToken()) {
+                    if (guestMenu) guestMenu.style.display = 'none';
+                    if (loggedMenu) {
+                        loggedMenu.style.display = 'block';
+                        const info = document.getElementById('dropdownUserInfo');
+                        if (info) info.textContent = user.name || user.mobile || 'My Account';
+                    }
+                } else {
+                    if (guestMenu) guestMenu.style.display = 'block';
+                    if (loggedMenu) loggedMenu.style.display = 'none';
+                }
+            }
+            updateHeaderUserUI();
+
+            userBtn?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                userDrop?.classList.toggle('open');
+            });
+            document.addEventListener('click', () => userDrop?.classList.remove('open'));
+
+            document.getElementById('logoutBtn')?.addEventListener('click', () => {
+                localStorage.removeItem('DEVASTHRA_token');
+                localStorage.removeItem('DEVASTHRA_user');
+                window.location.href = 'index.html';
+            });
+
+            // Logout from sidebar
+            document.getElementById('dashLogoutBtn')?.addEventListener('click', () => {
+                localStorage.removeItem('DEVASTHRA_token');
+                localStorage.removeItem('DEVASTHRA_user');
+                showToast('Logged out successfully', 'success');
+                setTimeout(() => { window.location.href = 'index.html'; }, 500);
+            });
+
+            // Order Details Modal Logic
+            const orderModalOverlay = document.getElementById('orderItemsOverlay');
+            const orderItemsList = document.getElementById('orderItemsList');
+            const modalOrderTitle = document.getElementById('modalOrderTitle');
+            const closeOrderModal = document.getElementById('closeOrderModal');
+            const modalCloseBtn = document.getElementById('modalCloseBtn');
+            const cancelRequestOverlay = document.getElementById('cancelRequestOverlay');
+            const closeCancelRequestModal = document.getElementById('closeCancelRequestModal');
+            const cancelRequestDismissBtn = document.getElementById('cancelRequestDismissBtn');
+            const submitCancelRequestBtn = document.getElementById('submitCancelRequestBtn');
+            const cancelOtherWrap = document.getElementById('cancelOtherWrap');
+            const cancelOtherReason = document.getElementById('cancelOtherReason');
+            const cancelRequestOrderId = document.getElementById('cancelRequestOrderId');
+            const reviewOverlay = document.getElementById('reviewOverlay');
+            const closeReviewModalBtn = document.getElementById('closeReviewModal');
+            const cancelReviewModalBtn = document.getElementById('cancelReviewModalBtn');
+            const reviewTargetInfo = document.getElementById('reviewTargetInfo');
+            const reviewProductGroup = document.getElementById('reviewProductGroup');
+            const reviewProductSelect = document.getElementById('reviewProductSelect');
+            const reviewStarRow = document.getElementById('reviewStarRow');
+            const reviewTextInput = document.getElementById('reviewText');
+            const submitReviewBtn = document.getElementById('submitReviewBtn');
+            let activeReviewContext = null;
+
+            function renderStarsHTML(avgRating) {
+                const rating = Number(avgRating) || 0;
+                let html = '';
+                for (let i = 1; i <= 5; i++) {
+                    if (i <= Math.floor(rating)) {
+                        html += '<span class="star filled">★</span>';
+                    } else if (i - rating < 1 && i - rating > 0) {
+                        html += '<span class="star half">★</span>';
+                    } else {
+                        html += '<span class="star empty">☆</span>';
+                    }
+                }
+                return html;
+            }
+
+            function isDeliveredOrder(order) {
+                const normalizedStatus = String(order?.status || '').trim().toLowerCase();
+                const normalizedShiprocket = String(
+                    order?.shiprocket_system_status ||
+                    order?.shiprocket_display_status ||
+                    order?.shiprocket_tracking_status ||
+                    order?.shiprocket_status ||
+                    ''
+                ).trim().toUpperCase();
+
+                return normalizedStatus === 'delivered' || normalizedShiprocket === 'DELIVERED';
+            }
+
+            function getEffectiveShiprocketStatus(order) {
+                return String(
+                    order?.shiprocket_system_status ||
+                    order?.shiprocket_display_status ||
+                    order?.shiprocket_tracking_status ||
+                    order?.shiprocket_latest_activity ||
+                    order?.shiprocket_status ||
+                    order?.status ||
+                    ''
+                ).trim();
+            }
+
+            function parseSafeDate(value) {
+                if (!value) return null;
+                const date = new Date(value);
+                return Number.isNaN(date.getTime()) ? null : date;
+            }
+
+            function getReturnDeadline(order, returnWindowDays) {
+                const baseDate = parseSafeDate(order?.delivery_date) || (isDeliveredOrder(order) ? parseSafeDate(order?.shiprocket_latest_activity_at) || new Date() : null);
+                if (!baseDate) return null;
+                const windowDays = Number.parseInt(returnWindowDays, 10);
+                const safeWindowDays = Number.isFinite(windowDays) && windowDays > 0 ? windowDays : 0;
+                const deadline = new Date(baseDate);
+                deadline.setDate(deadline.getDate() + safeWindowDays);
+                deadline.setHours(23, 59, 59, 999);
+                return deadline;
+            }
+
+            function getDaysRemaining(deadline) {
+                if (!deadline) return 0;
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const normalizedDeadline = new Date(deadline);
+                normalizedDeadline.setHours(23, 59, 59, 999);
+                return Math.ceil((normalizedDeadline - today) / (1000 * 60 * 60 * 24));
+            }
+
+            let currentReturnRequest = { orderId: null, orderItemId: null };
+            let currentExchangeRequest = { orderId: null, orderItemId: null };
+
+            function openReturnRequestModal(context) {
+                currentReturnRequest = {
+                    orderId: context.orderId,
+                    orderItemId: context.orderItemId
+                };
+
+                document.getElementById('returnProductInfo').innerHTML = `
+                    <strong style="display:block;font-size:1rem;margin-bottom:4px;">${escapeHtml(context.name || 'Product')}</strong>
+                    <div style="font-size:.84rem;color:#7a6f63;">Order ${escapeHtml(context.orderRef || `#${context.orderId}`)} · Size ${escapeHtml(context.size || 'N/A')} · Qty ${escapeHtml(String(context.quantity || 1))}</div>
+                `;
+                document.getElementById('returnReason').value = '';
+                document.getElementById('returnSubReason').value = '';
+                document.getElementById('returnDescription').value = '';
+                document.getElementById('returnImages').value = '';
+                document.getElementById('returnRequestOverlay').classList.add('open');
+            }
+
+            function closeReturnRequestModal() {
+                document.getElementById('returnRequestOverlay').classList.remove('open');
+                currentReturnRequest = { orderId: null, orderItemId: null };
+                const submitBtn = document.getElementById('submitReturnBtn');
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit Return';
+                }
+            }
+
+            function openExchangeRequestModal(context) {
+                currentExchangeRequest = {
+                    orderId: context.orderId,
+                    orderItemId: context.orderItemId
+                };
+
+                document.getElementById('exchangeProductInfo').innerHTML = `
+                    <strong style="display:block;font-size:1rem;margin-bottom:4px;">${escapeHtml(context.name || 'Product')}</strong>
+                    <div style="font-size:.84rem;color:#7a6f63;">Order ${escapeHtml(context.orderRef || `#${context.orderId}`)} · Current Size ${escapeHtml(context.size || 'N/A')} · Qty ${escapeHtml(String(context.quantity || 1))}</div>
+                `;
+                document.getElementById('exchangeRequestedSize').value = context.size || '';
+                document.getElementById('exchangeReason').value = '';
+                document.getElementById('exchangeReasonDetail').value = '';
+                document.getElementById('exchangeRequestOverlay').classList.add('open');
+            }
+
+            function closeExchangeRequestModal() {
+                document.getElementById('exchangeRequestOverlay').classList.remove('open');
+                currentExchangeRequest = { orderId: null, orderItemId: null };
+                const submitBtn = document.getElementById('submitExchangeBtn');
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit Exchange';
+                }
+            }
+
+            async function loadDashboardReturnEligibility(orderId, orderRef) {
+                try {
+                    const res = await fetch(`${API_BASE}/returns/eligibility/${orderId}`, { headers });
+                    const data = await res.json();
+                    if (!data.success || !Array.isArray(data.items)) {
+                        return `<p class="dash-error">${escapeHtml(data.message || 'Unable to load return options')}</p>`;
+                    }
+
+                    const serviceCharge = Number(data.service_charge || 0);
+                    const rows = data.items.map((item) => {
+                        const itemRef = {
+                            orderId,
+                            orderItemId: item.order_item_id,
+                            orderRef,
+                            name: item.name,
+                            size: item.size,
+                            quantity: item.quantity
+                        };
+
+                        if (item.existing_return_status || item.existing_exchange_status) {
+                            return `
+                                <div class="dash-review-item">
+                                    <div class="dash-review-item-top">
+                                        <div>
+                                            <p class="dash-review-item-name">${escapeHtml(item.name)}</p>
+                                            <div class="dash-review-item-meta">Size: ${escapeHtml(item.size || 'N/A')} · Qty: ${escapeHtml(item.quantity)}</div>
+                                        </div>
+                                        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
+                                            ${item.existing_return_status ? `<span class="dash-review-chip">↩️ ${escapeHtml(item.existing_return_status)}</span>` : ''}
+                                            ${item.existing_exchange_status ? `<span class="dash-review-chip">⇄ ${escapeHtml(item.existing_exchange_status)}</span>` : ''}
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }
+
+                        if (item.eligible) {
+                            return `
+                                <div class="dash-review-item">
+                                    <div class="dash-review-item-top">
+                                        <div>
+                                            <p class="dash-review-item-name">${escapeHtml(item.name)}</p>
+                                            <div class="dash-review-item-meta">Size: ${escapeHtml(item.size || 'N/A')} · Qty: ${escapeHtml(item.quantity)}</div>
+                                            <div class="dash-review-item-meta">Return window: ${escapeHtml(item.return_eligible_until || 'Not available')}</div>
+                                        </div>
+                                        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+                                            <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
+                                                <button class="btn btn-cancel-red" onclick='window.openReturnRequestModal(${JSON.stringify(itemRef)})'>Return</button>
+                                                <button class="btn btn-submit-green" onclick='window.openExchangeRequestModal(${JSON.stringify(itemRef)})'>Exchange</button>
+                                            </div>
+                                            <span style="font-size:0.75rem;color:#6b7280;">Service fee: ₹${serviceCharge}</span>
+                                            <span style="font-size:0.75rem;color:#6b7280;">${item.days_left} day${item.days_left > 1 ? 's' : ''} left</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }
+
+                        return `
+                            <div class="dash-review-item">
+                                <div class="dash-review-item-top">
+                                    <div>
+                                        <p class="dash-review-item-name">${escapeHtml(item.name)}</p>
+                                        <div class="dash-review-item-meta">Size: ${escapeHtml(item.size || 'N/A')} · Qty: ${escapeHtml(item.quantity)}</div>
+                                    </div>
+                                    <span class="dash-review-chip">${escapeHtml(item.reason || 'Not eligible')}</span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                    return `
+                        <div class="dash-return-panel" style="margin:18px 0 0;">
+                            <h4 style="margin:0 0 12px;font-size:1rem;">Return / Exchange Options</h4>
+                            <div class="dash-review-grid">
+                                ${rows}
+                            </div>
+                        </div>
+                    `;
+                } catch {
+                    return `<p class="dash-error">Unable to load return options.</p>`;
+                }
+            }
+
+            function getReviewableItemsFromContext() {
+                if (!activeReviewContext || !Array.isArray(activeReviewContext.items)) return [];
+                return activeReviewContext.items.filter(item => item && (item.can_review || activeReviewContext.forceReviewable));
+            }
+
+            function getSelectedReviewItem() {
+                const items = getReviewableItemsFromContext();
+                if (!items.length) return null;
+                const selectedId = Number(reviewProductSelect?.value || activeReviewContext?.selectedOrderItemId || items[0].order_item_id);
+                return items.find(item => Number(item.order_item_id) === selectedId) || items[0];
+            }
+
+            function renderReviewModalTarget() {
+                if (!activeReviewContext) {
+                    reviewTargetInfo.textContent = '';
+                    return;
+                }
+
+                const items = getReviewableItemsFromContext();
+                const selectedItem = getSelectedReviewItem() || items[0] || {};
+                const orderLabel = escapeHtml(activeReviewContext.order_ref || `#${activeReviewContext.order_id || ''}`);
+                const productLabel = escapeHtml(selectedItem.name || selectedItem.product_name || 'Product');
+                const sizeLabel = escapeHtml(selectedItem.size || 'N/A');
+                const quantityLabel = escapeHtml(String(selectedItem.quantity || 1));
+
+                reviewTargetInfo.innerHTML = `
+                    <strong style="display:block;font-size:1rem;margin-bottom:4px;">${productLabel}</strong>
+                    <div style="font-size:.84rem;color:#7a6f63;">Order ${orderLabel} · Size ${sizeLabel} · Qty ${quantityLabel}</div>
+                `;
+
+                if (reviewProductGroup) {
+                    const shouldShowSelector = items.length > 1;
+                    reviewProductGroup.style.display = shouldShowSelector ? '' : 'none';
+
+                    if (shouldShowSelector && reviewProductSelect) {
+                        reviewProductSelect.innerHTML = items.map((item) => {
+                            const label = `${item.name || item.product_name || 'Product'}${item.size ? ` · Size ${item.size}` : ''}${item.quantity ? ` · Qty ${item.quantity}` : ''}`;
+                            return `<option value="${Number(item.order_item_id)}">${escapeHtml(label)}</option>`;
+                        }).join('');
+                        reviewProductSelect.value = String(selectedItem.order_item_id || items[0].order_item_id);
+                    }
+                }
+            }
+
+            function resetReviewSelection() {
+                reviewStarRow?.querySelectorAll('.dash-review-star').forEach(btn => btn.classList.remove('active'));
+                if (submitReviewBtn) submitReviewBtn.dataset.rating = '';
+            }
+
+            function closeReviewModal() {
+                reviewOverlay?.classList.remove('open');
+                activeReviewContext = null;
+                reviewTextInput.value = '';
+                if (reviewProductSelect) reviewProductSelect.innerHTML = '';
+                if (reviewProductGroup) reviewProductGroup.style.display = 'none';
+                submitReviewBtn.disabled = false;
+                submitReviewBtn.textContent = 'Submit Review';
+                resetReviewSelection();
+            }
+
+            function setReviewRating(rating) {
+                reviewStarRow?.querySelectorAll('.dash-review-star').forEach(btn => {
+                    const btnRating = Number(btn.dataset.rating || 0);
+                    btn.classList.toggle('active', btnRating <= rating);
+                });
+                if (submitReviewBtn) submitReviewBtn.dataset.rating = String(rating);
+            }
+
+            function openReviewModal(context) {
+                activeReviewContext = {
+                    order_id: context.order_id,
+                    order_ref: context.order_ref || `#${context.order_id || ''}`,
+                    items: Array.isArray(context.items) ? context.items : [context],
+                    selectedOrderItemId: context.selectedOrderItemId || context.order_item_id || null,
+                    forceReviewable: Boolean(context.forceReviewable)
+                };
+                renderReviewModalTarget();
+
+                reviewStarRow.innerHTML = [1, 2, 3, 4, 5].map((rating) => `
+                    <button type="button" class="dash-review-star" data-rating="${rating}" aria-label="${rating} star">${rating}</button>
+                `).join('');
+                reviewStarRow.querySelectorAll('.dash-review-star').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        setReviewRating(Number(btn.dataset.rating || 0));
+                    });
+                });
+                if (reviewProductSelect) {
+                    reviewProductSelect.onchange = () => {
+                        renderReviewModalTarget();
+                    };
+                }
+                renderReviewModalTarget();
+                setReviewRating(5);
+                reviewOverlay?.classList.add('open');
+            }
+
+            async function openOrderReviewModal(orderId, orderRef) {
+                try {
+                    const reviewUrls = [
+                        `${API_BASE}/api/reviews/orders/${orderId}/reviewable-items`
+                    ];
+                    let res = null;
+                    let data = null;
+
+                    for (const url of reviewUrls) {
+                        const response = await fetch(url, { headers });
+                        const contentType = response.headers.get('content-type') || '';
+                        if (!response.ok || !contentType.includes('application/json')) {
+                            continue;
+                        }
+
+                        res = response;
+                        data = await response.json();
+                        break;
+                    }
+
+                    if (!data || !data.success || !Array.isArray(data.items)) {
+                        showToast((data && data.message) ? data.message : 'Unable to open review form');
+                        return;
+                    }
+
+                    const reviewableItems = data.items.filter(item => item && item.can_review);
+                    if (!reviewableItems.length) {
+                        const alreadyReviewed = data.items.some(item => item && item.is_reviewed);
+                        showToast(alreadyReviewed ? 'You already reviewed this order' : 'No reviewable items yet');
+                        return;
+                    }
+
+                    openReviewModal({
+                        order_id: Number(data.order_id || orderId) || orderId,
+                        order_ref: orderRef,
+                        items: reviewableItems,
+                        selectedOrderItemId: reviewableItems[0].order_item_id
+                    });
+                } catch (err) {
+                    console.error(err);
+                    showToast('Failed to open review form');
+                }
+            }
+
+            async function submitReview() {
+                if (!activeReviewContext) return;
+                const rating = Number(submitReviewBtn.dataset.rating || 0);
+                if (rating < 1 || rating > 5) {
+                    showToast('Please choose a rating');
+                    return;
+                }
+
+                const selectedItem = getSelectedReviewItem();
+                if (!selectedItem) {
+                    showToast('No reviewable product found');
+                    return;
+                }
+
+                submitReviewBtn.disabled = true;
+                submitReviewBtn.textContent = 'Submitting...';
+                try {
+                    const reviewOrderId = activeReviewContext.order_id;
+                    const reviewUrls = [
+                        `${API_BASE}/api/reviews`
+                    ];
+                    const payload = {
+                        order_id: activeReviewContext.order_id,
+                        order_item_id: selectedItem.order_item_id,
+                        product_id: selectedItem.product_id,
+                        rating,
+                        review_text: reviewTextInput.value.trim()
+                    };
+
+                    let data = null;
+                    for (const url of reviewUrls) {
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            headers,
+                            body: JSON.stringify(payload)
+                        });
+                        const contentType = response.headers.get('content-type') || '';
+                        if (!response.ok || !contentType.includes('application/json')) {
+                            continue;
+                        }
+                        data = await response.json();
+                        break;
+                    }
+
+                    if (!data || !data.success) {
+                        showToast((data && data.message) ? data.message : 'Failed to submit review');
+                        return;
+                    }
+
+                    showToast('Review submitted successfully', 'success');
+                    try {
+                        const productId = Number(selectedItem?.product_id || 0) || null;
+                        const refreshPayload = JSON.stringify({ productId, timestamp: Date.now() });
+                        localStorage.setItem('DEVASTHRA_reviews_refresh', refreshPayload);
+                        window.dispatchEvent(new CustomEvent('DEVASTHRA_REVIEWS_UPDATED', { detail: { productId } }));
+                    } catch { }
+                    closeReviewModal();
+                    if (orderModalOverlay?.classList.contains('open')) {
+                        await openOrderItems(reviewOrderId);
+                    } else {
+                        await loadOrders();
+                    }
+                } catch (err) {
+                    showToast('Failed to submit review');
+                } finally {
+                    submitReviewBtn.disabled = false;
+                    submitReviewBtn.textContent = 'Submit Review';
+                }
+            }
+
+            function closeModal() {
+                orderModalOverlay.classList.remove('open');
+                closeReviewModal();
+            }
+
+            function closeCancelModal() {
+                cancelRequestOverlay.classList.remove('open');
+                cancelRequestOrderId.value = '';
+                cancelOtherReason.value = '';
+                cancelOtherWrap.classList.remove('open');
+                document.querySelectorAll('input[name="cancelReason"]').forEach(input => { input.checked = false; });
+                submitCancelRequestBtn.disabled = false;
+                submitCancelRequestBtn.textContent = 'Submit Request';
+            }
+
+            closeOrderModal.addEventListener('click', closeModal);
+            modalCloseBtn.addEventListener('click', closeModal);
+            orderModalOverlay.addEventListener('click', (e) => {
+                if (e.target === orderModalOverlay) closeModal();
+            });
+            closeReviewModalBtn?.addEventListener('click', closeReviewModal);
+            cancelReviewModalBtn?.addEventListener('click', closeReviewModal);
+            reviewOverlay?.addEventListener('click', (e) => {
+                if (e.target === reviewOverlay) closeReviewModal();
+            });
+            submitReviewBtn?.addEventListener('click', submitReview);
+            closeCancelRequestModal?.addEventListener('click', closeCancelModal);
+            cancelRequestDismissBtn?.addEventListener('click', closeCancelModal);
+            cancelRequestOverlay?.addEventListener('click', (e) => {
+                if (e.target === cancelRequestOverlay) closeCancelModal();
+            });
+            document.getElementById('closeReturnRequestModal')?.addEventListener('click', closeReturnRequestModal);
+            document.getElementById('cancelReturnRequestBtn')?.addEventListener('click', closeReturnRequestModal);
+            document.getElementById('returnRequestOverlay')?.addEventListener('click', (e) => {
+                const overlay = document.getElementById('returnRequestOverlay');
+                if (e.target === overlay) closeReturnRequestModal();
+            });
+            document.getElementById('closeExchangeRequestModal')?.addEventListener('click', closeExchangeRequestModal);
+            document.getElementById('cancelExchangeRequestBtn')?.addEventListener('click', closeExchangeRequestModal);
+            document.getElementById('exchangeRequestOverlay')?.addEventListener('click', (e) => {
+                const overlay = document.getElementById('exchangeRequestOverlay');
+                if (e.target === overlay) closeExchangeRequestModal();
+            });
+            document.querySelectorAll('input[name="cancelReason"]').forEach(input => {
+                input.addEventListener('change', () => {
+                    const isOther = input.value === 'Other' && input.checked;
+                    cancelOtherWrap.classList.toggle('open', isOther);
+                    if (!isOther) cancelOtherReason.value = '';
+                });
+            });
+
+            document.getElementById('submitReturnBtn')?.addEventListener('click', async () => {
+                const orderId = currentReturnRequest.orderId;
+                const orderItemId = currentReturnRequest.orderItemId;
+                const reason = document.getElementById('returnReason').value;
+                const subReason = document.getElementById('returnSubReason').value.trim();
+                const description = document.getElementById('returnDescription').value.trim();
+                const images = document.getElementById('returnImages').files;
+                const submitBtn = document.getElementById('submitReturnBtn');
+
+                if (!orderId || !orderItemId) {
+                    showToast('Unable to find this order item');
+                    return;
+                }
+                if (!reason) {
+                    showToast('Please select a reason for return');
+                    return;
+                }
+
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Submitting...';
+
+                try {
+                    const formData = new FormData();
+                    formData.append('order_id', orderId);
+                    formData.append('order_item_id', orderItemId);
+                    formData.append('reason', reason);
+                    formData.append('sub_reason', subReason);
+                    formData.append('description', description);
+                    for (let i = 0; i < Math.min(images.length, 5); i++) {
+                        formData.append('proof_images', images[i]);
+                    }
+
+                    const res = await fetch(`${API_BASE}/returns/request`, {
+                        method: 'POST',
+                        headers: { Authorization: `Bearer ${token}` },
+                        body: formData
+                    });
+                    const data = await res.json();
+                    if (!data.success) {
+                        showToast(data.message || 'Failed to submit return');
+                        return;
+                    }
+
+                    showToast(data.message || 'Return request submitted successfully', 'success');
+                    closeReturnRequestModal();
+                    await openOrderItems(orderId);
+                } catch {
+                    showToast('Network error. Please try again.');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit Return';
+                }
+            });
+
+            document.getElementById('submitExchangeBtn')?.addEventListener('click', async () => {
+                const orderId = currentExchangeRequest.orderId;
+                const orderItemId = currentExchangeRequest.orderItemId;
+                const requestedSize = document.getElementById('exchangeRequestedSize').value.trim();
+                const reason = document.getElementById('exchangeReason').value;
+                const reasonDetail = document.getElementById('exchangeReasonDetail').value.trim();
+                const submitBtn = document.getElementById('submitExchangeBtn');
+
+                if (!orderId || !orderItemId) {
+                    showToast('Unable to find this order item');
+                    return;
+                }
+                if (!reason) {
+                    showToast('Please select an exchange reason');
+                    return;
+                }
+
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Submitting...';
+
+                try {
+                    const res = await fetch(`${API_BASE}/returns/exchange-request`, {
+                        method: 'POST',
+                        headers,
+                        body: JSON.stringify({
+                            order_id: orderId,
+                            order_item_id: orderItemId,
+                            requested_size: requestedSize,
+                            reason,
+                            reason_detail: reasonDetail
+                        })
+                    });
+                    const data = await res.json();
+                    if (!data.success) {
+                        showToast(data.message || 'Failed to submit exchange request');
+                        return;
+                    }
+
+                    showToast(data.message || 'Exchange request submitted successfully', 'success');
+                    closeExchangeRequestModal();
+                    await openOrderItems(orderId);
+                } catch {
+                    showToast('Network error. Please try again.');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit Exchange';
+                }
+            });
+
+            async function openOrderItems(orderId, orderRef = '') {
+                modalOrderTitle.textContent = orderRef ? String(orderRef) : 'Order Details';
+                orderItemsList.innerHTML = '<div class="dash-loading"><div class="spinner"></div><p>Fetching items...</p></div>';
+                orderModalOverlay.classList.add('open');
+
+                try {
+                    const res = await fetch(`${API_BASE}/orders/${orderId}`, { headers });
+                    const data = await res.json();
+
+                    if (!data.success) {
+                        orderItemsList.innerHTML = `<p class="dash-error">${data.message || 'Failed to fetch items'}</p>`;
+                        return;
+                    }
+
+                    if (!data.items || data.items.length === 0) {
+                        orderItemsList.innerHTML = '<p>No items found for this order.</p>';
+                        return;
+                    }
+
+                    const modalStatus = String(data.order?.status || '').trim().toLowerCase();
+                    const cancelRequestStatus = String(data.order?.cancellation_request_status || '').trim().toLowerCase();
+                    const canCancel = (modalStatus === 'pending' || modalStatus === 'paid') && cancelRequestStatus !== 'requested';
+                    modalOrderTitle.textContent = data.order?.invoice_number || orderRef || 'Order Details';
+
+                    const orderSummaryBlock = `
+                        <div class="dash-modal-summary">
+                            <div class="dash-modal-summary-card">
+                                <span>Order Ref</span>
+                                <strong>${escapeHtml(data.order?.invoice_number || `#${orderId}`)}</strong>
+                            </div>
+                            <div class="dash-modal-summary-card">
+                                <span>Placed On</span>
+                                <strong>${escapeHtml(fmtDate(data.order?.created_at))}</strong>
+                            </div>
+                            <div class="dash-modal-summary-card">
+                                <span>Payment</span>
+                                <strong>${escapeHtml(data.order?.payment_method || 'Prepaid')}</strong>
+                            </div>
+                            <div class="dash-modal-summary-card">
+                                <span>Total</span>
+                                <strong>${escapeHtml(fmt(data.order?.total_amount || 0))}</strong>
+                            </div>
+                        </div>
+                    `;
+                    const trackingBlock = renderDashboardTrackingSummary(data.order);
+                    const actionBlock = `
+                        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 16px;">
+                            <div style="font-size:0.92rem;color:#6b7280;">
+                                Status: <strong>${data.order?.status || 'Unknown'}</strong>
+                            </div>
+                            ${cancelRequestStatus === 'requested' ? `
+                                <span style="padding:7px 12px;border-radius:999px;background:#fff7dd;color:#9a6700;font-size:0.78rem;font-weight:700;">
+                                    Cancellation Requested
+                                </span>
+                            ` : ''}
+                            ${canCancel ? `
+                                <button class="btn btn-cancel-red dash-cancel-btn" onclick="window.openCancelRequestModal(${orderId})">
+                                    Request Cancellation
+                                </button>
+                            ` : ''}
+                        </div>
+                    `;
+
+                    orderItemsList.innerHTML = orderSummaryBlock + trackingBlock + actionBlock + data.items.map(item => `
+                        <div class="modal-item">
+                            <img src="${getImageUrl(item.image_url)}" alt="${item.name}">
+                            <div class="modal-item-info">
+                                <h4>${item.name}</h4>
+                                <p>Size: <strong>${item.size || 'N/A'}</strong> · Qty: <strong>${item.quantity}</strong></p>
+                                <div class="modal-item-price">${fmt(item.price)}</div>
+                            </div>
+                        </div>
+                    `).join('');
+                } catch (err) {
+                    console.error(err);
+                    orderItemsList.innerHTML = '<p class="dash-error">Error loading items.</p>';
+                }
+            }
+
+            async function openOrderItems(orderId, orderRef = '') {
+                modalOrderTitle.textContent = orderRef ? String(orderRef) : 'Order Details';
+                orderItemsList.innerHTML = '<div class="dash-loading"><div class="spinner"></div><p>Fetching items...</p></div>';
+                orderModalOverlay.classList.add('open');
+
+                try {
+                    const res = await fetch(`${API_BASE}/orders/${orderId}`, { headers });
+                    const data = await res.json();
+
+                    if (!data.success) {
+                        orderItemsList.innerHTML = `<p class="dash-error">${data.message || 'Failed to fetch items'}</p>`;
+                        return;
+                    }
+
+                    if (!data.items || data.items.length === 0) {
+                        orderItemsList.innerHTML = '<p>No items found for this order.</p>';
+                        return;
+                    }
+
+                    let reviewMap = new Map();
+                    let reviewOrderStatus = String(data.order?.status || '').trim();
+                    try {
+                        const reviewRes = await fetch(`${API_BASE}/api/reviews/orders/${orderId}/reviewable-items`, { headers });
+                        const reviewData = await reviewRes.json();
+                        if (reviewData.success && Array.isArray(reviewData.items)) {
+                            reviewOrderStatus = String(reviewData.order_status || reviewOrderStatus).trim();
+                            reviewMap = new Map(reviewData.items.map(item => [Number(item.order_item_id), item]));
+                        }
+                    } catch {
+                        reviewMap = new Map();
+                    }
+
+                    const modalStatus = String(reviewOrderStatus || data.order?.status || '').trim().toLowerCase();
+                    const cancelRequestStatus = String(data.order?.cancellation_request_status || '').trim().toLowerCase();
+                    const canCancel = (modalStatus === 'pending' || modalStatus === 'paid') && cancelRequestStatus !== 'requested';
+                    const returnBlock = await loadDashboardReturnEligibility(orderId, data.order?.invoice_number || `#${orderId}`);
+                    modalOrderTitle.textContent = data.order?.invoice_number || orderRef || 'Order Details';
+
+                    const orderSummaryBlock = `
+                        <div class="dash-modal-summary">
+                            <div class="dash-modal-summary-card">
+                                <span>Order Ref</span>
+                                <strong>${escapeHtml(data.order?.invoice_number || `#${orderId}`)}</strong>
+                            </div>
+                            <div class="dash-modal-summary-card">
+                                <span>Placed On</span>
+                                <strong>${escapeHtml(fmtDate(data.order?.created_at))}</strong>
+                            </div>
+                            <div class="dash-modal-summary-card">
+                                <span>Payment</span>
+                                <strong>${escapeHtml(data.order?.payment_method || 'Prepaid')}</strong>
+                            </div>
+                            <div class="dash-modal-summary-card">
+                                <span>Total</span>
+                                <strong>${escapeHtml(fmt(data.order?.total_amount || 0))}</strong>
+                            </div>
+                        </div>
+                    `;
+                    const trackingBlock = renderDashboardTrackingSummary(data.order);
+                    const actionBlock = `
+                        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 16px;">
+                            <div style="font-size:0.92rem;color:#6b7280;">
+                                Status: <strong>${data.order?.status || 'Unknown'}</strong>
+                            </div>
+                            ${cancelRequestStatus === 'requested' ? `
+                                <span style="padding:7px 12px;border-radius:999px;background:#fff7dd;color:#9a6700;font-size:0.78rem;font-weight:700;">
+                                    Cancellation Requested
+                                </span>
+                            ` : ''}
+                            ${canCancel ? `
+                                <button class="btn btn-cancel-red dash-cancel-btn" onclick="window.openCancelRequestModal(${orderId})">
+                                    Request Cancellation
+                                </button>
+                            ` : ''}
+                        </div>
+                    `;
+
+                    const itemCards = data.items.map(item => {
+                        const reviewInfo = reviewMap.get(Number(item.order_item_id)) || {};
+                        const canReview = !!reviewInfo.can_review;
+                        const reviewed = !!reviewInfo.is_reviewed;
+                        const reviewBadge = reviewed
+                            ? `<span class="dash-review-chip">${renderStarsHTML(reviewInfo.existing_rating || 0)} <span>Reviewed</span></span>`
+                            : canReview
+                                ? `<span class="dash-review-chip" style="background:#f8efe5;color:#8b6d57;">Ready to rate</span>`
+                                : '';
+
+                        return `
+                            <div class="dash-review-item">
+                                <div class="dash-review-item-top">
+                                    <div>
+                                        <p class="dash-review-item-name">${escapeHtml(item.name)}</p>
+                                        <div class="dash-review-item-meta">Size: ${escapeHtml(item.size || 'N/A')} · Qty: ${escapeHtml(item.quantity)}</div>
+                                    </div>
+                                    ${reviewBadge}
+                                </div>
+                                <div style="display:flex;gap:14px;align-items:flex-start;">
+                                    <img src="${getImageUrl(item.image_url)}" alt="${escapeHtml(item.name)}" style="width:68px;height:86px;object-fit:cover;border-radius:10px;background:#f9f9f9;">
+                                    <div style="flex:1;">
+                                        <div class="modal-item-price">${fmt(item.price)}</div>
+                                        <p class="dash-review-item-meta" style="margin-top:8px;">${reviewed ? 'You already reviewed this item.' : canReview ? 'Tap Rate on the order card to review.' : ''}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                    orderItemsList.innerHTML = orderSummaryBlock + trackingBlock + actionBlock + returnBlock + `
+                        <div class="dash-review-grid" style="margin-top:18px;">
+                            ${itemCards}
+                        </div>
+                    `;
+
+                } catch (err) {
+                    console.error(err);
+                    orderItemsList.innerHTML = '<p class="dash-error">Error loading items.</p>';
+                }
+            }
+
+            function openCancelRequestModal(orderId, event) {
+                if (event && typeof event.stopPropagation === 'function') event.stopPropagation();
+                cancelRequestOrderId.value = orderId;
+                cancelRequestOverlay.classList.add('open');
+            }
+
+            async function cancelDashboardOrder() {
+                const orderId = Number(cancelRequestOrderId.value);
+                const reason = document.querySelector('input[name="cancelReason"]:checked')?.value || '';
+                const otherReason = cancelOtherReason.value.trim();
+
+                if (!orderId) {
+                    showToast('Missing order details');
+                    return;
+                }
+                if (!reason) {
+                    showToast('Please select a cancellation reason');
+                    return;
+                }
+                if (reason === 'Other' && !otherReason) {
+                    showToast('Please specify your reason');
+                    return;
+                }
+
+                submitCancelRequestBtn.disabled = true;
+                submitCancelRequestBtn.textContent = 'Submitting...';
+                try {
+                    const res = await fetch(`${API_BASE}/orders/cancel/${orderId}`, {
+                        method: 'PUT',
+                        headers,
+                        body: JSON.stringify({
+                            reason,
+                            other_reason: reason === 'Other' ? otherReason : ''
+                        })
+                    });
+                    const data = await res.json();
+
+                    if (!data.success) {
+                        showToast(data.message || 'Failed to cancel order');
+                        submitCancelRequestBtn.disabled = false;
+                        submitCancelRequestBtn.textContent = 'Submit Request';
+                        return;
+                    }
+
+                    showToast(data.message || 'Cancellation request submitted', 'success');
+                    closeCancelModal();
+                    closeModal();
+                    await loadOrders();
+                    await loadPayments();
+                } catch (err) {
+                    console.error(err);
+                    showToast('Network error. Please try again.');
+                    submitCancelRequestBtn.disabled = false;
+                    submitCancelRequestBtn.textContent = 'Submit Request';
+                }
+            }
+            submitCancelRequestBtn?.addEventListener('click', cancelDashboardOrder);
+
+            async function loadOrders() {
+                const container = document.getElementById('dashOrdersList');
+                container.innerHTML = '<div class="dash-loading"><div class="spinner"></div><p>Loading orders...</p></div>';
+
+                try {
+                    const res = await fetch(`${API_BASE}/orders`, { headers });
+                    const data = await res.json();
+                    if (!data.success || !data.orders || data.orders.length === 0) {
+                        container.innerHTML = `
+                            <div class="dash-empty-state">
+                                <p>No recent orders yet.</p>
+                                <a href="index.html#products" class="btn btn-primary">Start Shopping</a>
+                            </div>`;
+                        return;
+                    }
+
+                    const recentOrders = data.orders.slice(0, 10);
+                    container.innerHTML = recentOrders.map(order => {
+                        const orderIdVal = order.order_id || order.id;
+                        const orderRef = String(order.invoice_number || '').trim() || `NATDEV${String(orderIdVal || 0).padStart(3, '0')}`;
+                        const orderStatus = String(order.status || '').trim().toLowerCase();
+                        const cancelRequestStatus = String(order.cancellation_request_status || '').trim().toLowerCase();
+                        const delivered = isDeliveredOrder(order);
+                        const canReviewOrder = delivered;
+                        const canCancel = (orderStatus === 'pending' || orderStatus === 'paid') && cancelRequestStatus !== 'requested';
+                        const returnEligibleUntil = order.return_eligible_until ? new Date(order.return_eligible_until) : null;
+                        const returnDaysLeft = returnEligibleUntil ? getDaysRemaining(returnEligibleUntil) : 0;
+                        const returnBadge = delivered
+                            ? (returnDaysLeft > 0
+                                ? `<div class="return-eligibility-notice eligible">✅ Return/Exchange available — ${returnDaysLeft} day${returnDaysLeft > 1 ? 's' : ''} left</div>`
+                                : `<div class="return-eligibility-notice expired">⏰ Return/Exchange window closed</div>`)
+                            : (order.status === 'Cancelled' ? '' : `<div class="return-eligibility-notice pending">↩️ Return/Exchange available after delivery</div>`);
+                        const returnTrackingLabel = order.return_shiprocket_tracking_status || order.return_shiprocket_status || order.return_latest_activity || '';
+                        const returnSummary = order.return_request_status ? `
+                            <div style="margin-top:10px;padding:12px 14px;border-radius:14px;border:1px solid #f0e1d8;background:#fff9f6;display:grid;gap:4px;">
+                                <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;">
+                                    <span style="font-size:0.82rem;font-weight:700;color:#8b1e33;">Return: ${escapeHtml(order.return_request_status)}</span>
+                                    ${order.refund_status ? `<span style="font-size:0.78rem;font-weight:700;color:#0f7a35;background:#eaf7ee;padding:4px 10px;border-radius:999px;">Refund: ${escapeHtml(order.refund_status)}</span>` : ''}
+                                </div>
+                                ${order.return_reason ? `<div style="font-size:0.8rem;color:#6f5f55;">Reason: ${escapeHtml(order.return_reason)}</div>` : ''}
+                                ${order.return_shiprocket_awb_code || order.return_shiprocket_courier_name ? `<div style="font-size:0.8rem;color:#6f5f55;">${escapeHtml(order.return_shiprocket_courier_name || 'Courier')} ${order.return_shiprocket_awb_code ? `• AWB ${escapeHtml(order.return_shiprocket_awb_code)}` : ''}</div>` : ''}
+                                ${returnTrackingLabel ? `<div style="font-size:0.8rem;color:#6f5f55;">Pickup / Return: ${escapeHtml(returnTrackingLabel)}</div>` : ''}
+                            </div>
+                        ` : '';
+                        return `
+                        <div class="dash-order-list-item" onclick='window.openOrderItems(${orderIdVal}, ${JSON.stringify(orderRef)})'>
+                            <div class="dash-order-list-top">
+                                <span class="dash-order-id">${orderRef}</span>
+                                <span class="dash-status ${statusClass(order.status)}">${order.status}</span>
+                            </div>
+                            <div class="dash-order-list-meta">
+                                <span>${fmtDate(order.created_at)}</span>
+                                <span class="dash-order-amount">${fmt(order.total_amount)}</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:14px;margin-top:10px;">
+                                ${order.address_line ? `<p class="dash-order-list-address" style="margin:0;flex:1;padding-right:15px;">${order.address_line}, ${order.city}, ${order.state} - ${order.pincode}</p>` : '<div style="flex:1;"></div>'}
+                                <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
+                                    ${cancelRequestStatus === 'requested' ? `<span style="padding:7px 12px;border-radius:999px;background:#fff7dd;color:#9a6700;font-size:0.78rem;font-weight:700;">Request Sent</span>` : ''}
+                                    ${canCancel ? `<button class="btn btn-cancel-red dash-cancel-btn" onclick="window.openCancelRequestModal(${orderIdVal}, event)">Cancel</button>` : ''}
+                                    ${delivered ? `<button class="btn btn-submit-green dash-cancel-btn" onclick="event.stopPropagation(); window.openOrderItems(${orderIdVal})">Return / Exchange</button>` : ''}
+                                    ${canReviewOrder ? `<button type="button" class="btn-rate-review" data-order-review='${escapeHtml(JSON.stringify({ order_id: orderIdVal, order_ref: orderRef }))}'>Rate ⭐</button>` : ''}
+                                    <span style="font-size: 0.75rem; color: #8b5cf6; font-weight: 600;">View Details »</span>
+                                </div>
+                            </div>
+                            ${returnBadge}
+                            ${returnSummary}
+                        </div>
+                    `;
+                    }).join('');
+
+                    // Expose to window for onclick
+                    window.openOrderItems = openOrderItems;
+                    window.cancelDashboardOrder = cancelDashboardOrder;
+                    window.openCancelRequestModal = openCancelRequestModal;
+                    window.openReturnRequestModal = openReturnRequestModal;
+                    window.openExchangeRequestModal = openExchangeRequestModal;
+
+                    container.querySelectorAll('.btn-rate-review[data-order-review]').forEach(btn => {
+                        btn.addEventListener('click', (event) => {
+                            event.stopPropagation();
+                            const payload = JSON.parse(btn.dataset.orderReview);
+                            openOrderReviewModal(Number(payload.order_id), payload.order_ref);
+                        });
+                    });
+
+                } catch {
+                    container.innerHTML = '<p class="dash-error">Failed to load orders.</p>';
+                }
+            }
+
+            async function loadPayments() {
+                const container = document.getElementById('dashPaymentsList');
+                container.innerHTML = '<div class="dash-loading"><div class="spinner"></div><p>Loading payments...</p></div>';
+
+                try {
+                    const res = await fetch(`${API_BASE}/orders`, { headers });
+                    const data = await res.json();
+
+                    if (!data.success || !data.orders || data.orders.length === 0) {
+                        container.innerHTML = '<div class="dash-empty-state"><p>No payment history yet.</p></div>';
+                        return;
+                    }
+
+                    const paidOrders = data.orders.filter(order => String(order.status).toLowerCase() !== 'pending');
+                    if (!paidOrders.length) {
+                        container.innerHTML = '<div class="dash-empty-state"><p>No completed payments yet.</p></div>';
+                        return;
+                    }
+
+                    container.innerHTML = `
+                        <div class="dash-payments-table-wrap">
+                            <table class="dash-payments-table">
+                                <thead>
+                                    <tr>
+                                        <th>Order</th>
+                                        <th>Date</th>
+                                        <th>Amount</th>
+                                        <th>PayU / Refund ID</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${paidOrders.map(order => {
+                        const orderIdVal = order.order_id || order.id;
+                        const orderRef = String(order.invoice_number || '').trim() || `NATDEV${String(orderIdVal || 0).padStart(3, '0')}`;
+                        const payuRef = String(order.gateway_payment_id || order.refund_request_id || '').trim() || '—';
+                        return `
+                                        <tr>
+                                            <td>${orderRef}</td>
+                                            <td>${fmtDate(order.created_at)}</td>
+                                            <td>${fmt(order.total_amount)}</td>
+                                            <td>${payuRef}</td>
+                                            <td><span class="dash-status ${statusClass(order.status)}">${order.status}</span></td>
+                                        </tr>
+                                    `;
+                    }).join('')}
+                                </tbody>
+                            </table>
+                        </div>`;
+                } catch {
+                    container.innerHTML = '<p class="dash-error">Failed to load payments.</p>';
+                }
+            }
+
+            async function loadAddresses() {
+                const container = document.getElementById('dashAddressContent');
+                container.innerHTML = '<div class="dash-loading"><div class="spinner"></div><p>Loading addresses...</p></div>';
+
+                try {
+                    const res = await fetch(`${API_BASE}/addresses`, { headers });
+                    const data = await res.json();
+
+                    if (!data.success || !data.addresses || data.addresses.length === 0) {
+                        container.innerHTML = `
+                            <div class="dash-empty-state">
+                                <p>No addresses saved yet.</p>
+                                <p class="dash-empty-hint">Add an address during checkout.</p>
+                            </div>`;
+                        return;
+                    }
+
+                    container.innerHTML = `
+                        <div class="dash-address-list">
+                            ${data.addresses.map(address => {
+                                const displayAddress = normalizeAddressDisplay(address);
+                                return `
+                                <div class="dash-address-list-item">
+                                    <div class="dash-address-row">
+                                        <div class="dash-address-details">
+                                            <h3>${displayAddress.displayName || 'Address'}</h3>
+                                            <p>${address.address_line || ''}</p>
+                                            <p>${address.city || ''}, ${address.state || ''} - ${address.pincode || ''}</p>
+                                            <p class="dash-address-mobile">${displayAddress.displayPhone || ''}</p>
+                                        </div>
+                                        <div class="dash-address-actions">
+                                            <button
+                                                type="button"
+                                                class="dash-address-action-btn dash-edit-addr-btn"
+                                                data-addr='${JSON.stringify(address).replace(/'/g, "&#39;")}'
+                                                aria-label="Edit address"
+                                            >
+                                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                                    <path d="M4 20h4l10.5-10.5a2.1 2.1 0 0 0 0-3L17.5 5a2.1 2.1 0 0 0-3 0L4 15.5V20z"></path>
+                                                    <path d="M13.5 6.5l4 4"></path>
+                                                </svg>
+                                                <span>Edit</span>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="dash-address-action-btn dash-address-delete-btn"
+                                                data-address-id="${address.id}"
+                                                aria-label="Delete address"
+                                            >
+                                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                                    <path d="M3 6h18"></path>
+                                                    <path d="M8 6V4h8v2"></path>
+                                                    <path d="M6 6l1 14h10l1-14"></path>
+                                                    <path d="M10 11v5"></path>
+                                                    <path d="M14 11v5"></path>
+                                                </svg>
+                                                <span>Delete</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>`;
+                            }).join('')}
+                        </div>`;
+
+                    // Attach action button listeners
+                    container.querySelectorAll('.dash-edit-addr-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const addr = JSON.parse(btn.dataset.addr);
+                            openEditAddress(addr);
+                        });
+                    });
+                    container.querySelectorAll('.dash-address-delete-btn').forEach(btn => {
+                        btn.addEventListener('click', async () => {
+                            const addressId = btn.dataset.addressId;
+                            if (!addressId) return;
+
+                            const ok = window.confirm('Delete this address? This cannot be undone.');
+                            if (!ok) return;
+
+                            try {
+                                btn.disabled = true;
+                                const originalText = btn.innerHTML;
+                                btn.dataset.originalText = originalText;
+                                btn.innerHTML = '<span>Deleting...</span>';
+
+                                const res = await fetch(`${API_BASE}/addresses/${addressId}`, {
+                                    method: 'DELETE',
+                                    headers
+                                });
+                                const data = await res.json();
+                                if (!data.success) {
+                                    throw new Error(data.message || 'Failed to delete address');
+                                }
+
+                                showToast('Address deleted successfully', 'success');
+                                await loadAddresses();
+                            } catch (err) {
+                                showToast(err.message || 'Failed to delete address');
+                            } finally {
+                                btn.disabled = false;
+                                if (btn.dataset.originalText) {
+                                    btn.innerHTML = btn.dataset.originalText;
+                                    delete btn.dataset.originalText;
+                                }
+                            }
+                        });
+                    });
+                } catch {
+                    container.innerHTML = '<p class="dash-error">Failed to load addresses.</p>';
+                }
+            }
+
+            // ── Address Edit Modal ──
+            const addressEditOverlay = document.getElementById('addressEditOverlay');
+            const closeAddressEditModal = document.getElementById('closeAddressEditModal');
+            const addressEditForm = document.getElementById('addressEditForm');
+
+            function openEditAddress(addr) {
+                document.getElementById('editAddrId').value = addr.id;
+                document.getElementById('editAddrName').value = addr.name || '';
+                document.getElementById('editAddrMobile').value = addr.mobile || '';
+                document.getElementById('editAddrLine').value = addr.address_line || '';
+                document.getElementById('editAddrPincode').value = addr.pincode || '';
+                document.getElementById('editAddrCity').value = addr.city || '';
+                document.getElementById('editAddrState').value = addr.state || '';
+                addressEditOverlay.classList.add('open');
+            }
+
+            function closeAddrEditModal() {
+                addressEditOverlay.classList.remove('open');
+            }
+
+            closeAddressEditModal?.addEventListener('click', closeAddrEditModal);
+            addressEditOverlay?.addEventListener('click', (e) => {
+                if (e.target === addressEditOverlay) closeAddrEditModal();
+            });
+
+            addressEditForm?.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const saveBtn = document.getElementById('saveAddrBtn');
+                const addrId = document.getElementById('editAddrId').value;
+                const body = {
+                    name: document.getElementById('editAddrName').value.trim(),
+                    mobile: document.getElementById('editAddrMobile').value.trim(),
+                    address_line: document.getElementById('editAddrLine').value.trim(),
+                    pincode: document.getElementById('editAddrPincode').value.trim(),
+                    city: document.getElementById('editAddrCity').value.trim(),
+                    state: document.getElementById('editAddrState').value.trim()
+                };
+
+                if (!body.address_line || !body.city || !body.state || !body.pincode) {
+                    showToast('Please fill all required fields');
+                    return;
+                }
+
+                saveBtn.disabled = true;
+                saveBtn.textContent = 'Saving...';
+                try {
+                    const res = await fetch(`${API_BASE}/addresses/${addrId}`, {
+                        method: 'PUT',
+                        headers,
+                        body: JSON.stringify(body)
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        showToast('Address updated successfully', 'success');
+                        closeAddrEditModal();
+                        await loadAddresses();
+                    } else {
+                        showToast(data.message || 'Failed to update address');
+                    }
+                } catch {
+                    showToast('Failed to connect to server');
+                } finally {
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = 'Save Address';
+                }
+            });
+
+            // Auto-fill city/state from pincode
+            document.getElementById('editAddrPincode')?.addEventListener('input', async (e) => {
+                const pin = e.target.value.trim();
+                if (pin.length === 6) {
+                    try {
+                        const res = await fetch(`${API_BASE}/pincode/${pin}`);
+                        const data = await res.json();
+                        if (data.success) {
+                            document.getElementById('editAddrCity').value = data.city || '';
+                            document.getElementById('editAddrState').value = data.state || '';
+                        }
+                    } catch { /* ignore */ }
+                }
+            });
+
+            async function loadProfile() {
+                try {
+                    const res = await fetch(`${API_BASE}/user/profile`, { headers });
+                    const data = await res.json();
+                    if (!data.success) return;
+
+                    const user = data.user;
+                    document.getElementById('profileName').value = user.name || '';
+                    document.getElementById('profileEmail').value = user.email || '';
+                    document.getElementById('profileMobile').value = user.mobile_number || '';
+                    document.getElementById('profileDob').value = user.dob || '';
+                    document.getElementById('profileCreated').value = fmtDate(user.created_at);
+
+                    if (user.gender) {
+                        const selectedGender = document.querySelector(`input[name="profileGender"][value="${user.gender}"]`);
+                        if (selectedGender) selectedGender.checked = true;
+                    }
+                } catch {
+                    showToast('Failed to load profile', 'error');
+                }
+            }
+
+            document.getElementById('dashProfileForm')?.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const saveBtn = document.getElementById('profileSaveBtn');
+                const name = document.getElementById('profileName').value.trim();
+                const email = document.getElementById('profileEmail').value.trim();
+                const dob = document.getElementById('profileDob').value.trim();
+                const gender = document.querySelector('input[name="profileGender"]:checked')?.value || '';
+
+                if (!name) {
+                    showToast('Please enter your name');
+                    return;
+                }
+
+                saveBtn.disabled = true;
+                saveBtn.textContent = 'Saving...';
+                try {
+                    const res = await fetch(`${API_BASE}/user/profile`, {
+                        method: 'PUT',
+                        headers,
+                        body: JSON.stringify({ name, email, dob, gender })
+                    });
+                    const data = await res.json();
+                    if (!data.success) {
+                        showToast(data.message || 'Failed to update profile');
+                        return;
+                    }
+
+                    const localUser = getUser() || {};
+                    localStorage.setItem('DEVASTHRA_user', JSON.stringify({ ...localUser, name, email, dob, gender }));
+                    showToast('Profile updated successfully', 'success');
+                } catch {
+                    showToast('Failed to connect to server');
+                } finally {
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = 'Save Changes';
+                }
+            });
+
+            function renderSupportMessages(messages = []) {
+                const headerEl = document.getElementById('userSupportHeader');
+                const messagesEl = document.getElementById('userSupportMessages');
+                if (!messagesEl) return;
+
+                headerEl.textContent = 'Talk to support';
+                if (!messages.length) {
+                    messagesEl.innerHTML = '<div class="dash-empty-state"><p>No messages yet. Start the conversation and the admin team will reply here.</p></div>';
+                    return;
+                }
+
+                messagesEl.innerHTML = messages.map(message => `
+                    <div style="display:flex;justify-content:${message.sender_type === 'user' ? 'flex-end' : 'flex-start'};">
+                        <div style="max-width:min(80%,520px);padding:12px 14px;border-radius:14px;background:${message.sender_type === 'user' ? '#6B0F2B' : '#fff'};color:${message.sender_type === 'user' ? '#fff' : '#111'};box-shadow:0 6px 18px rgba(0,0,0,.06);">
+                            <div style="font-size:.92rem;line-height:1.5;">${escapeHtml(message.message)}</div>
+                            <div style="font-size:.72rem;opacity:.8;margin-top:6px;">${fmtDate(message.created_at)}</div>
+                        </div>
+                    </div>
+                `).join('');
+                messagesEl.scrollTop = messagesEl.scrollHeight;
+            }
+
+            async function loadSupportConversation() {
+                const messagesEl = document.getElementById('userSupportMessages');
+                if (!messagesEl) return;
+                messagesEl.innerHTML = '<div class="dash-loading"><div class="spinner"></div><p>Loading support chat...</p></div>';
+
+                try {
+                    const res = await fetch(`${API_BASE}/support/conversation`, { headers });
+                    const data = await res.json();
+                    if (!data.success) throw new Error(data.message || 'Failed to load support chat');
+                    renderSupportMessages(data.messages || []);
+                } catch (err) {
+                    messagesEl.innerHTML = `<p class="dash-error">${err.message || 'Failed to load support chat'}</p>`;
+                }
+            }
+
+            document.getElementById('userSupportForm')?.addEventListener('submit', async event => {
+                event.preventDefault();
+                const input = document.getElementById('userSupportInput');
+                const message = input.value.trim();
+                if (!message) return;
+
+                try {
+                    const res = await fetch(`${API_BASE}/support/messages`, {
+                        method: 'POST',
+                        headers,
+                        body: JSON.stringify({ message })
+                    });
+                    const data = await res.json();
+                    if (!data.success) throw new Error(data.message || 'Failed to send message');
+                    input.value = '';
+                    await loadSupportConversation();
+                    showToast('Message sent', 'success');
+                } catch (err) {
+                    showToast(err.message || 'Failed to send message');
+                }
+            });
+
+            setInterval(() => {
+                if (document.getElementById('sec-support')?.classList.contains('active')) {
+                    loadSupportConversation();
+                }
+            }, 5000);
+
+            switchSection('orders');
+        });
+    </script>
+
+    <!-- ===== SHARED FOOTER ===== -->
+    <div id="site-footer"></div>
+    <script src="chat-widget.js"></script>
+    <script src="site-header.js"></script>
+    <script src="site-footer.js"></script>
+    <script src="header-category-drawer.js"></script>
+</body>
+
+</html>

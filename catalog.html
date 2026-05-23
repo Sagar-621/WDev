@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categories - DEVASTHRA</title>
+    <meta name="description" content="Browse DEVASTHRA categories, subcategories, and products for men and women.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="backend/images/Fashion logo.jfif">
+</head>
+
+<body class="has-category-drawer">
+
+    <!-- ===== SHARED HEADER ===== -->
+    <div id="site-header"></div>
+
+    <main class="catalog-page">
+        <section class="catalog-hero">
+            <div class="container">
+                <nav class="pdp-breadcrumb catalog-breadcrumb">
+                    <a href="index.html">Home</a>
+                    <span>&rsaquo;</span>
+                    <a href="index.html#categories">Categories</a>
+                    <span>&rsaquo;</span>
+                    <span id="catalogBreadcrumbLabel">Catalog</span>
+                </nav>
+
+                <div class="catalog-hero-copy">
+                    <p class="section-subtitle" id="catalogAudienceLabel">Men</p>
+                    <h1 class="section-title" id="catalogTitle">Loading category...</h1>
+                    <p class="section-desc" id="catalogDescription">Please wait while we load the subcategories and products.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="catalog-shell">
+            <div class="container">
+                <div class="catalog-content">
+                    <section class="catalog-subcategories">
+                        <div class="catalog-section-header">
+                            <div>
+                                <p class="section-subtitle">Subcategories</p>
+                                <h2 class="section-title" id="subcategorySectionTitle">Choose a subcategory</h2>
+                            </div>
+                            <a href="#" id="viewAllProductsLink" class="btn btn-outline">View All In Category</a>
+                        </div>
+                        <div class="catalog-subcategory-grid" id="catalogSubcategoryGrid"></div>
+                    </section>
+
+                    <section class="catalog-products-section">
+                        <div class="catalog-section-header">
+                            <div>
+                                <p class="section-subtitle">Products</p>
+                                <h2 class="section-title" id="productsSectionTitle">Category Products</h2>
+                            </div>
+                            <p class="catalog-result-copy" id="catalogResultCopy"></p>
+                        </div>
+                        <div class="products-grid catalog-products-grid" id="catalogProductsGrid"></div>
+                    </section>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ===== SHARED FOOTER ===== -->
+    <div id="site-footer"></div>
+
+    <script src="site-header.js"></script>
+    <script src="site-footer.js"></script>
+    <script src="js/catalog-browser.js"></script>
+    <script src="header-category-drawer.js"></script>
+    <script src="chat-widget.js"></script>
+</body>
+
+</html>
+

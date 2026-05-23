@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Terms of Service — DEVASTHRA</title>
+    <meta name="description" content="Terms of Service for DEVASTHRA">
+    <script src="runtime-env.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="backend/images/Fashion logo.jfif">
+</head>
+
+<body>
+    <div id="site-header"></div>
+
+    <main class="container legal-page">
+        <h1 id="termsOfServiceHeading">Terms of Service</h1>
+        <p id="termsOfServiceUpdated">Last updated: February 24, 2026</p>
+        <div id="termsOfServiceDocumentLink" hidden></div>
+        <div id="termsOfServiceContent">
+            <section>
+                <h2>Agreement to Terms</h2>
+                <p>These Terms govern your use of the DEVASTHRA website. By accessing or using the site you agree to be
+                    bound by these terms.</p>
+                <p>For legal and payment processing purposes, this website is operated by NATOO KART TECHNOLOGIES PRIVATE LIMITED.</p>
+            </section>
+
+            <section>
+                <h2>Use of the Site</h2>
+                <p>You agree to use the site only for lawful purposes and in accordance with these Terms. You must not
+                    misuse our services.</p>
+            </section>
+
+            <section>
+                <h2>Purchases</h2>
+                <p>All purchases are subject to our Shipping & Returns policy. Product descriptions and pricing are subject
+                    to change.</p>
+            </section>
+
+            <section>
+                <h2>Intellectual Property</h2>
+                <p>All content on the site is owned or licensed by DEVASTHRA and protected by applicable intellectual
+                    property laws.</p>
+            </section>
+
+            <section>
+                <h2>Limitation of Liability</h2>
+                <p>To the fullest extent permitted by law, DEVASTHRA is not liable for indirect or consequential damages
+                    arising from use of the site.</p>
+            </section>
+            </div>
+
+        <section>
+            <h2>Business Contact</h2>
+            <p>Questions regarding these Terms may be directed to NATOO KART TECHNOLOGIES PRIVATE LIMITED at <a href="mailto:support@natookart.com">support@natookart.com</a>.</p>
+        </section>
+    </main>
+
+    <div id="site-footer"></div>
+
+    <script src="site-header.js"></script>
+    <script src="site-footer.js"></script>
+    <script src="header-category-drawer.js"></script>
+    <script src="chat-widget.js"></script>
+    <script>
+        (async function loadTermsOfService() {
+            try {
+                const res = await fetch(`${window.__API_BASE || window.location.origin}/api/policies/terms`);
+                const data = await res.json();
+                if (!data.success || !data.policy) return;
+
+                const heading = document.getElementById('termsOfServiceHeading');
+                const updated = document.getElementById('termsOfServiceUpdated');
+                const content = document.getElementById('termsOfServiceContent');
+                const docLink = document.getElementById('termsOfServiceDocumentLink');
+
+                if (heading) heading.textContent = data.policy.title || 'Terms of Service';
+                if (updated) updated.textContent = data.policy.last_updated
+                    ? `Last updated: ${data.policy.last_updated}`
+                    : '';
+                if (content && data.policy.content) {
+                    content.textContent = data.policy.content;
+                    content.style.whiteSpace = 'pre-wrap';
+                }
+                if (docLink && data.policy.document_url) {
+                    docLink.hidden = false;
+                    docLink.innerHTML = `<p><a href="${data.policy.document_url}" target="_blank" rel="noopener">View source document</a></p>`;
+                }
+            } catch (error) {
+                console.warn('Unable to load admin-managed terms of service:', error.message);
+            }
+        })();
+    </script>
+</body>
+
+</html>
+

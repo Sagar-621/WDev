@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Keep admin and backend paths out of search indexing.
+Disallow: /admin/
+Disallow: /backend/
+Disallow: /upload/
+
+Sitemap: https://devasthra.com/sitemap.xml
+

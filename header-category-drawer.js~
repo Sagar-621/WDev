@@ -1,0 +1,133 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const menuButton = document.getElementById('headerMenuBtn');
+    const drawer = document.getElementById('categoryDrawer');
+    const overlay = document.getElementById('categoryDrawerOverlay');
+    const closeButton = document.getElementById('categoryDrawerClose');
+    const audienceSwitch = document.getElementById('drawerAudienceSwitch');
+    const categoryList = document.getElementById('drawerCategoryList');
+
+    if (!menuButton || !drawer || !overlay || !closeButton || !audienceSwitch || !categoryList) return;
+
+    const API_BASE = window.__API_BASE || (
+        window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1' ||
+        window.location.protocol === 'file:'
+            ? 'http://localhost:5000'
+            : window.location.origin
+    );
+    const fetchTaxonomy = window.__fetchJsonWithApiFallback
+        ? () => window.__fetchJsonWithApiFallback('/api/products/taxonomy')
+        : async () => {
+            const response = await fetch(`${API_BASE}/api/products/taxonomy`);
+            return {
+                base: API_BASE,
+                url: `${API_BASE}/api/products/taxonomy`,
+                response,
+                data: await response.json()
+            };
+        };
+    const params = new URLSearchParams(window.location.search);
+    let taxonomy = {};
+    let audiences = [];
+    let activeAudience = '';
+    let expandedCategory = params.get('category') || '';
+    const activeSubcategory = params.get('subcategory') || '';
+
+    function openDrawer() {
+        drawer.classList.add('open');
+        overlay.classList.add('visible');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+        drawer.classList.remove('open');
+        overlay.classList.remove('visible');
+        document.body.style.overflow = '';
+    }
+
+    function renderAudienceSwitch() {
+        if (!audiences.length) {
+            audienceSwitch.innerHTML = '';
+            return;
+        }
+
+        audienceSwitch.innerHTML = audiences.map((audience) => `
+            <button type="button" class="drawer-audience-chip ${audience === activeAudience ? 'active' : ''}" data-audience="${audience}">
+                ${audience}
+            </button>
+        `).join('');
+
+        audienceSwitch.querySelectorAll('[data-audience]').forEach((button) => {
+            button.addEventListener('click', () => {
+                activeAudience = button.getAttribute('data-audience');
+                expandedCategory = taxonomy[activeAudience]?.[0]?.category || '';
+                renderAudienceSwitch();
+                renderCategoryList();
+            });
+        });
+    }
+
+    function renderCategoryList() {
+        const audienceTaxonomy = Array.isArray(taxonomy[activeAudience]) ? taxonomy[activeAudience] : [];
+        if (!audienceTaxonomy.length) {
+            categoryList.innerHTML = `<p style="color:#666;padding:8px 0;">No categories available right now.</p>`;
+            return;
+        }
+
+        categoryList.innerHTML = audienceTaxonomy.map((entry) => `
+            <div class="drawer-category-group ${expandedCategory === entry.category ? 'active' : ''}">
+                <div class="drawer-category-row">
+                    <a class="drawer-category-link" href="catalog.html?gender=${encodeURIComponent(activeAudience)}&category=${encodeURIComponent(entry.category)}">
+                        ${entry.category}
+                    </a>
+                    <button type="button" class="drawer-category-toggle" data-category="${entry.category}" aria-label="Toggle ${entry.category}">
+                        <span>${expandedCategory === entry.category ? '-' : '+'}</span>
+                    </button>
+                </div>
+                <div class="drawer-subcategory-list">
+                    ${entry.subcategories.map((subcategory) => `
+                        <a class="drawer-subcategory-link ${expandedCategory === entry.category && activeSubcategory === subcategory ? 'active' : ''}" href="catalog.html?gender=${encodeURIComponent(activeAudience)}&category=${encodeURIComponent(entry.category)}&subcategory=${encodeURIComponent(subcategory)}">
+                            ${subcategory}
+                        </a>
+                    `).join('')}
+                </div>
+            </div>
+        `).join('');
+
+        categoryList.querySelectorAll('.drawer-category-toggle').forEach((button) => {
+            button.addEventListener('click', () => {
+                const category = button.getAttribute('data-category');
+                expandedCategory = expandedCategory === category ? '' : category;
+                renderCategoryList();
+            });
+        });
+
+        categoryList.querySelectorAll('a').forEach((link) => {
+            link.addEventListener('click', closeDrawer);
+        });
+    }
+
+    menuButton.addEventListener('click', openDrawer);
+    closeButton.addEventListener('click', closeDrawer);
+    overlay.addEventListener('click', closeDrawer);
+
+    (async () => {
+        try {
+            const { data } = await fetchTaxonomy();
+            taxonomy = data.success ? (data.taxonomy || {}) : {};
+            audiences = Object.keys(taxonomy);
+            activeAudience = audiences.includes(params.get('gender')) ? params.get('gender') : (audiences.includes('Men') ? 'Men' : audiences[0]);
+
+            if (!expandedCategory) {
+                expandedCategory = taxonomy[activeAudience]?.[0]?.category || '';
+            }
+
+            renderAudienceSwitch();
+            renderCategoryList();
+        } catch (error) {
+            console.error('Category drawer failed:', error);
+            categoryList.innerHTML = `<p style="color:#c0392b;padding:8px 0;">Could not load categories. Check API base configuration.</p>`;
+        }
+    })();
+});
+

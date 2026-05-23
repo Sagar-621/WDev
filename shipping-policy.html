@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Shipping Policy - DEVASTHRA</title>
+    <meta name="description" content="Shipping Policy for DEVASTHRA">
+    <script src="runtime-env.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="backend/images/Fashion logo.jfif">
+</head>
+
+<body>
+    <div id="site-header"></div>
+
+    <main class="container legal-page">
+        <h1 id="shippingPolicyHeading">Shipping Policy</h1>
+        <p id="shippingPolicyUpdated">Last updated: May 14, 2026</p>
+        <div id="shippingPolicyDocumentLink" hidden></div>
+        <div id="shippingPolicyContent">
+            <section>
+                <h2>Shipping Time</h2>
+                <p>After processing, your order will be shipped within 5 business days.</p>
+                <p>All products will be delivered within 5-7 business days.</p>
+            </section>
+        </div>
+    </main>
+
+    <div id="site-footer"></div>
+
+    <script src="site-header.js"></script>
+    <script src="site-footer.js"></script>
+    <script src="header-category-drawer.js"></script>
+    <script src="chat-widget.js"></script>
+    <script>
+        (async function loadShippingPolicy() {
+            try {
+                const res = await fetch(`${window.__API_BASE || window.location.origin}/api/policies/shipping`);
+                const data = await res.json();
+                if (!data.success || !data.policy) return;
+
+                const heading = document.getElementById('shippingPolicyHeading');
+                const updated = document.getElementById('shippingPolicyUpdated');
+                const content = document.getElementById('shippingPolicyContent');
+                const docLink = document.getElementById('shippingPolicyDocumentLink');
+
+                if (heading) heading.textContent = data.policy.title || 'Shipping Policy';
+                if (updated) updated.textContent = data.policy.last_updated
+                    ? `Last updated: ${data.policy.last_updated}`
+                    : '';
+                if (content && data.policy.content) {
+                    content.textContent = data.policy.content;
+                    content.style.whiteSpace = 'pre-wrap';
+                }
+                if (docLink && data.policy.document_url) {
+                    docLink.hidden = false;
+                    docLink.innerHTML = `<p><a href="${data.policy.document_url}" target="_blank" rel="noopener">View source document</a></p>`;
+                }
+            } catch (error) {
+                console.warn('Unable to load admin-managed shipping policy:', error.message);
+            }
+        })();
+    </script>
+</body>
+
+</html>

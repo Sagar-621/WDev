@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collection - DEVASTHRA</title>
+    <meta name="description" content="Browse related products inside the selected DEVASTHRA collection.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="backend/images/Fashion logo.jfif">
+</head>
+
+<body>
+    <div id="site-header"></div>
+
+    <main class="collection-page">
+        <section class="collections collection-page-shell" style="padding-top:0;">
+        <div class="container">
+            <nav class="pdp-breadcrumb" style="margin-bottom:28px;">
+                <a href="index.html">Home</a>
+                <span>›</span>
+                <a href="index.html#categories">Categories</a>
+                <span>›</span>
+                <span id="collectionBreadcrumb">Collection</span>
+            </nav>
+
+            <section class="collection-hero fade-in">
+                <div class="collection-hero-copy">
+                    <p class="section-subtitle collection-hero-kicker">Collection Spotlight</p>
+                    <h1 class="collection-hero-title" id="collectionTitle">Loading Collection...</h1>
+                    <p class="collection-hero-description" id="collectionDescription">Please wait while we load the products in this collection.</p>
+                    <div class="collection-hero-meta">
+                        <div class="collection-hero-stat">
+                            <span class="collection-hero-stat-value" id="collectionProductCount">0</span>
+                            <span class="collection-hero-stat-label">Products</span>
+                        </div>
+                        <div class="collection-hero-stat">
+                            <span class="collection-hero-stat-value" id="collectionAudience">Collection</span>
+                            <span class="collection-hero-stat-label">Audience</span>
+                        </div>
+                    </div>
+                    <div class="collection-hero-actions">
+                        <a href="index.html#categories" class="btn btn-dark">All Categories</a>
+                        <a href="#relatedProductsGrid" class="btn btn-outline">Browse Products</a>
+                    </div>
+                </div>
+                <div class="collection-hero-media">
+                    <img id="collectionImage" src="" alt="">
+                </div>
+            </section>
+
+            <section class="collection-toolbar fade-in">
+                <div class="collection-toolbar-copy">
+                    <p class="section-subtitle" style="text-align:left;margin-bottom:6px;">Browse More</p>
+                    <h2 class="section-title collection-toolbar-title">Switch Collections</h2>
+                    <p class="collection-toolbar-summary" id="relatedSummary">Choose the product you want to view in detail before buying.</p>
+                </div>
+                <div class="collection-toolbar-actions">
+                    <a href="index.html#categories" class="btn btn-dark">All Categories</a>
+                </div>
+            </section>
+
+            <section class="fade-in" style="margin-bottom:28px;">
+                <div class="collection-switcher" id="collectionSwitcher"></div>
+            </section>
+
+            <section class="collection-products-block">
+                <div class="collection-products-head">
+                    <div>
+                        <p class="section-subtitle" style="text-align:left;margin-bottom:6px;">Shop The Edit</p>
+                        <h2 class="section-title collection-toolbar-title" id="relatedHeading">Explore This Collection</h2>
+                    </div>
+                </div>
+                <div class="products-grid collection-shop-grid" id="relatedProductsGrid"></div>
+            </section>
+        </div>
+        </section>
+    </main>
+
+    <div id="site-footer"></div>
+
+    <div class="toast" id="toast">
+        <span class="toast-icon">✓</span>
+        <span id="toastMessage">Item added to cart</span>
+    </div>
+
+    <div class="otp-overlay" id="otpOverlay"></div>
+    <div class="otp-modal" id="otpModal" role="dialog" aria-modal="true" aria-label="Login with OTP">
+        <button class="otp-close" id="otpCloseBtn" aria-label="Close">&times;</button>
+        <div class="otp-modal-header">
+            <h2>Login to Continue</h2>
+            <p>Enter your mobile number to receive an OTP</p>
+        </div>
+        <div id="otpStep1">
+            <div class="otp-field-group">
+                <label for="otpMobile">Mobile Number <span class="required-star">*</span></label>
+                <div class="otp-phone-input">
+                    <span class="otp-flag">+91</span>
+                    <input type="tel" id="otpMobile" placeholder="Enter 10-digit number" maxlength="10"
+                        autocomplete="tel">
+                </div>
+            </div>
+            <p class="otp-msg" id="otpMessage"></p>
+            <button class="btn btn-primary otp-action-btn" id="sendOtpBtn">Send OTP</button>
+        </div>
+        <div id="otpStep2" style="display:none">
+            <p class="otp-msg" id="otpMessage2"></p>
+            <div class="otp-field-group">
+                <label for="otpInput">OTP <span class="required-star">*</span></label>
+                <input type="text" id="otpInput" placeholder="Enter 6-digit OTP" maxlength="6"
+                    autocomplete="one-time-code" inputmode="numeric">
+            </div>
+            <button class="btn btn-primary otp-action-btn" id="verifyOtpBtn">Sign In</button>
+            <button class="otp-resend-btn" id="resendOtpBtn" disabled>Resend OTP</button>
+        </div>
+        <p class="otp-terms">By continuing, you agree to our <a href="privacy-policy.html">Privacy Policy</a> &amp;
+            Terms</p>
+    </div>
+
+    <script src="site-header.js"></script>
+    <script src="site-footer.js"></script>
+    <script src="js/related-products.js"></script>
+    <script src="header-category-drawer.js"></script>
+    <script src="chat-widget.js"></script>
+</body>
+
+</html>
+

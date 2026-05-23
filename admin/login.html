@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - DEVASTHRA</title>
+    <script src="../runtime-env.js"></script>
+    <link rel="icon" href="" id="brandFavicon">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Segoe UI", sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a0a10 0%, #3d1525 50%, #6b0f2b 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 48px 40px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-card::before {
+            content: "";
+            position: absolute;
+            inset: 0 0 auto 0;
+            height: 6px;
+            background: linear-gradient(90deg, #6b0f2b 0%, #b45309 100%);
+        }
+
+        .login-brand {
+            text-align: center;
+            margin-bottom: 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .login-brand-images {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .login-brand img.round-logo {
+            width: 48px;
+            height: 48px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .login-brand img.logo-text-img-1 {
+            height: 82px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .login-brand p {
+            color: #888;
+            font-size: 0.875rem;
+            margin-top: 4px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #fff3e0;
+            color: #e67e22;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .password-field {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            padding: 0 14px 0 0;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 12px;
+            background: #fff;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .password-field:focus-within {
+            border-color: #b45309;
+            box-shadow: 0 0 0 3px rgba(180, 83, 9, 0.08);
+        }
+
+        .password-field input {
+            padding: 12px 16px;
+        }
+
+        .password-toggle {
+            border: none;
+            background: transparent;
+            color: #6b0f2b;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 40px;
+        }
+
+        .password-toggle:hover {
+            background: rgba(107, 15, 43, 0.06);
+        }
+
+        .password-toggle svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 6px;
+        }
+
+        .otp-target {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 12px;
+            background: #fff;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .field-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            color: #6b0f2b;
+            flex: 0 0 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 0;
+            border: none;
+            border-radius: 0;
+            font-size: 0.95rem;
+            background: transparent;
+            outline: none;
+        }
+
+        .otp-target {
+            font-size: 0.95rem;
+            color: #6b0f2b;
+            background: #faf5f7;
+            font-weight: 600;
+            border-color: #ead1d9;
+        }
+
+        .text-field {
+            width: 100%;
+            padding: 0 16px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 12px;
+            background: #fff;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .text-field:focus-within {
+            border-color: #b45309;
+            box-shadow: 0 0 0 3px rgba(180, 83, 9, 0.08);
+        }
+
+        .text-field input {
+            padding: 12px 0;
+        }
+
+        .otp-target-copy {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .otp-target-copy small {
+            color: #8b5b6a;
+            font-size: 0.76rem;
+            font-weight: 500;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: #6b0f2b;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn:hover {
+            background: #55091f;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .error-msg {
+            color: #c0392b;
+            font-size: 0.85rem;
+            margin-top: 12px;
+            text-align: center;
+            min-height: 20px;
+        }
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 38px 22px 28px;
+            }
+
+            .login-brand img.logo-text-img-1 {
+                height: 68px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-card">
+        <div class="login-brand">
+            <div class="login-brand-images">
+                <img src="" alt="Logo" class="round-logo" id="brandRoundLogo">
+                <img src="" alt="DEVASTHRA" class="logo-text-img-1" id="brandTextLogo">
+            </div>
+            <div class="badge">Admin Panel</div>
+            <p>Login with email, password, and OTP to manage orders</p>
+        </div>
+
+        <form id="loginForm">
+            <div id="credentialsStep">
+                <div class="form-group">
+                    <label for="adminEmail">Admin Email <span style="color:#c0392b;">*</span></label>
+                    <div class="text-field">
+                        <input type="email" id="adminEmail" placeholder="support@devasthra.com" autocomplete="username">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="adminPassword">Password <span style="color:#c0392b;">*</span></label>
+                    <div class="password-field">
+                        <input type="password" id="adminPassword" placeholder="Enter admin password" autocomplete="current-password">
+                        <button type="button" class="password-toggle" id="passwordToggle" aria-label="Show password" aria-pressed="false">
+                            <svg id="passwordToggleIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="otpSendStep" style="display:none;">
+                <div class="form-group">
+                    <label>OTP will be sent to</label>
+                    <div class="otp-target" id="adminOtpMobile">Configured admin mobile</div>
+                </div>
+                <div class="form-group">
+                    <label>Email OTP will be sent to</label>
+                    <div class="otp-target" id="adminOtpEmail">Configured admin email</div>
+                </div>
+            </div>
+
+            <div id="otpVerifyStep" style="display:none;">
+                <div class="form-group">
+                    <label for="adminOtp">Verification Code <span style="color:#c0392b;">*</span></label>
+                    <div class="text-field">
+                        <input type="text" id="adminOtp" placeholder="Enter 6-digit verification code" maxlength="6" inputmode="numeric" autocomplete="one-time-code">
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn" id="loginBtn">Get OTP</button>
+            <p class="error-msg" id="errorMsg"></p>
+        </form>
+    </div>
+
+    <script>
+        const isLocalEnv = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:';
+        const API_BASE = window.__API_BASE || (isLocalEnv ? 'http://localhost:5000' : window.location.origin);
+        const STATIC_BASE = window.__STATIC_BASE || (isLocalEnv ? API_BASE : 'https://devasthra.com');
+        const form = document.getElementById('loginForm');
+        const errMsg = document.getElementById('errorMsg');
+        const loginBtn = document.getElementById('loginBtn');
+        const brandFavicon = document.getElementById('brandFavicon');
+        const brandRoundLogo = document.getElementById('brandRoundLogo');
+        const brandTextLogo = document.getElementById('brandTextLogo');
+        const credentialsStep = document.getElementById('credentialsStep');
+        const otpSendStep = document.getElementById('otpSendStep');
+        const otpVerifyStep = document.getElementById('otpVerifyStep');
+        const adminEmailInput = document.getElementById('adminEmail');
+        const adminPasswordInput = document.getElementById('adminPassword');
+        const passwordToggle = document.getElementById('passwordToggle');
+        const passwordToggleIcon = document.getElementById('passwordToggleIcon');
+        const adminOtpMobile = document.getElementById('adminOtpMobile');
+        const adminOtpEmail = document.getElementById('adminOtpEmail');
+
+        brandFavicon.href = `${STATIC_BASE}/backend/images/Fashion%20logo.jfif`;
+        brandRoundLogo.src = `${STATIC_BASE}/backend/images/Fashion%20logo.jfif`;
+        brandTextLogo.src = `${STATIC_BASE}/backend/images/red_text_logo.png`;
+
+        if (localStorage.getItem('DEVASTHRA_admin_token')) {
+            window.location.href = 'dashboard.html';
+        }
+
+        function setPasswordVisibility(show) {
+            adminPasswordInput.type = show ? 'text' : 'password';
+            passwordToggle.setAttribute('aria-pressed', show ? 'true' : 'false');
+            passwordToggle.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+            passwordToggleIcon.innerHTML = show
+                ? '<path d="M3 3l18 18"></path><path d="M10.58 10.58A3 3 0 0 0 12 15a3 3 0 0 0 2.42-1.22"></path><path d="M9.88 5.08A10.94 10.94 0 0 1 12 5c7 0 11 7 11 7a19.4 19.4 0 0 1-3.17 4.17"></path><path d="M6.11 6.11C2.68 8.23 1 12 1 12s4 7 11 7a10.8 10.8 0 0 0 4.22-.8"></path>'
+                : '<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"></path><circle cx="12" cy="12" r="3"></circle>';
+        }
+
+        passwordToggle.addEventListener('click', () => {
+            setPasswordVisibility(adminPasswordInput.type === 'password');
+        });
+
+        let pendingAdminId = null;
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errMsg.textContent = '';
+            loginBtn.disabled = true;
+
+            if (!pendingAdminId) {
+                loginBtn.textContent = 'Sending OTP...';
+                const email = adminEmailInput.value.trim();
+                const password = adminPasswordInput.value.trim();
+
+                if (!email || !password) {
+                    errMsg.textContent = 'Please enter the admin email and password first.';
+                    loginBtn.textContent = 'Get OTP';
+                    loginBtn.disabled = false;
+                    return;
+                }
+
+                try {
+                    const res = await fetch(`${API_BASE}/admin/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, password })
+                    });
+                    const data = await res.json();
+
+                    if (data.success && data.otpRequired) {
+                        pendingAdminId = data.adminId;
+                        if (data.mobileHint) {
+                            adminOtpMobile.innerHTML = `
+                                <span class="field-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="7" y="2" width="10" height="20" rx="2"></rect>
+                                        <path d="M11 18h2"></path>
+                                    </svg>
+                                </span>
+                                <span class="otp-target-copy">
+                                    <span>${data.mobileHint}</span>
+                                </span>
+                            `;
+                        }
+                        if (data.emailHint) {
+                            adminOtpEmail.innerHTML = `
+                                <span class="field-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M4 6h16v12H4z"></path>
+                                        <path d="M4 8l8 6 8-6"></path>
+                                    </svg>
+                                </span>
+                            <span>${data.emailHint}</span>
+                        `;
+                        }
+                        credentialsStep.style.display = 'none';
+                        otpSendStep.style.display = 'none';
+                        otpVerifyStep.style.display = 'block';
+                        loginBtn.textContent = 'Verify OTP';
+                        document.getElementById('adminOtp').focus();
+                    } else {
+                        errMsg.textContent = 'Login failed';
+                        loginBtn.textContent = 'Get OTP';
+                    }
+                } catch {
+                    errMsg.textContent = 'Login failed';
+                    loginBtn.textContent = 'Get OTP';
+                } finally {
+                    loginBtn.disabled = false;
+                }
+            } else {
+                loginBtn.textContent = 'Verifying OTP...';
+                const otp = document.getElementById('adminOtp').value.trim();
+
+                if (!/^\d{6}$/.test(otp)) {
+                    errMsg.textContent = 'Enter a valid 6-digit OTP';
+                    loginBtn.textContent = 'Verify OTP';
+                    loginBtn.disabled = false;
+                    return;
+                }
+
+                try {
+                    const res = await fetch(`${API_BASE}/admin/verify-otp`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ adminId: pendingAdminId, otp })
+                    });
+                    const data = await res.json();
+
+                    if (data.success) {
+                        localStorage.setItem('DEVASTHRA_admin_token', data.token);
+                        localStorage.setItem('DEVASTHRA_admin_user', data.username || 'admin');
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        errMsg.textContent = 'Login failed';
+                        loginBtn.textContent = 'Verify OTP';
+                    }
+                } catch {
+                    errMsg.textContent = 'Login failed';
+                    loginBtn.textContent = 'Verify OTP';
+                } finally {
+                    loginBtn.disabled = false;
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
+
