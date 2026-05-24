@@ -947,37 +947,49 @@ button {
         min-height: 70vh;
     }
 
+    .hero-slide .hero-content {
+        justify-content: flex-start;
+        padding: 76px 20px 54px;
+    }
+
     .hero-content {
         padding: 0 20px;
     }
 
     .hero-badge-premium {
-        font-size: 0.6rem;
-        letter-spacing: 2px;
-        padding: 7px 18px;
-        margin-bottom: 18px;
+        font-size: 0.52rem;
+        letter-spacing: 1.8px;
+        padding: 6px 14px;
+        margin-bottom: 14px;
     }
 
     .hero-title {
-        font-size: clamp(1.8rem, 7vw, 2.6rem);
-        margin-bottom: 14px;
-        letter-spacing: -0.3px;
+        font-size: clamp(1.45rem, 6vw, 2.05rem);
+        margin-bottom: 10px;
+        letter-spacing: -0.2px;
     }
 
     .hero-tagline {
-        font-size: 0.88rem;
-        line-height: 1.6;
-        margin-bottom: 24px;
+        font-size: 0.78rem;
+        line-height: 1.45;
+        margin-bottom: 18px;
     }
 
     .hero-buttons {
-        gap: 12px;
-        margin-bottom: 28px;
+        gap: 10px;
+        margin-bottom: 18px;
+        width: min(100%, 320px);
+        position: relative;
+        z-index: 13;
     }
 
     .hero-buttons .btn {
-        padding: 12px 24px;
-        font-size: 0.78rem;
+        padding: 10px 18px;
+        font-size: 0.72rem;
+        min-height: 42px;
+        white-space: normal;
+        line-height: 1.2;
+        box-shadow: 0 8px 18px rgba(74, 10, 30, 0.16);
     }
 
     .hero-dots {
@@ -993,6 +1005,9 @@ button {
     .hero-arrow {
         width: 36px;
         height: 36px;
+        top: 50%;
+        bottom: auto;
+        transform: translateY(-50%);
     }
 
     .hero-arrow svg {
@@ -1006,6 +1021,14 @@ button {
 
     .hero-arrow-next {
         right: 10px;
+    }
+
+    .hero-arrow:hover {
+        transform: translateY(-50%) scale(1.08);
+    }
+
+    .hero-arrow:active {
+        transform: translateY(-50%) scale(0.96);
     }
 
     .hero>.hero-trust-badges {
@@ -1032,11 +1055,16 @@ button {
 
 @media (max-width: 480px) {
     .hero {
-        min-height: 55vh;
+        min-height: 70vh;
+    }
+
+    .hero-slide .hero-content {
+        justify-content: flex-start;
+        padding: 72px 14px 96px;
     }
 
     .hero-title {
-        font-size: clamp(1.6rem, 8vw, 2rem);
+        font-size: clamp(1.25rem, 6.8vw, 1.7rem);
     }
 
     .hero-buttons {
@@ -1044,11 +1072,18 @@ button {
         gap: 10px;
         width: 100%;
         padding: 0 8px;
+        margin-bottom: 8px;
     }
 
     .hero-buttons .btn {
         width: 100%;
         text-align: center;
+        min-height: 42px;
+        padding: 10px 14px;
+        font-size: 0.72rem;
+        letter-spacing: 0.06em;
+        white-space: normal;
+        line-height: 1.2;
     }
 
     .hero>.hero-trust-badges {
@@ -1064,6 +1099,35 @@ button {
         padding: 0 14px;
         font-size: 0.58rem;
         letter-spacing: 0.7px;
+    }
+
+    .hero-arrow {
+        width: 32px;
+        height: 32px;
+        top: auto;
+        bottom: 16px;
+        transform: none;
+    }
+
+    .hero-arrow svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .hero-arrow-prev {
+        left: 8px;
+    }
+
+    .hero-arrow-next {
+        right: 8px;
+    }
+
+    .hero-arrow:hover {
+        transform: scale(1.08);
+    }
+
+    .hero-arrow:active {
+        transform: scale(0.96);
     }
 }
 
@@ -3108,6 +3172,7 @@ button.review-submit-btn:hover {
         padding: 8px 10px;
         min-height: 34px;
     }
+
 }
 
 /* ===== MOBILE BREAKPOINT: 320px ===== */

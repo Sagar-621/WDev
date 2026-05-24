@@ -389,6 +389,12 @@
     }
 
     /* Background poll runs always — even when panel is closed */
+    function stopBackgroundPolling() {
+        if (!pollTimer) return;
+        clearInterval(pollTimer);
+        pollTimer = null;
+    }
+
     function startBackgroundPolling() {
         if (pollTimer) return;
         pollTimer = setInterval(async () => {
@@ -397,6 +403,15 @@
             try {
                 const res = await fetch(`${API_BASE}/support/conversation`, { headers: { Authorization: `Bearer ${getToken()}` } });
                 const data = await parseApiResponse(res);
+                if (res.status === 401 || res.status === 403) {
+                    localStorage.removeItem('DEVASTHRA_token');
+                    localStorage.removeItem('DEVASTHRA_user');
+                    stopBackgroundPolling();
+                    if (!panelOpen) {
+                        showLoggedOutState();
+                    }
+                    return;
+                }
                 if (!data.success) return;
                 const msgs = data.messages || [];
                 const newSupportMsgs = msgs.filter(m => m.sender_type !== 'user' && (!lastSeenMsgId || m.id > lastSeenMsgId));
@@ -471,4 +486,3 @@
     if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', ensureWidget); }
     else { ensureWidget(); }
 })();
-

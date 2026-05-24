@@ -57,8 +57,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── 6. Price Formatter ──
     const fmt = p => '₹' + p.toLocaleString('en-IN');
+    const NO_IMAGE_PLACEHOLDER = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+        <svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+            <rect width="300" height="300" fill="#f5efe9"/>
+            <rect x="36" y="36" width="228" height="228" rx="20" fill="#fffaf6" stroke="#d8c8bd" stroke-width="2"/>
+            <path d="M98 178l34-34 24 24 26-26 20 20v24H98z" fill="#c9a96e" opacity=".55"/>
+            <circle cx="122" cy="118" r="14" fill="#700823" opacity=".35"/>
+            <text x="150" y="214" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" fill="#7a6a61">No Image</text>
+        </svg>
+    `);
     const getImageUrl = (url) => {
-        if (!url) return 'https://via.placeholder.com/300?text=No+Image';
+        if (!url) return NO_IMAGE_PLACEHOLDER;
         if (url.startsWith('http')) return url;
         return url.startsWith('/') ? `${API_BASE}${url}` : `${API_BASE}/${url}`;
     };
@@ -133,9 +142,27 @@ document.addEventListener('DOMContentLoaded', () => {
     function closeCornerPopup(position) {
         const shell = document.getElementById(`cornerPopup${position}`);
         if (!shell) return;
+        if (shell.contains(document.activeElement)) {
+            document.activeElement?.blur?.();
+        }
         shell.hidden = true;
         shell.style.display = 'none';
         shell.setAttribute('aria-hidden', 'true');
+    }
+
+    function bindCornerPopupImageFallback(position) {
+        const image = document.getElementById(`cornerPopup${position}Image`);
+        const media = document.getElementById(`cornerPopup${position}Media`);
+        const shell = document.getElementById(`cornerPopup${position}`);
+
+        if (!image || image.dataset.fallbackBound === 'true') return;
+
+        image.dataset.fallbackBound = 'true';
+        image.addEventListener('error', () => {
+            if (media) media.hidden = true;
+            if (shell) shell.classList.remove('has-image');
+            image.removeAttribute('src');
+        });
     }
 
     function renderCornerPopup(position, banner) {
@@ -159,12 +186,15 @@ document.addEventListener('DOMContentLoaded', () => {
         shell.hidden = false;
         shell.style.display = '';
         shell.removeAttribute('aria-hidden');
-        const imageUrl = getBannerImageUrl(banner.image_url || '');
-        shell.classList.toggle('has-image', Boolean(imageUrl));
+        bindCornerPopupImageFallback(position);
 
-        if (media) media.hidden = !imageUrl;
+        const imageUrl = banner.image_url ? getBannerImageUrl(banner.image_url) : '';
+        const hasImage = Boolean(imageUrl);
+        shell.classList.toggle('has-image', hasImage);
+
+        if (media) media.hidden = !hasImage;
         if (image) {
-            image.src = imageUrl || '';
+            image.src = hasImage ? imageUrl : '';
             image.alt = banner.title || `DEVASTHRA ${position} corner popup`;
         }
         if (kicker) {
