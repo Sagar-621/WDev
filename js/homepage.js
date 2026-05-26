@@ -392,7 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         ${product.avg_rating ? `<div class="product-rating"><span class="product-rating-stars">${renderStarsHTML(product.avg_rating)}</span><span class="product-rating-count">(${product.review_count})</span></div>` : ''}
                     </div>
-                    <button class="btn btn-primary product-atc-btn" data-id="${product.id}" data-name="${product.name}" style="margin:12px;width:calc(100% - 24px)">
+                    <button class="btn btn-primary product-atc-btn" data-id="${product.id}" data-name="${product.name}" data-price="${product.price}" style="margin:12px;width:calc(100% - 24px)">
                         Add to Cart
                     </button>
                 </div>`;
@@ -490,6 +490,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await res.json();
 
             if (data.success) {
+                if (window.firePixelAddToCart) {
+                    window.firePixelAddToCart({
+                        product_id: productId,
+                        sku: `SKU-${productId}`,
+                        name: btn?.getAttribute('data-name') || 'Product',
+                        price: Number(btn?.getAttribute('data-price') || data.item?.price || 0),
+                        quantity,
+                        size
+                    });
+                }
                 showToast('✓ Added to cart!', 'success');
                 updateCartBadge(data.cartCount);
                 if (btn) { btn.textContent = '✓ Added'; setTimeout(() => { btn.textContent = 'Add to Cart'; btn.disabled = false; }, 2000); }
@@ -555,6 +565,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 const data = await res.json();
                 if (!data.success) throw new Error(data.message || 'Failed to submit message');
+                if (window.firePixelContact) {
+                    window.firePixelContact({
+                        content_name: 'Contact Form Submission',
+                        content_category: 'Customer Support',
+                        method: 'form',
+                        email
+                    });
+                }
                 showToast('Message sent successfully! Our team will review it shortly.', 'success');
                 contactForm.reset();
             } catch (err) {
@@ -574,6 +592,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             try {
                 const data = await submitNewsletterSignup(email, 'footer-newsletter');
+                if (window.firePixelLead) {
+                    window.firePixelLead({
+                        content_name: 'Newsletter Signup',
+                        content_category: 'Newsletter',
+                        source: 'footer-newsletter',
+                        email
+                    });
+                }
                 showToast(
                     data.alreadySubscribed
                         ? 'You are already subscribed. Watch your inbox for DEVASTHRA updates.'
@@ -624,6 +650,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 const data = await submitNewsletterSignup(email, 'homepage-popup');
+                if (window.firePixelLead) {
+                    window.firePixelLead({
+                        content_name: 'Homepage Offer Signup',
+                        content_category: 'Newsletter',
+                        source: 'homepage-popup',
+                        email
+                    });
+                }
                 showToast(
                     data.alreadySubscribed
                         ? 'This email is already subscribed. Watch your inbox for DEVASTHRA offers.'

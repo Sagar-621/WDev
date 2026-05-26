@@ -137,8 +137,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         function renderAudienceSwitch() {
             if (!audienceSwitch) return;
 
+            if (!audiences.length) {
+                audienceSwitch.innerHTML = '';
+                audienceSwitch.style.display = 'none';
+                return;
+            }
+
+            audienceSwitch.style.display = '';
             audienceSwitch.innerHTML = audiences.map((audience) => `
-                
+                <button type="button" class="collection-switch-chip ${audience === activeAudience ? 'active' : ''}" data-audience="${audience}">
+                    <span class="collection-switch-copy">
+                        <strong>${audience}</strong>
+                        <small>${getAudienceSummary(products, taxonomy, audience).length} categories</small>
+                    </span>
+                </button>
             `).join('');
 
             audienceSwitch.querySelectorAll('[data-audience]').forEach((button) => {
@@ -212,4 +224,3 @@ document.addEventListener('DOMContentLoaded', async () => {
         categoriesGrid.innerHTML = `<p style="text-align:center;color:#c0392b;padding:40px">Could not load categories. Check API base configuration.</p>`;
     }
 });
-

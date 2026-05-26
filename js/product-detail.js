@@ -667,6 +667,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         pdpMetaRatingEl.style.display = initialAvg || initialCount ? 'block' : 'none';
     }
 
+    if (window.firePixelViewContent) {
+        window.firePixelViewContent({
+            product_id: product.id,
+            sku: `SKU-${product.id}`,
+            name: product.name,
+            category: product.category,
+            price: product.price
+        });
+    }
+
     const relatedNav = document.getElementById('relatedProductsNav');
     const relatedSection = document.getElementById('relatedProductsSection');
     const relatedGrid = document.getElementById('relatedProductsGrid');
@@ -878,6 +888,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             const data = await res.json();
 
             if (data.success) {
+                if (window.firePixelAddToCart) {
+                    window.firePixelAddToCart({
+                        product_id: product.id,
+                        sku: `SKU-${product.id}`,
+                        name: product.name,
+                        category: product.category,
+                        price: product.price,
+                        quantity,
+                        size: selectedSize || ''
+                    });
+                }
                 showToast(`${product.name} (${selectedSize || 'One Size'} × ${quantity}) added to cart`, 'success');
                 updateCartBadge(data.cartCount);
                 return true;
@@ -1008,7 +1029,28 @@ document.addEventListener('DOMContentLoaded', async () => {
                         sessionStorage.removeItem('pendingCart');
                         const r = await fetch(`${API_BASE}/add-to-cart`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${data.token}` }, body: JSON.stringify({ product_id: pid, size: sz, quantity: qty }) });
                         const rd = await r.json();
-                        if (rd.success) { updateCartBadge(rd.cartCount); showToast('✓ Added to cart!', 'success'); }
+                        if (rd.success) {
+                            if (window.firePixelAddToCart) {
+                                window.firePixelAddToCart({
+                                    product_id: pid,
+                                    sku: `SKU-${pid}`,
+                                    name: product.name,
+                                    category: product.category,
+                                    price: product.price,
+                                    quantity: qty,
+                                    size: sz || ''
+                                });
+                            }
+                            updateCartBadge(rd.cartCount);
+                            showToast('✓ Added to cart!', 'success');
+                        }
+                    }
+                    if (data.isNewUser && window.firePixelCompleteRegistration) {
+                        window.firePixelCompleteRegistration({
+                            content_name: 'Product Page Sign Up',
+                            content_category: 'Registration',
+                            method: 'otp'
+                        });
                     }
                 } else { setOTPMsg(data.message || 'Invalid OTP'); }
             } catch { setOTPMsg('Cannot connect to server'); }

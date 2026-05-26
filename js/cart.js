@@ -263,6 +263,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             showToast('Logged in successfully', 'success');
             await processPendingCart(data.token);
             await loadCart();
+            if (currentIsNewUser && window.firePixelCompleteRegistration) {
+                window.firePixelCompleteRegistration({
+                    content_name: 'Cart Page Sign Up',
+                    content_category: 'Registration',
+                    method: 'otp'
+                });
+            }
         } catch {
             setMsg('Verification failed', 'error');
         } finally {
@@ -562,7 +569,36 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return false;
             }
 
+            let pendingProduct = {
+                name: pending.name || 'Product',
+                price: pending.price || 0
+            };
+            if (!pendingProduct.name || !pendingProduct.price) {
+                try {
+                    const productRes = await fetch(`${API_BASE}/products/${pending.productId}`);
+                    const productData = await productRes.json();
+                    if (productData.success && productData.product) {
+                        pendingProduct = {
+                            name: productData.product.name || pendingProduct.name,
+                            price: Number(productData.product.price) || pendingProduct.price
+                        };
+                    }
+                } catch {
+                    // Fall back to the pending cart snapshot if product lookup fails.
+                }
+            }
+
             sessionStorage.removeItem('pendingCart');
+            if (window.firePixelAddToCart) {
+                window.firePixelAddToCart({
+                    product_id: pending.productId,
+                    sku: `SKU-${pending.productId}`,
+                    name: pendingProduct.name,
+                    price: pendingProduct.price,
+                    quantity: Number(pending.quantity) || 1,
+                    size: pending.size || ''
+                });
+            }
             updateCartBadge(data.cartCount);
             showToast('Selected product added to cart', 'success');
             return true;
