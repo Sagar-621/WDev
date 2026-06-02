@@ -526,8 +526,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function getPublicImageUrl(url) {
         if (!url) return 'https://via.placeholder.com/300?text=No+Image';
-        if (String(url).startsWith('http')) return url;
-        return String(url).startsWith('/') ? `${API_BASE}${url}` : `${API_BASE}/${url}`;
+        const raw = typeof url === 'object' && url?.url ? String(url.url).trim() : String(url).trim();
+        if (!raw) return 'https://via.placeholder.com/300?text=No+Image';
+        if (/^data:/i.test(raw) || /^blob:/i.test(raw) || /^https?:\/\//i.test(raw)) return raw;
+        if (/^image\/svg\+xml/i.test(raw)) return `data:${raw}`;
+        if (/^svg\+xml/i.test(raw)) return `data:image/${raw}`;
+        return raw.startsWith('/') ? `${API_BASE}${raw}` : `${API_BASE}/${raw}`;
     }
 
     function updatePendingCart(nextValues = {}) {

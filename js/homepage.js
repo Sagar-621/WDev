@@ -68,8 +68,13 @@ document.addEventListener('DOMContentLoaded', () => {
     `);
     const getImageUrl = (url) => {
         if (!url) return NO_IMAGE_PLACEHOLDER;
-        if (url.startsWith('http')) return url;
-        return url.startsWith('/') ? `${API_BASE}${url}` : `${API_BASE}/${url}`;
+
+        const raw = typeof url === 'object' && url?.url ? String(url.url).trim() : String(url).trim();
+        if (!raw) return NO_IMAGE_PLACEHOLDER;
+        if (/^data:/i.test(raw) || /^blob:/i.test(raw) || /^https?:\/\//i.test(raw)) return raw;
+        if (/^image\/svg\+xml/i.test(raw)) return `data:${raw}`;
+        if (/^svg\+xml/i.test(raw)) return `data:image/${raw}`;
+        return raw.startsWith('/') ? `${API_BASE}${raw}` : `${API_BASE}/${raw}`;
     };
 
     const getBannerImageUrl = (url) => getImageUrl(url);

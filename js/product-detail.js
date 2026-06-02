@@ -355,11 +355,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     const fmt = p => '₹' + p.toLocaleString('en-IN');
     const getImageUrl = (url) => {
         if (!url) return 'https://via.placeholder.com/300?text=No+Image';
-        if (typeof url === 'object' && url.url) return url.url;
-        if (typeof url === 'string' && url.startsWith('http')) return url;
-        const path = typeof url === 'string' ? url : (url.url || '');
-        if (path.startsWith('http')) return path;
-        return path.startsWith('/') ? `${API_BASE}${path}` : `${API_BASE}/${path}`;
+
+        const raw = typeof url === 'object' && url?.url ? String(url.url).trim() : String(url).trim();
+        if (!raw) return 'https://via.placeholder.com/300?text=No+Image';
+        if (/^data:/i.test(raw) || /^blob:/i.test(raw) || /^https?:\/\//i.test(raw)) return raw;
+        if (/^image\/svg\+xml/i.test(raw)) return `data:${raw}`;
+        if (/^svg\+xml/i.test(raw)) return `data:image/${raw}`;
+        return raw.startsWith('/') ? `${API_BASE}${raw}` : `${API_BASE}/${raw}`;
     };
 
     function renderStarsHTML(avgRating) {

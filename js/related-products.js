@@ -48,9 +48,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const getImageUrl = (url) => {
         if (!url) return 'https://via.placeholder.com/800x900?text=No+Image';
-        if (typeof url === 'object' && url.url) return url.url;
-        if (String(url).startsWith('http')) return url;
-        return String(url).startsWith('/') ? `${API_BASE}${url}` : `${API_BASE}/${url}`;
+
+        const raw = typeof url === 'object' && url?.url ? String(url.url).trim() : String(url).trim();
+        if (!raw) return 'https://via.placeholder.com/800x900?text=No+Image';
+        if (/^data:/i.test(raw) || /^blob:/i.test(raw) || /^https?:\/\//i.test(raw)) return raw;
+        if (/^image\/svg\+xml/i.test(raw)) return `data:${raw}`;
+        if (/^svg\+xml/i.test(raw)) return `data:image/${raw}`;
+        return raw.startsWith('/') ? `${API_BASE}${raw}` : `${API_BASE}/${raw}`;
     };
 
     const fmt = (price) => `₹${Number(price || 0).toLocaleString('en-IN')}`;

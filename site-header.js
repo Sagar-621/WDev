@@ -54,11 +54,11 @@
 
     function ensureSharedAuthModal() {
         if (document.getElementById('otpModal')) {
-            return;
+            return false;
         }
 
         if (!document.body) {
-            return;
+            return false;
         }
 
         const wrapper = document.createElement('div');
@@ -131,59 +131,308 @@
 
         document.body.appendChild(wrapper.firstElementChild);
         document.body.appendChild(wrapper.lastElementChild);
+        return true;
+    }
+
+    function bindSharedAuthModalHandlers() {
+        if (window.__devasthraSharedAuthModalBound) return;
+
+        const otpModal = document.getElementById('otpModal');
+        const otpOverlay = document.getElementById('otpOverlay');
+        const step1 = document.getElementById('otpStep1');
+        const step2 = document.getElementById('otpStep2');
+        const closeBtn = document.getElementById('otpCloseBtn');
+        const mobileInput = document.getElementById('otpMobile');
+        const emailInput = document.getElementById('otpEmailOptional');
+        const otpInput = document.getElementById('otpInput');
+        const otpRegName = document.getElementById('otpRegName');
+        const otpRegEmail = document.getElementById('otpRegEmail');
+        const otpRegMobile = document.getElementById('otpRegMobile');
+        const otpRegDob = document.getElementById('otpRegDob');
+        const otpRegGender = document.getElementById('otpRegGender');
+        const otpRegFields = document.getElementById('otpRegFields');
+        const otpMessage = document.getElementById('otpMessage');
+        const otpMessage2 = document.getElementById('otpMessage2');
+        const sendOtpBtn = document.getElementById('sendOtpBtn');
+        const verifyOtpBtn = document.getElementById('verifyOtpBtn');
+        const resendOtpBtn = document.getElementById('resendOtpBtn');
+
+        if (!otpModal || !otpOverlay || !sendOtpBtn || !verifyOtpBtn || !resendOtpBtn) {
+            return;
+        }
+
+        const apiBase = window.__API_BASE || (
+            window.location.hostname === 'localhost' ||
+            window.location.hostname === '127.0.0.1' ||
+            window.location.protocol === 'file:'
+                ? 'http://localhost:5000'
+                : window.location.origin
+        );
+        const state = {
+            resendTimer: null,
+            authMode: 'mobile',
+            authIdentifier: '',
+            isNewUser: false
+        };
+
+        const setMsg = (element, message, type = 'error') => {
+            if (!element) return;
+            element.textContent = message || '';
+            element.className = `otp-msg ${type}`;
+        };
+
+        const setSignupFieldsVisible = (isVisible, prefill = {}) => {
+            if (otpRegFields) {
+                otpRegFields.hidden = !isVisible;
+                otpRegFields.style.display = isVisible ? 'grid' : 'none';
+            }
+
+            if (otpRegName) otpRegName.value = prefill.name || '';
+            if (otpRegEmail) {
+                otpRegEmail.value = prefill.email || '';
+                otpRegEmail.readOnly = Boolean(prefill.lockEmail && isVisible);
+            }
+            if (otpRegMobile) {
+                otpRegMobile.value = prefill.mobile || '';
+                otpRegMobile.readOnly = Boolean(prefill.lockMobile && isVisible);
+            }
+            if (otpRegDob) otpRegDob.value = prefill.dob || '';
+            if (otpRegGender) otpRegGender.value = prefill.gender || '';
+        };
+
+        const clearResendTimer = () => {
+            if (state.resendTimer) {
+                clearInterval(state.resendTimer);
+                state.resendTimer = null;
+            }
+        };
+
+        const startResendTimer = () => {
+            let seconds = 30;
+            resendOtpBtn.disabled = true;
+            resendOtpBtn.textContent = `Resend in ${seconds}s`;
+            clearResendTimer();
+            state.resendTimer = setInterval(() => {
+                seconds -= 1;
+                resendOtpBtn.textContent = seconds > 0 ? `Resend in ${seconds}s` : 'Resend OTP';
+                if (seconds <= 0) {
+                    clearResendTimer();
+                    resendOtpBtn.disabled = false;
+                }
+            }, 1000);
+        };
+
+        const closeModal = () => {
+            otpOverlay.classList.remove('show');
+            otpModal.classList.remove('show');
+            document.body.classList.remove('site-modal-open');
+            document.body.style.overflow = '';
+            clearResendTimer();
+        };
+
+        const resetModal = () => {
+            if (step1) step1.style.display = 'block';
+            if (step2) step2.style.display = 'none';
+            if (mobileInput) mobileInput.value = '';
+            if (emailInput) emailInput.value = '';
+            if (otpInput) otpInput.value = '';
+            if (otpRegName) otpRegName.value = '';
+            if (otpRegEmail) otpRegEmail.value = '';
+            if (otpRegMobile) otpRegMobile.value = '';
+            if (otpRegDob) otpRegDob.value = '';
+            if (otpRegGender) otpRegGender.value = '';
+            setSignupFieldsVisible(false);
+            setMsg(otpMessage, '');
+            setMsg(otpMessage2, '');
+            sendOtpBtn.disabled = false;
+            sendOtpBtn.textContent = 'Send OTP';
+            verifyOtpBtn.disabled = false;
+            verifyOtpBtn.textContent = 'Verify & Continue';
+            resendOtpBtn.disabled = true;
+            resendOtpBtn.textContent = 'Resend OTP';
+            state.authMode = 'mobile';
+            state.authIdentifier = '';
+            state.isNewUser = false;
+        };
+
+        const openModal = () => {
+            otpModal.classList.add('show');
+            otpOverlay.classList.add('show');
+            document.body.classList.add('site-modal-open');
+            document.body.style.overflow = 'hidden';
+            resetModal();
+        };
+
+        window.openEmailAuthModal = openModal;
+        window.openOTPModal = openModal;
+        window.closeEmailAuthModal = closeModal;
+        window.__devasthraSharedAuthModalBound = true;
+
+        closeBtn?.addEventListener('click', closeModal);
+        otpOverlay.addEventListener('click', closeModal);
+        window.addEventListener('pageshow', () => {
+            document.body.style.overflow = '';
+        });
+
+        sendOtpBtn.addEventListener('click', async (event) => {
+            event.preventDefault();
+
+            const mobile = (mobileInput?.value || '').trim();
+            const email = (emailInput?.value || '').trim().toLowerCase();
+            const hasValidMobile = /^[6-9]\d{9}$/.test(mobile);
+            const hasValidEmail = email ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) : false;
+
+            if (!hasValidMobile && !hasValidEmail) {
+                setMsg(otpMessage, 'Enter a valid mobile number or email address', 'error');
+                return;
+            }
+
+            sendOtpBtn.disabled = true;
+            sendOtpBtn.textContent = 'Sending...';
+            setMsg(otpMessage, '');
+            setMsg(otpMessage2, '');
+
+            try {
+                const endpoint = hasValidMobile ? '/api/send-mobile-login-otp' : '/api/send-login-code';
+                const payload = hasValidMobile ? { mobile, email } : { email };
+                const response = await fetch(`${apiBase}${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+
+                if (!data.success) {
+                    setMsg(otpMessage, data.message || 'Failed to send OTP', 'error');
+                    return;
+                }
+
+                state.authMode = hasValidMobile ? 'mobile' : 'email';
+                state.authIdentifier = hasValidMobile ? mobile : email;
+                state.isNewUser = Boolean(data.isNewUser);
+
+                if (step1) step1.style.display = 'none';
+                if (step2) step2.style.display = 'block';
+                startResendTimer();
+
+                setSignupFieldsVisible(state.isNewUser, {
+                    name: data.user?.name || '',
+                    email: data.user?.email || email || '',
+                    mobile: data.user?.mobile_number || mobile || '',
+                    dob: data.user?.dob || '',
+                    gender: data.user?.gender || '',
+                    lockMobile: hasValidMobile,
+                    lockEmail: hasValidEmail
+                });
+                setMsg(
+                    otpMessage2,
+                    data.dev ? 'Dev mode: Check backend console for OTP' : `OTP sent successfully to your ${hasValidMobile ? 'mobile number' : 'email'}`,
+                    'success'
+                );
+                otpInput?.focus();
+            } catch {
+                setMsg(otpMessage, 'Cannot connect to server', 'error');
+            } finally {
+                sendOtpBtn.disabled = false;
+                sendOtpBtn.textContent = 'Send OTP';
+            }
+        });
+
+        resendOtpBtn.addEventListener('click', (event) => {
+            event.preventDefault();
+            sendOtpBtn.click();
+        });
+
+        verifyOtpBtn.addEventListener('click', async (event) => {
+            event.preventDefault();
+
+            const code = (otpInput?.value || '').trim();
+            const signupName = (otpRegName?.value || '').trim();
+            const signupEmail = (otpRegEmail?.value || emailInput?.value || '').trim().toLowerCase();
+            const signupMobile = ((otpRegMobile?.value || mobileInput?.value || state.authIdentifier || '') + '').replace(/\D/g, '').slice(-10);
+            const signupDob = (otpRegDob?.value || '').trim();
+            const signupGender = (otpRegGender?.value || '').trim();
+            const isMobileMode = state.authMode === 'mobile';
+            const endpoint = isMobileMode ? '/api/verify-mobile-login-otp' : '/api/verify-login-code';
+
+            if (!/^\d{6}$/.test(code)) {
+                setMsg(otpMessage2, 'Enter a valid 6-digit OTP', 'error');
+                return;
+            }
+
+            if (state.isNewUser) {
+                if (!signupName) { setMsg(otpMessage2, 'Enter your full name', 'error'); return; }
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(signupEmail)) { setMsg(otpMessage2, 'Enter a valid email address', 'error'); return; }
+                if (!/^[6-9]\d{9}$/.test(signupMobile)) { setMsg(otpMessage2, 'Enter a valid mobile number', 'error'); return; }
+                if (!signupDob) { setMsg(otpMessage2, 'Enter your date of birth', 'error'); return; }
+                if (!signupGender) { setMsg(otpMessage2, 'Select your gender', 'error'); return; }
+            }
+
+            verifyOtpBtn.disabled = true;
+            verifyOtpBtn.textContent = 'Verifying...';
+            setMsg(otpMessage2, '');
+
+            try {
+                const response = await fetch(`${apiBase}${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        mobile: signupMobile || state.authIdentifier,
+                        email: signupEmail || (!isMobileMode ? state.authIdentifier : ''),
+                        code,
+                        name: signupName,
+                        dob: signupDob,
+                        gender: signupGender
+                    })
+                });
+                const data = await response.json();
+
+                if (!data.success) {
+                    setMsg(otpMessage2, data.message || 'Invalid OTP', 'error');
+                    return;
+                }
+
+                localStorage.setItem('DEVASTHRA_token', data.token);
+                localStorage.setItem('DEVASTHRA_user', JSON.stringify({
+                    userId: data.userId,
+                    mobile: data.mobile,
+                    name: data.name || '',
+                    email: data.email || signupEmail || '',
+                    dob: data.dob || signupDob || '',
+                    gender: data.gender || signupGender || ''
+                }));
+
+                closeModal();
+                window.syncHeaderAuthUI?.();
+            } catch {
+                setMsg(otpMessage2, 'Verification failed', 'error');
+            } finally {
+                verifyOtpBtn.disabled = false;
+                verifyOtpBtn.textContent = 'Verify & Continue';
+            }
+        });
     }
 
     function ensureSharedAuthModalReady() {
-        ensureSharedAuthModal();
-        if (!window.openEmailAuthModal && document.getElementById('otpModal')) {
+        const created = ensureSharedAuthModal();
+        const path = String(window.location.pathname || '').toLowerCase();
+        const isHomePage =
+            path === '/' ||
+            path === '' ||
+            path.endsWith('/index.html') ||
+            path.endsWith('\\index.html');
+
+        if (created || (isHomePage && document.getElementById('otpModal') && !window.__devasthraSharedAuthModalBound)) {
+            bindSharedAuthModalHandlers();
+        } else if (document.getElementById('otpModal') && !window.openEmailAuthModal) {
             window.openEmailAuthModal = function () {
                 const otpModal = document.getElementById('otpModal');
                 const otpOverlay = document.getElementById('otpOverlay');
-                const step1 = document.getElementById('otpStep1');
-                const step2 = document.getElementById('otpStep2');
-                const mobileInput = document.getElementById('otpMobile');
-                const emailInput = document.getElementById('otpEmailOptional');
-                const otpInput = document.getElementById('otpInput');
-                const otpRegName = document.getElementById('otpRegName');
-                const otpRegEmail = document.getElementById('otpRegEmail');
-                const otpRegMobile = document.getElementById('otpRegMobile');
-                const otpRegDob = document.getElementById('otpRegDob');
-                const otpRegGender = document.getElementById('otpRegGender');
-                const otpRegFields = document.getElementById('otpRegFields');
-                const otpMessage = document.getElementById('otpMessage');
-                const otpMessage2 = document.getElementById('otpMessage2');
-                const sendOtpBtn = document.getElementById('sendOtpBtn');
-                const verifyOtpBtn = document.getElementById('verifyOtpBtn');
-                const resendOtpBtn = document.getElementById('resendOtpBtn');
                 if (!otpModal || !otpOverlay) return;
                 otpModal.classList.add('show');
                 otpOverlay.classList.add('show');
                 document.body.classList.add('site-modal-open');
                 document.body.style.overflow = 'hidden';
-                if (step1) step1.style.display = 'block';
-                if (step2) step2.style.display = 'none';
-                if (mobileInput) mobileInput.value = '';
-                if (emailInput) emailInput.value = '';
-                if (otpInput) otpInput.value = '';
-                if (otpRegName) otpRegName.value = '';
-                if (otpRegEmail) otpRegEmail.value = '';
-                if (otpRegMobile) otpRegMobile.value = '';
-                if (otpRegDob) otpRegDob.value = '';
-                if (otpRegGender) otpRegGender.value = '';
-                if (otpRegFields) {
-                    otpRegFields.hidden = true;
-                    otpRegFields.style.display = 'none';
-                }
-                if (otpMessage) otpMessage.textContent = '';
-                if (otpMessage2) otpMessage2.textContent = '';
-                if (sendOtpBtn) sendOtpBtn.disabled = false;
-                if (sendOtpBtn) sendOtpBtn.textContent = 'Send OTP';
-                if (verifyOtpBtn) verifyOtpBtn.disabled = false;
-                if (verifyOtpBtn) verifyOtpBtn.textContent = 'Verify & Continue';
-                if (resendOtpBtn) {
-                    resendOtpBtn.disabled = true;
-                    resendOtpBtn.textContent = 'Resend OTP';
-                }
             };
             window.openOTPModal = window.openEmailAuthModal;
         }
