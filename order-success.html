@@ -101,7 +101,9 @@
         function renderSuccessState() {
             const sourceLabel = paymentSource === 'payu'
                 ? 'Your PayU payment was completed successfully.'
-                : paymentSource === 'cod'
+                : paymentSource === 'phonepe'
+                    ? 'Your PhonePe payment was completed successfully.'
+                    : paymentSource === 'cod'
                     ? 'Your cash on delivery order was placed successfully.'
                     : 'Your order was placed successfully.';
 
@@ -131,7 +133,7 @@
 
                 let order = data.order;
                 if (
-                    paymentSource === 'payu' &&
+                    (paymentSource === 'payu' || paymentSource === 'phonepe') &&
                     order.payment_method === 'Prepaid' &&
                     !order.shiprocket_order_id &&
                     !order.shiprocket_shipment_id &&

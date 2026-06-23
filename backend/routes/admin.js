@@ -21,6 +21,7 @@ const {
     checkRefundStatusByPayuId,
     classifyRefundStatus
 } = require('../services/payuRefund');
+const phonepe = require('../services/phonepe');
 const { ensureBannerTable, getBanners } = require('../utils/banners');
 const {
     deleteCatalogNode,
@@ -4879,7 +4880,7 @@ router.get('/payment-history', adminAuth, async (req, res) => {
         const offset = (page - 1) * pageSize;
 
         // Simplified: execute two separate queries
-        let countQuery = 'SELECT COUNT(DISTINCT p.id) as total FROM payments p JOIN orders o ON p.order_id = o.order_id JOIN users u ON o.user_id = u.id LEFT JOIN order_addresses oa ON oa.order_id = o.order_id LEFT JOIN (SELECT rf1.* FROM refund_transactions rf1 INNER JOIN (SELECT order_id, MAX(id) AS max_id FROM refund_transactions GROUP BY order_id) rfmax ON rf1.id = rfmax.max_id) rf ON rf.order_id = p.order_id WHERE 1=1';
+        let countQuery = 'SELECT COUNT(DISTINCT p.id) as total FROM payments p JOIN orders o ON p.order_id = o.order_id JOIN users u ON o.user_id = u.id LEFT JOIN order_addresses oa ON oa.order_id = o.order_id LEFT JOIN (SELECT rf1.* FROM refund_transactions rf1 INNER JOIN (SELECT order_id, MAX(id) AS max_id FROM refund_transactions GROUP BY order_id) rfmax ON rf1.id = rfmax.max_id) rf ON rf.order_id = p.order_id LEFT JOIN (SELECT ph1.* FROM phonepe_transactions ph1 INNER JOIN (SELECT order_id, MAX(id) AS max_id FROM phonepe_transactions GROUP BY order_id) phmax ON ph1.id = phmax.max_id) ph ON ph.order_id = p.order_id WHERE 1=1';
         let countParams = [];
 
         if (status) {
@@ -4905,7 +4906,7 @@ router.get('/payment-history', adminAuth, async (req, res) => {
 
         const [[{ total }]] = await db.execute(countQuery, countParams);
 
-        let dataQuery = 'SELECT p.id, p.order_id, p.gateway, p.gateway_txn_id, p.gateway_payment_id, p.amount, p.status AS payment_status, p.created_at AS transaction_date, o.invoice_number, o.total_amount, o.status AS order_status, o.payment_method, COALESCE(oa.name, u.name) AS customer_name, COALESCE(oa.mobile, u.mobile_number) AS customer_mobile, COALESCE(oa.city, u.city) AS city, COALESCE(oa.state, u.state) AS state, COALESCE(oa.pincode, u.pincode) AS pincode, rf.id AS refund_id, rf.status AS refund_status, rf.amount AS refund_amount, rf.mode AS refund_mode, rf.gateway_reference AS refund_request_id FROM payments p JOIN orders o ON p.order_id = o.order_id JOIN users u ON o.user_id = u.id LEFT JOIN order_addresses oa ON oa.order_id = o.order_id LEFT JOIN (SELECT rf1.* FROM refund_transactions rf1 INNER JOIN (SELECT order_id, MAX(id) AS max_id FROM refund_transactions GROUP BY order_id) rfmax ON rf1.id = rfmax.max_id) rf ON rf.order_id = p.order_id WHERE 1=1';
+        let dataQuery = 'SELECT p.id, p.order_id, p.gateway, p.gateway_txn_id, p.gateway_payment_id, p.amount, p.status AS payment_status, p.created_at AS transaction_date, o.invoice_number, o.total_amount, o.status AS order_status, o.payment_method, COALESCE(oa.name, u.name) AS customer_name, COALESCE(oa.mobile, u.mobile_number) AS customer_mobile, COALESCE(oa.city, u.city) AS city, COALESCE(oa.state, u.state) AS state, COALESCE(oa.pincode, u.pincode) AS pincode, rf.id AS refund_id, rf.status AS refund_status, rf.amount AS refund_amount, rf.mode AS refund_mode, rf.gateway_reference AS refund_request_id, ph.merchant_order_id AS phonepe_merchant_order_id, ph.phonepe_order_id, ph.state AS phonepe_state, ph.payment_mode AS phonepe_payment_mode, ph.transaction_id AS phonepe_transaction_id, ph.transaction_state AS phonepe_transaction_state, ph.error_code AS phonepe_error_code, ph.detailed_error_code AS phonepe_detailed_error_code, ph.redirect_url AS phonepe_redirect_url, ph.webhook_event AS phonepe_webhook_event, ph.webhook_authorization_verified AS phonepe_webhook_verified FROM payments p JOIN orders o ON p.order_id = o.order_id JOIN users u ON o.user_id = u.id LEFT JOIN order_addresses oa ON oa.order_id = o.order_id LEFT JOIN (SELECT rf1.* FROM refund_transactions rf1 INNER JOIN (SELECT order_id, MAX(id) AS max_id FROM refund_transactions GROUP BY order_id) rfmax ON rf1.id = rfmax.max_id) rf ON rf.order_id = p.order_id LEFT JOIN (SELECT ph1.* FROM phonepe_transactions ph1 INNER JOIN (SELECT order_id, MAX(id) AS max_id FROM phonepe_transactions GROUP BY order_id) phmax ON ph1.id = phmax.max_id) ph ON ph.order_id = p.order_id WHERE 1=1';
         let dataParams = [];
 
         if (status) {
@@ -4969,7 +4970,23 @@ router.get('/payments/:id', adminAuth, async (req, res) => {
                 rf.status AS refund_status,
                 rf.amount AS refund_amount,
                 rf.mode AS refund_mode,
-                rf.gateway_reference AS refund_request_id
+                rf.gateway_reference AS refund_request_id,
+                ph.merchant_order_id AS phonepe_merchant_order_id,
+                ph.phonepe_order_id,
+                ph.state AS phonepe_state,
+                ph.amount AS phonepe_amount,
+                ph.expire_at AS phonepe_expire_at,
+                ph.payment_mode AS phonepe_payment_mode,
+                ph.transaction_id AS phonepe_transaction_id,
+                ph.transaction_state AS phonepe_transaction_state,
+                ph.error_code AS phonepe_error_code,
+                ph.detailed_error_code AS phonepe_detailed_error_code,
+                ph.redirect_url AS phonepe_redirect_url,
+                ph.meta_info AS phonepe_meta_info,
+                ph.request_payload AS phonepe_request_payload,
+                ph.response_payload AS phonepe_response_payload,
+                ph.webhook_event AS phonepe_webhook_event,
+                ph.webhook_authorization_verified AS phonepe_webhook_verified
             FROM payments p
             JOIN orders o ON p.order_id = o.order_id
             JOIN users u ON o.user_id = u.id
@@ -4983,6 +5000,15 @@ router.get('/payments/:id', adminAuth, async (req, res) => {
                     GROUP BY order_id
                 ) rfmax ON rf1.id = rfmax.max_id
             ) rf ON rf.order_id = p.order_id
+            LEFT JOIN (
+                SELECT ph1.*
+                FROM phonepe_transactions ph1
+                INNER JOIN (
+                    SELECT order_id, MAX(id) AS max_id
+                    FROM phonepe_transactions
+                    GROUP BY order_id
+                ) phmax ON ph1.id = phmax.max_id
+            ) ph ON ph.order_id = p.order_id
             WHERE p.id = ?
         `, [paymentId]);
 
@@ -5033,45 +5059,114 @@ router.post('/payments/:id/sync-status', adminAuth, async (req, res) => {
             });
         }
 
-        // Only PayU payments can be synced
-        if (String(payment.gateway || '').toLowerCase() !== 'payu') {
-            return res.status(400).json({
-                success: false,
-                message: `Payment gateway '${payment.gateway}' does not support status syncing. Only PayU payments can be synced.`
-            });
-        }
-
-        const payuPaymentId = String(payment.gateway_payment_id || '').trim();
-        if (!payuPaymentId) {
-            return res.status(400).json({
-                success: false,
-                message: 'PayU payment ID is missing. Cannot sync status.'
-            });
-        }
-
-        // Check status with PayU
-        const payuResult = await checkRefundStatusByPayuId(payuPaymentId);
-        const normalized = classifyRefundStatus(payuResult.raw, payuResult.rawText) || payuResult.normalizedStatus || '';
-
-        // Map PayU result to payment status
+        const gateway = String(payment.gateway || '').toLowerCase();
         let newStatus = payment.status;
-        if (normalized === 'Success' || normalized.includes('Success')) {
-            newStatus = 'Success';
-        } else if (normalized === 'Failed' || normalized.includes('Failed')) {
-            newStatus = 'Failed';
+        let gatewayResponse = {};
+        let statusMessage = '';
+
+        if (gateway === 'payu') {
+            const payuPaymentId = String(payment.gateway_payment_id || '').trim();
+            if (!payuPaymentId) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'PayU payment ID is missing. Cannot sync status.'
+                });
+            }
+
+            const payuResult = await checkRefundStatusByPayuId(payuPaymentId);
+            const normalized = classifyRefundStatus(payuResult.raw, payuResult.rawText) || payuResult.normalizedStatus || '';
+            gatewayResponse = payuResult.raw || {};
+
+            if (normalized === 'Success' || normalized.includes('Success')) {
+                newStatus = 'Success';
+            } else if (normalized === 'Failed' || normalized.includes('Failed')) {
+                newStatus = 'Failed';
+            } else {
+                newStatus = 'Created';
+            }
+            statusMessage = `Payment status synced with PayU: ${payment.status} → ${newStatus}`;
+        } else if (gateway === 'phonepe') {
+            const merchantOrderId = String(payment.gateway_txn_id || '').trim();
+            if (!merchantOrderId) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'PhonePe merchant order ID is missing. Cannot sync status.'
+                });
+            }
+
+            const phonepeResult = await phonepe.getPhonePeOrderStatus(merchantOrderId, { details: true, errorContext: true });
+            const summary = phonepe.extractPhonePeTransactionSummary(phonepeResult.raw || {});
+            gatewayResponse = phonepeResult.raw || {};
+
+            if ((summary.state || phonepeResult.state || '').toUpperCase() === 'COMPLETED') {
+                newStatus = 'Success';
+            } else if ((summary.state || phonepeResult.state || '').toUpperCase() === 'FAILED') {
+                newStatus = 'Failed';
+            } else {
+                newStatus = 'Created';
+            }
+
+            await db.execute(
+                `UPDATE phonepe_transactions
+                 SET phonepe_order_id = COALESCE(?, phonepe_order_id),
+                     state = ?,
+                     amount = COALESCE(?, amount),
+                     expire_at = COALESCE(FROM_UNIXTIME(? / 1000), expire_at),
+                     payment_mode = COALESCE(?, payment_mode),
+                     transaction_id = COALESCE(?, transaction_id),
+                     transaction_state = COALESCE(?, transaction_state),
+                     error_code = COALESCE(?, error_code),
+                     detailed_error_code = COALESCE(?, detailed_error_code),
+                     response_payload = ?,
+                     webhook_event = 'sync-status',
+                     webhook_authorization_verified = TRUE
+                 WHERE merchant_order_id = ?
+                 ORDER BY id DESC
+                 LIMIT 1`,
+                [
+                    String(phonepeResult.phonepeOrderId || gatewayResponse.orderId || '').trim() || null,
+                    summary.state || phonepeResult.state || newStatus,
+                    Number(gatewayResponse.amount || phonepeResult.amount || 0) || 0,
+                    Number(gatewayResponse.expireAt || phonepeResult.expireAt || 0) || null,
+                    summary.paymentMode || null,
+                    summary.transactionId || null,
+                    summary.paymentState || null,
+                    summary.errorCode || null,
+                    summary.detailedErrorCode || null,
+                    JSON.stringify(gatewayResponse || {}),
+                    merchantOrderId
+                ]
+            );
+
+            const [orderRows] = await db.execute(
+                'SELECT status FROM orders WHERE order_id = ? LIMIT 1',
+                [payment.order_id]
+            );
+            if (newStatus === 'Success' && orderRows[0] && orderRows[0].status === 'Pending') {
+                await db.execute(
+                    'UPDATE orders SET status = ?, updated_at = NOW() WHERE order_id = ?',
+                    ['Paid', payment.order_id]
+                );
+            }
+
+            statusMessage = `Payment status synced with PhonePe: ${payment.status} → ${newStatus}`;
         } else {
-            newStatus = 'Created'; // Still pending
+            return res.status(400).json({
+                success: false,
+                message: `Payment gateway '${payment.gateway}' does not support status syncing.`
+            });
         }
 
-        // Update payment status
         await db.execute(`
             UPDATE payments
             SET status = ?,
-                gateway_response = ?
+                gateway_response = ?,
+                gateway_payment_id = COALESCE(?, gateway_payment_id)
             WHERE id = ?
         `, [
             newStatus,
-            JSON.stringify(payuResult.raw || {}),
+            JSON.stringify(gatewayResponse || {}),
+            gateway === 'phonepe' ? String((phonepe.extractPhonePeTransactionSummary(gatewayResponse || {}).transactionId) || '').trim() || null : null,
             paymentId
         ]);
 
@@ -5096,16 +5191,16 @@ router.post('/payments/:id/sync-status', adminAuth, async (req, res) => {
             entityId: paymentId,
             oldValues: { status: payment.status },
             newValues: { status: newStatus },
-            description: `Payment #${paymentId} status synced with PayU: ${payment.status} → ${newStatus}`
+            description: `Payment #${paymentId} status synced: ${payment.status} → ${newStatus}`
         });
 
         res.json({
             success: true,
-            message: `Payment status synced: ${payment.status} → ${newStatus}`,
+            message: statusMessage || `Payment status synced: ${payment.status} → ${newStatus}`,
             payment: {
                 ...payment,
                 status: newStatus,
-                gateway_response: payuResult.raw || {},
+                gateway_response: gatewayResponse || {},
                 last_synced_at: new Date()
             }
         });

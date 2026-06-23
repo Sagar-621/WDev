@@ -1169,6 +1169,12 @@
                     .replace(/'/g, '&#39;');
             }
 
+            function normalizeDateInputValue(value) {
+                const raw = String(value || '').trim();
+                const match = raw.match(/^(\d{4}-\d{2}-\d{2})/);
+                return match ? match[1] : '';
+            }
+
             function normalizeAddressDisplay(address) {
                 const recipientName = String(address?.recipient_name || '').trim();
                 const recipientPhone = String(address?.recipient_phone || '').trim();
@@ -2600,7 +2606,7 @@
                     document.getElementById('profileName').value = user.name || '';
                     document.getElementById('profileEmail').value = user.email || '';
                     document.getElementById('profileMobile').value = user.mobile_number || '';
-                    document.getElementById('profileDob').value = user.dob || '';
+                    document.getElementById('profileDob').value = normalizeDateInputValue(user.dob);
                     document.getElementById('profileCreated').value = fmtDate(user.created_at);
 
                     if (user.gender) {
@@ -2617,7 +2623,7 @@
                 const saveBtn = document.getElementById('profileSaveBtn');
                 const name = document.getElementById('profileName').value.trim();
                 const email = document.getElementById('profileEmail').value.trim();
-                const dob = document.getElementById('profileDob').value.trim();
+                const dob = normalizeDateInputValue(document.getElementById('profileDob').value);
                 const gender = document.querySelector('input[name="profileGender"]:checked')?.value || '';
 
                 if (!name) {

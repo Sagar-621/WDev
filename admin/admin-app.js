@@ -4176,6 +4176,27 @@ async function viewPaymentDetails(paymentId) {
             </div>
         ` : '';
 
+        const phonePeDetailsHtml = p.gateway && String(p.gateway).toLowerCase() === 'phonepe' ? `
+            <div class="refund-details-section" style="margin-top: 16px; padding: 16px; border-left-color: #673ab7;">
+                <strong style="color:#673ab7;">📱 PhonePe Details</strong>
+                <div style="margin-top:12px;font-size:0.9rem;display:grid;grid-template-columns:1fr auto;gap:12px;">
+                    <div>
+                        <div style="margin-bottom:8px;"><strong>Merchant Order ID:</strong> ${p.phonepe_merchant_order_id || '—'}</div>
+                        <div style="margin-bottom:8px;"><strong>PhonePe Order ID:</strong> ${p.phonepe_order_id || '—'}</div>
+                        <div style="margin-bottom:8px;"><strong>Status:</strong> ${p.phonepe_state || '—'}</div>
+                        <div style="margin-bottom:8px;"><strong>Payment Mode:</strong> ${p.phonepe_payment_mode || '—'}</div>
+                        <div style="margin-bottom:8px;"><strong>Transaction ID:</strong> ${p.phonepe_transaction_id || '—'}</div>
+                        <div style="margin-bottom:8px;"><strong>Transaction State:</strong> ${p.phonepe_transaction_state || '—'}</div>
+                        <div style="margin-bottom:8px;"><strong>Error Code:</strong> ${p.phonepe_error_code || '—'}</div>
+                        <div><strong>Verified:</strong> ${p.phonepe_webhook_verified ? 'Yes' : 'No'}</div>
+                    </div>
+                    <div style="text-align:right;color:var(--text-muted);font-size:0.8rem;">
+                        ${p.phonepe_webhook_event ? `<strong>Event:</strong><br>${p.phonepe_webhook_event}` : ''}
+                    </div>
+                </div>
+            </div>
+        ` : '';
+
         content.innerHTML = `
             <div>
                 <div>
@@ -4221,6 +4242,7 @@ async function viewPaymentDetails(paymentId) {
                     </div>
                 </div>
             </div>
+            ${phonePeDetailsHtml}
             ${refundDetailsHtml}
         `;
 

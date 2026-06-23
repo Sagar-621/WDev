@@ -6,6 +6,147 @@
 (function () {
     'use strict';
 
+    const GUEST_CART_KEY = 'guest_cart';
+
+    function readGuestCart() {
+        try {
+            const cart = JSON.parse(window.localStorage.getItem(GUEST_CART_KEY) || '[]');
+            return Array.isArray(cart) ? cart.filter(item => Number(item.productId) > 0) : [];
+        } catch {
+            return [];
+        }
+    }
+
+    function writeGuestCart(items) {
+        const normalized = (Array.isArray(items) ? items : [])
+            .map(item => ({
+                productId: Number(item.productId || item.product_id),
+                quantity: Math.max(1, Math.min(10, Number(item.quantity) || 1)),
+                size: item.size ? String(item.size).trim() : '',
+                productDetails: item.productDetails || item.product || {}
+            }))
+            .filter(item => item.productId > 0);
+
+        window.localStorage.setItem(GUEST_CART_KEY, JSON.stringify(normalized));
+        updateGuestCartBadges();
+        return normalized;
+    }
+
+    function addGuestCartItem(item) {
+        const productId = Number(item.productId || item.product_id);
+        if (!productId) return readGuestCart();
+
+        const size = item.size ? String(item.size).trim() : '';
+        const quantity = Math.max(1, Math.min(10, Number(item.quantity) || 1));
+        const productDetails = item.productDetails || item.product || {};
+        const cart = readGuestCart();
+        const existingIndex = cart.findIndex(cartItem =>
+            Number(cartItem.productId) === productId &&
+            String(cartItem.size || '') === size
+        );
+
+        if (existingIndex > -1) {
+            cart[existingIndex].quantity = Math.max(1, Math.min(10, Number(cart[existingIndex].quantity || 0) + quantity));
+            cart[existingIndex].productDetails = {
+                ...(cart[existingIndex].productDetails || {}),
+                ...productDetails
+            };
+        } else {
+            cart.push({ productId, quantity, size, productDetails });
+        }
+
+        return writeGuestCart(cart);
+    }
+
+    function getGuestCartCount() {
+        return readGuestCart().reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
+    }
+
+    function updateGuestCartBadges(count = getGuestCartCount()) {
+        const badge = document.getElementById('cartCount');
+        if (badge) {
+            badge.textContent = count > 0 ? String(count) : '';
+            badge.style.display = count > 0 ? 'flex' : 'none';
+        }
+
+        const mobileBadge = document.querySelector('.mobile-cart-count');
+        if (mobileBadge) {
+            mobileBadge.textContent = count > 0 ? `(${count})` : '';
+            mobileBadge.style.display = count > 0 ? 'inline' : 'none';
+        }
+    }
+
+    async function updateServerCartBadges(token) {
+        if (!token) {
+            updateGuestCartBadges();
+            return;
+        }
+
+        try {
+            const response = await fetch(`${getApiBase()}/cart/count`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const data = await response.json();
+            if (data.success) {
+                updateGuestCartBadges(Number(data.count) || 0);
+            }
+        } catch {
+            // Keep the existing badge state if the count request fails.
+        }
+    }
+
+    async function mergeGuestCartToServer(token) {
+        const cart = readGuestCart();
+        if (!cart.length || !token) return { success: true, skipped: true, cartCount: 0 };
+
+        const response = await fetch(`${getApiBase()}/api/cart/merge`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                items: cart.map(item => ({
+                    productId: Number(item.productId),
+                    quantity: Math.max(1, Number(item.quantity) || 1),
+                    size: item.size || null
+                }))
+            })
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            window.localStorage.removeItem(GUEST_CART_KEY);
+            updateGuestCartBadges(Number(data.cartCount) || 0);
+        }
+
+        return data;
+    }
+
+    function getApiBase() {
+        return window.__API_BASE || (
+            window.location.hostname === 'localhost' ||
+            window.location.hostname === '127.0.0.1' ||
+            window.location.protocol === 'file:'
+                ? 'http://localhost:5000'
+                : window.location.origin
+        );
+    }
+
+    window.DevasthraGuestCart = window.DevasthraGuestCart || {
+        key: GUEST_CART_KEY,
+        read: readGuestCart,
+        write: writeGuestCart,
+        add: addGuestCartItem,
+        count: getGuestCartCount,
+        updateBadges: updateGuestCartBadges,
+        mergeToServer: mergeGuestCartToServer,
+        clear: () => {
+            window.localStorage.removeItem(GUEST_CART_KEY);
+            updateGuestCartBadges(0);
+        }
+    };
+
     const GA_MEASUREMENT_ID = 'G-W318K4KVR1';
     // Paste your 16-digit Meta Pixel ID here to override the backend value.
     const META_PIXEL_ID = '1707515313578180';
@@ -403,6 +544,11 @@
                 }));
 
                 closeModal();
+                try {
+                    await window.DevasthraGuestCart?.mergeToServer(data.token);
+                } catch {
+                    // Keep guest_cart in localStorage so the cart can retry the merge.
+                }
                 window.syncHeaderAuthUI?.();
             } catch {
                 setMsg(otpMessage2, 'Verification failed', 'error');
@@ -414,13 +560,18 @@
     }
 
     function ensureSharedAuthModalReady() {
-        const created = ensureSharedAuthModal();
         const path = String(window.location.pathname || '').toLowerCase();
+        const isCartPage = path.endsWith('/cart.html') || path.endsWith('\\cart.html');
+        const created = ensureSharedAuthModal();
         const isHomePage =
             path === '/' ||
             path === '' ||
             path.endsWith('/index.html') ||
             path.endsWith('\\index.html');
+
+        if (isCartPage) {
+            return;
+        }
 
         if (created || (isHomePage && document.getElementById('otpModal') && !window.__devasthraSharedAuthModalBound)) {
             bindSharedAuthModalHandlers();
@@ -1410,11 +1561,13 @@
             }
             if (mobileGuestMenu)  mobileGuestMenu.style.display  = 'none';
             if (mobileLoggedMenu) mobileLoggedMenu.style.display = 'block';
+            updateServerCartBadges(token);
         } else {
             if (guestMenu)        guestMenu.style.display = 'block';
             if (loggedMenu)       loggedMenu.style.display = 'none';
             if (mobileGuestMenu)  mobileGuestMenu.style.display  = 'block';
             if (mobileLoggedMenu) mobileLoggedMenu.style.display = 'none';
+            window.DevasthraGuestCart?.updateBadges();
         }
     }
 

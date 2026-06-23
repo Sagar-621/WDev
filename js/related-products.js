@@ -96,7 +96,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     async function refreshCartCount() {
-        if (!isLoggedIn()) return;
+        if (!isLoggedIn()) {
+            updateCartBadge(window.DevasthraGuestCart?.count() || 0);
+            return;
+        }
         try {
             const response = await fetch(`${API_BASE}/cart/count`, {
                 headers: { Authorization: `Bearer ${getToken()}` }
@@ -185,12 +188,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         button.textContent = 'ADDING...';
 
         if (!isLoggedIn()) {
-            sessionStorage.setItem('pendingCart', JSON.stringify({
+            window.DevasthraGuestCart?.add({
                 productId: product.id,
-                size: selectedSize,
+                size: selectedSize || '',
                 quantity: 1,
-                redirectTo: 'cart.html'
-            }));
+                productDetails: {
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    original_price: product.original_price,
+                    image_url: product.image_url,
+                    stock: product.stock
+                }
+            });
+            updateCartBadge(window.DevasthraGuestCart?.count() || 0);
             window.location.href = 'cart.html';
             button.disabled = false;
             button.textContent = 'ADD TO CART';
@@ -317,10 +328,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             window.syncHeaderAuthUI?.();
             showToast('Logged in successfully', 'success');
 
-            const pending = sessionStorage.getItem('pendingCart');
-            if (pending) {
-                window.location.href = 'cart.html';
-                return;
+            try {
+                await window.DevasthraGuestCart?.mergeToServer(data.token);
+                sessionStorage.removeItem('pendingCart');
+            } catch {
+                // Keep guest_cart in localStorage so cart.html can retry the merge.
             }
 
             await refreshCartCount();

@@ -42,22 +42,23 @@
         <div class="checkout-modal-header">
             <p class="checkout-kicker">Review details</p>
             <h2 id="checkoutTitle">Confirm your details before payment</h2>
-            <p>Review the delivery address, order summary, and payment method before continuing.</p>
+            <!-- <p>Review the delivery address, order summary, and payment method before continuing.</p> -->
         </div>
 
         <div class="checkout-modal-body">
             <div class="checkout-review-stack">
-                <section class="checkout-review-card">
+                <section class="checkout-review-card checkout-address-review">
                     <h3>Delivery Address</h3>
                     <div class="checkout-review-copy" id="checkoutAddressSummary"></div>
                 </section>
-                <section class="checkout-review-card">
+                <section class="checkout-review-card checkout-order-review">
                     <h3>Order Summary</h3>
                     <div class="checkout-review-copy" id="checkoutOrderSummary"></div>
                 </section>
-                <section class="checkout-review-card">
+                <section class="checkout-review-card checkout-payment-review">
                     <h3>Payment Method</h3>
                     <div class="checkout-review-copy" id="checkoutPaymentSummary"></div>
+                    <div class="checkout-review-copy checkout-gateway-summary" id="checkoutGatewaySummary"></div>
                 </section>
             </div>
 
@@ -81,6 +82,7 @@
 
     <script src="site-header.js"></script>
     <script src="site-footer.js"></script>
+    <script src="runtime-env.js"></script>
     <script src="js/cart.js"></script>
     <script src="header-category-drawer.js"></script>
     <script src="chat-widget.js"></script>

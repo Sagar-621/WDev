@@ -8,6 +8,12 @@ const getUser = () => {
     catch { return null; }
 };
 
+function normalizeDateOnly(value) {
+    const raw = String(value || '').trim();
+    const match = raw.match(/^(\d{4}-\d{2}-\d{2})/);
+    return match ? match[1] : '';
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     const toast = document.getElementById('toast');
     const toastMsg = document.getElementById('toastMessage');
@@ -74,7 +80,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (otpRegName) otpRegName.value = prefill.name || '';
         if (otpRegEmail) otpRegEmail.value = prefill.email || '';
         if (otpRegMobile) otpRegMobile.value = prefill.mobile || '';
-        if (otpRegDob) otpRegDob.value = prefill.dob || '';
+        if (otpRegDob) otpRegDob.value = normalizeDateOnly(prefill.dob);
         if (otpRegGender) otpRegGender.value = prefill.gender || '';
         if (otpRegMobile && prefill.lockMobile) otpRegMobile.readOnly = true;
         if (otpRegEmail && prefill.lockEmail) otpRegEmail.readOnly = true;
@@ -186,7 +192,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 name: data.user?.name || '',
                 email: data.user?.email || email || '',
                 mobile: data.user?.mobile_number || mobile || '',
-                dob: data.user?.dob || '',
+                dob: normalizeDateOnly(data.user?.dob),
                 gender: data.user?.gender || '',
                 lockMobile: hasValidMobile,
                 lockEmail: hasValidEmail
@@ -254,14 +260,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 mobile: data.mobile,
                 name: data.name || '',
                 email: data.email || signupEmail || '',
-                dob: data.dob || signupDob || '',
+                dob: normalizeDateOnly(data.dob || signupDob),
                 gender: data.gender || signupGender || ''
             }));
 
             closeOtpModal();
             refreshAuthenticatedUI();
             showToast('Logged in successfully', 'success');
-            await processPendingCart(data.token);
+            await processGuestCartMerge(data.token);
             await loadCart();
             if (currentIsNewUser && window.firePixelCompleteRegistration) {
                 window.firePixelCompleteRegistration({
@@ -294,6 +300,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const checkoutAddressSummary = document.getElementById('checkoutAddressSummary');
     const checkoutOrderSummary = document.getElementById('checkoutOrderSummary');
     const checkoutPaymentSummary = document.getElementById('checkoutPaymentSummary');
+    const checkoutGatewaySummary = document.getElementById('checkoutGatewaySummary');
     let checkoutResolve = null;
     let activeCheckoutAddress = null;
 
@@ -323,9 +330,41 @@ document.addEventListener('DOMContentLoaded', async () => {
             name: user.name || selectedAddr?.name || '',
             email: user.email || '',
             mobile: user.mobile || selectedAddr?.mobile || '',
-            dob: user.dob || '',
-            gender: user.gender || ''
+            dob: normalizeDateOnly(user.dob),
+            gender: user.gender || '',
+            paymentGateway: selectedPaymentMethod === 'Prepaid' ? selectedPaymentGateway : 'COD'
         };
+    }
+
+    function renderGatewayOptions() {
+        if (!checkoutGatewaySummary) return;
+        if (selectedPaymentMethod === 'COD') {
+            checkoutGatewaySummary.innerHTML = '';
+            if (checkoutConfirmBtn) checkoutConfirmBtn.disabled = false;
+            return;
+        }
+
+        ensureSelectedPaymentGateway();
+        const gateways = getAvailablePrepaidGateways();
+        if (!gateways.length) {
+            checkoutGatewaySummary.innerHTML = `
+                <strong class="checkout-gateway-title">Online payment unavailable</strong>
+                <span class="checkout-gateway-error">PayU and PhonePe are not configured on this server.</span>
+            `;
+            if (checkoutConfirmBtn) checkoutConfirmBtn.disabled = true;
+            return;
+        }
+
+        if (checkoutConfirmBtn) checkoutConfirmBtn.disabled = false;
+        checkoutGatewaySummary.innerHTML = `
+            <strong class="checkout-gateway-title">Choose Payment Gateway</strong>
+            ${gateways.map((gateway, index) => `
+                <label class="checkout-gateway-option ${index < gateways.length - 1 ? 'has-gap' : ''}">
+                    <input type="radio" name="checkoutGateway" value="${gateway}" ${selectedPaymentGateway === gateway ? 'checked' : ''}>
+                    <span><strong>${gateway}</strong><small>${getGatewayDescription(gateway)}</small></span>
+                </label>
+            `).join('')}
+        `;
     }
 
     function renderCheckoutSummary(selectedAddr) {
@@ -362,8 +401,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (checkoutPaymentSummary) {
             checkoutPaymentSummary.innerHTML = selectedPaymentMethod === 'COD'
                 ? '<strong>Cash on Delivery</strong><br><span style="color:#6b7280;">Pay when your order arrives.</span>'
-                : '<strong>Pay Online</strong><br><span style="color:#6b7280;">Tap proceed to continue to the PayU gateway.</span>';
+                : '<strong>Pay Online</strong><br><span style="color:#6b7280;">Confirm the gateway below before payment.</span>';
         }
+
+        renderGatewayOptions();
     }
 
     function openCheckoutModal(selectedAddr) {
@@ -400,6 +441,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     checkoutCancelBtn?.addEventListener('click', () => closeCheckoutModal(null));
     checkoutOverlay?.addEventListener('click', () => closeCheckoutModal(null));
     checkoutConfirmBtn?.addEventListener('click', confirmCheckoutDetails);
+    checkoutModal?.addEventListener('change', (event) => {
+        const target = event.target;
+        if (!target || target.name !== 'checkoutGateway') return;
+        const gateways = getAvailablePrepaidGateways();
+        selectedPaymentGateway = gateways.includes(target.value) ? target.value : (gateways[0] || 'PayU');
+        sessionStorage.setItem('selectedPaymentGateway', selectedPaymentGateway);
+        renderGatewayOptions();
+    });
 
     // Cart + address state
     const queryParams = new URLSearchParams(window.location.search);
@@ -415,8 +464,33 @@ document.addEventListener('DOMContentLoaded', async () => {
     let addresses = [];
     let selectedAddressId = Number(sessionStorage.getItem('selectedAddressId') || 0) || null;
     let selectedPaymentMethod = sessionStorage.getItem('selectedPaymentMethod') || 'Prepaid';
+    let selectedPaymentGateway = sessionStorage.getItem('selectedPaymentGateway') || 'PayU';
+    if (!['PayU', 'PhonePe'].includes(selectedPaymentGateway)) {
+        selectedPaymentGateway = 'PayU';
+    }
     let appliedCoupon = JSON.parse(sessionStorage.getItem('appliedCoupon') || 'null');
     let storeConfig = { cod_enabled: true, min_order_value: 0, cod_min_order_value: 0, shipping_charge: 0 };
+    let paymentGatewayConfig = { success: true, available: ['PayU', 'PhonePe', 'COD'], configured: {} };
+
+    function getAvailablePrepaidGateways() {
+        return (paymentGatewayConfig.available || []).filter((gateway) => gateway === 'PayU' || gateway === 'PhonePe');
+    }
+
+    function getGatewayDescription(gateway) {
+        if (gateway === 'PhonePe') return paymentGatewayConfig.configured?.phonepe?.description || 'UPI, Card, Wallet';
+        if (gateway === 'PayU') return paymentGatewayConfig.configured?.payu?.description || 'Credit/Debit Card, Wallet, UPI';
+        return 'Online payment';
+    }
+
+    function ensureSelectedPaymentGateway() {
+        const gateways = getAvailablePrepaidGateways();
+        if (selectedPaymentMethod === 'COD') {
+            selectedPaymentGateway = 'COD';
+        } else if (gateways.length && !gateways.includes(selectedPaymentGateway)) {
+            selectedPaymentGateway = gateways[0];
+        }
+        sessionStorage.setItem('selectedPaymentGateway', selectedPaymentGateway);
+    }
 
     function getSelectedCartSnapshot() {
         const selectedItems = cartItems.filter(item => selectedCartItemIds.includes(Number(item.id)));
@@ -720,6 +794,185 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    function getGuestCartItems() {
+        return window.DevasthraGuestCart?.read?.() || [];
+    }
+
+    function setGuestCartItems(items) {
+        const updated = window.DevasthraGuestCart?.write?.(items) || [];
+        updateCartBadge(updated.reduce((sum, item) => sum + Number(item.quantity || 0), 0));
+        return updated;
+    }
+
+    function updateGuestCartItem(productId, size, quantity) {
+        const targetSize = String(size || '');
+        const updated = getGuestCartItems().map(item => {
+            if (Number(item.productId) !== Number(productId) || String(item.size || '') !== targetSize) return item;
+            return {
+                ...item,
+                quantity: Math.max(1, Math.min(10, Number(quantity) || 1))
+            };
+        });
+        setGuestCartItems(updated);
+    }
+
+    function removeGuestCartItem(productId, size) {
+        const targetSize = String(size || '');
+        setGuestCartItems(getGuestCartItems().filter(item =>
+            Number(item.productId) !== Number(productId) || String(item.size || '') !== targetSize
+        ));
+        sessionStorage.removeItem('guestCouponCode');
+        sessionStorage.removeItem('guestCouponNote');
+    }
+
+    function clearGuestCart() {
+        window.DevasthraGuestCart?.clear?.();
+        sessionStorage.removeItem('guestCouponCode');
+        sessionStorage.removeItem('guestCouponNote');
+    }
+
+    async function processGuestCartMerge(token = getToken()) {
+        if (!getGuestCartItems().length || !token) return false;
+        try {
+            const data = await window.DevasthraGuestCart?.mergeToServer?.(token);
+            if (!data?.success) {
+                showToast(data?.message || 'Could not sync your guest cart');
+                return false;
+            }
+            updateCartBadge(data.cartCount || 0);
+            return true;
+        } catch {
+            showToast('Could not sync your guest cart');
+            return false;
+        }
+    }
+
+    async function renderGuestCart() {
+        const guestCart = getGuestCartItems();
+        const guestCount = guestCart.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+        updateCartBadge(guestCount);
+
+        if (!guestCart.length) {
+            layout.innerHTML = `
+                <div class="cart-empty">
+                    <div class="cart-empty-icon">Cart</div>
+                    <h2>Your cart is empty</h2>
+                    <p>Add a product to see it here.</p>
+                    <a href="index.html#categories" class="btn btn-primary">Browse Categories</a>
+                </div>`;
+            return;
+        }
+
+        const items = await Promise.all(guestCart.map(async item => {
+            let product = item.productDetails || {};
+            if (!product.name || !product.price || !product.image_url) {
+                try {
+                    const res = await fetch(`${API_BASE}/products/${item.productId}`);
+                    const data = await res.json();
+                    if (data.success && data.product) product = data.product;
+                } catch {
+                    // Use the local snapshot if product refresh fails.
+                }
+            }
+            return {
+                ...item,
+                productDetails: product,
+                quantity: Math.max(1, Number(item.quantity) || 1),
+                size: item.size || ''
+            };
+        }));
+
+        const fmtGuest = value => 'Rs. ' + Number(value || 0).toLocaleString('en-IN');
+        const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
+        const total = items.reduce((sum, item) => sum + (Number(item.productDetails?.price) || 0) * item.quantity, 0);
+        const savedCouponCode = String(sessionStorage.getItem('guestCouponCode') || '').trim().toUpperCase();
+        const savedCouponNote = String(sessionStorage.getItem('guestCouponNote') || '').trim();
+
+        layout.innerHTML = `
+            <div class="cart-items-col">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px;">
+                    <h2 class="cart-col-title" style="margin:0;">Your Cart (${items.length})</h2>
+                    <button type="button" class="btn btn-outline" id="guestClearCartBtn">Clear Cart</button>
+                </div>
+                ${items.map(item => {
+            const product = item.productDetails || {};
+            const sizeLabel = item.size ? String(item.size) : 'One Size';
+            const lineTotal = (Number(product.price) || 0) * item.quantity;
+            return `
+                <div class="cart-item" style="border:1px solid rgba(112,8,35,0.08);">
+                    <img src="${getPublicImageUrl(product.image_url)}" alt="${escapeHtml(product.name || 'Product')}" class="cart-item-img">
+                    <div class="cart-item-info">
+                        <h3>${escapeHtml(product.name || 'Product')}</h3>
+                        <p class="cart-item-size">Size: <strong>${escapeHtml(sizeLabel)}</strong></p>
+                        <div class="cart-item-qty-row">
+                            <span class="cart-item-qty-label">Qty</span>
+                            <div class="cart-item-qty-controls">
+                                <button type="button" class="cart-qty-btn guest-qty-btn" data-product-id="${item.productId}" data-size="${escapeHtml(item.size || '')}" data-next-qty="${Math.max(1, item.quantity - 1)}" ${item.quantity <= 1 ? 'disabled' : ''}>-</button>
+                                <span class="cart-qty-value">${item.quantity}</span>
+                                <button type="button" class="cart-qty-btn guest-qty-btn" data-product-id="${item.productId}" data-size="${escapeHtml(item.size || '')}" data-next-qty="${Math.min(10, item.quantity + 1)}">+</button>
+                            </div>
+                        </div>
+                        <p class="cart-item-price">${fmtGuest(lineTotal)}</p>
+                    </div>
+                    <button class="cart-remove-btn guest-remove-btn" data-product-id="${item.productId}" data-size="${escapeHtml(item.size || '')}" aria-label="Remove item">Remove</button>
+                </div>`;
+        }).join('')}
+            </div>
+
+            <div class="cart-summary-col">
+                <div class="cart-summary-card">
+                    <h2 class="cart-col-title">Order Summary</h2>
+                    <div class="cart-summary-row"><span>Subtotal (${totalQuantity} items)</span><span>${fmtGuest(total)}</span></div>
+                    <div class="cart-summary-row"><span>Shipping</span><span>Calculated at checkout</span></div>
+                    <div class="cart-summary-row total"><span>Total</span><span>${fmtGuest(total)}</span></div>
+                    <div class="cart-coupon-section" style="margin-top:14px;">
+                        <div class="cart-coupon-input-wrap">
+                            <input type="text" id="guestCouponInput" placeholder="Enter coupon code" maxlength="30" value="${savedCouponCode}">
+                            <button type="button" class="btn btn-primary cart-coupon-apply-btn" id="guestCouponBtn">Apply</button>
+                        </div>
+                        <div id="guestCouponResult" class="cart-coupon-summary">
+                            ${savedCouponCode ? `<span class="cart-coupon-chip">Saved: ${savedCouponCode}</span>` : '<span class="cart-coupon-muted">Coupon can be entered here before checkout.</span>'}
+                            ${savedCouponNote ? `<div style="margin-top:8px;color:#166534;">${savedCouponNote}</div>` : ''}
+                        </div>
+                    </div>
+                    <p style="color:#6b7280;line-height:1.6;margin:14px 0 14px;">
+                        Address and payment details will be asked after login.
+                    </p>
+                    <button class="btn btn-primary cart-proceed-btn" id="guestProceedBtn">Proceed to Checkout</button>
+                </div>
+            </div>`;
+
+        document.querySelectorAll('.guest-qty-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                updateGuestCartItem(btn.dataset.productId, btn.dataset.size, Number(btn.dataset.nextQty));
+                renderGuestCart();
+            });
+        });
+        document.querySelectorAll('.guest-remove-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                removeGuestCartItem(btn.dataset.productId, btn.dataset.size);
+                renderGuestCart();
+            });
+        });
+        document.getElementById('guestClearCartBtn')?.addEventListener('click', () => {
+            clearGuestCart();
+            renderGuestCart();
+        });
+        document.getElementById('guestCouponBtn')?.addEventListener('click', () => {
+            const code = String(document.getElementById('guestCouponInput')?.value || '').trim().toUpperCase();
+            if (!code) {
+                sessionStorage.removeItem('guestCouponCode');
+                sessionStorage.removeItem('guestCouponNote');
+                renderGuestCart();
+                return;
+            }
+            sessionStorage.setItem('guestCouponCode', code);
+            sessionStorage.setItem('guestCouponNote', 'Coupon saved and will be verified at checkout.');
+            renderGuestCart();
+        });
+        document.getElementById('guestProceedBtn')?.addEventListener('click', openOtpModal);
+    }
+
     function isAddressComplete(address) {
         if (!address) return false;
         return !!(
@@ -768,15 +1021,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     async function loadCart() {
         layout.innerHTML = '<div class="cart-loading"><div class="spinner"></div><p>Loading your cart...</p></div>';
         try {
-            const [cartRes, addrRes, configRes] = await Promise.all([
+            const [cartRes, addrRes, configRes, gatewayConfigRes] = await Promise.all([
                 fetch(`${API_BASE}/cart`, { headers: { Authorization: `Bearer ${getToken()}` } }),
                 fetch(`${API_BASE}/addresses`, { headers: { Authorization: `Bearer ${getToken()}` } }),
-                fetch(`${API_BASE}/api/store-config`).catch(() => ({ json: () => ({ success: true, cod_enabled: true, min_order_value: 0, cod_min_order_value: 0, shipping_charge: 0 }) }))
+                fetch(`${API_BASE}/api/store-config`).catch(() => ({ json: () => ({ success: true, cod_enabled: true, min_order_value: 0, cod_min_order_value: 0, shipping_charge: 0 }) })),
+                fetch(`${API_BASE}/api/config/payment-gateways`).catch(() => ({ json: () => ({ success: false }) }))
             ]);
             const cartData = await cartRes.json();
             const addrData = await addrRes.json();
             const configData = await configRes.json();
+            const gatewayConfigData = await gatewayConfigRes.json();
             if (configData.success) storeConfig = configData;
+            if (gatewayConfigData.success) paymentGatewayConfig = gatewayConfigData;
 
             cartItems = cartData.success ? (cartData.items || []) : [];
             // Select all by default on first load if nothing selected
@@ -851,6 +1107,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             selectedPaymentMethod = 'Prepaid';
             sessionStorage.setItem('selectedPaymentMethod', selectedPaymentMethod);
         }
+        ensureSelectedPaymentGateway();
         const canProceed = !!selectedAddr && isAddressComplete(selectedAddr) && selectedCartItemIds.length > 0;
 
         const addrOptions = addresses.length
@@ -978,7 +1235,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <h2 class="cart-col-title">Payment Method</h2>
                     <label style="display:flex; gap:10px; align-items:flex-start; margin-bottom:12px; cursor:pointer;">
                         <input type="radio" name="paymentMethod" value="Prepaid" ${selectedPaymentMethod === 'Prepaid' ? 'checked' : ''}>
-                        <span><strong>Pay Online</strong><br><small style="color:#6b7280;">Use PayU for prepaid checkout</small></span>
+                        <span><strong>Pay Online</strong><br><small style="color:#6b7280;">Pay securely online</small></span>
                     </label>
                     ${codAllowed ? `
                     <label style="display:flex; gap:10px; align-items:flex-start; cursor:pointer;">
@@ -1046,6 +1303,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             input.addEventListener('change', () => {
                 selectedPaymentMethod = input.value;
                 sessionStorage.setItem('selectedPaymentMethod', selectedPaymentMethod);
+                if (selectedPaymentMethod !== 'Prepaid') {
+                    selectedPaymentGateway = 'COD';
+                } else if (selectedPaymentGateway === 'COD') {
+                    selectedPaymentGateway = 'PayU';
+                }
+                sessionStorage.setItem('selectedPaymentGateway', selectedPaymentGateway);
                 renderCart();
             });
         });
@@ -1206,6 +1469,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     address_id: selectedAddressId,
                     cart_item_ids: selectedCartItemIds,
                     payment_method: selectedPaymentMethod,
+                    payment_gateway: selectedPaymentMethod === 'Prepaid' ? selectedPaymentGateway : 'COD',
                     coupon_code: appliedCoupon?.code || null,
                     coupon_id: appliedCoupon?.id || null,
                     customer_details: customerDetails
@@ -1254,6 +1518,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
 
+            if (orderData.paymentGateway === 'PhonePe' && orderData.phonepe?.redirectUrl) {
+                if (window.firePixelAddPaymentInfo) {
+                    window.firePixelAddPaymentInfo({
+                        ...getCartDataForPixel(),
+                        payment_method: 'PhonePe'
+                    });
+                }
+
+                clearAppliedCoupon({ silent: true });
+                selectedCartItemIds = [];
+                window.location.href = orderData.phonepe.redirectUrl;
+                return;
+            }
+
             showToast('Unable to start online payment right now');
             btn.textContent = defaultButtonText;
             btn.disabled = false;
@@ -1298,11 +1576,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function initPage() {
         if (!getToken()) {
-            await renderGuestPendingCart();
+            await renderGuestCart();
             return;
         }
 
-        await processPendingCart();
+        await processGuestCartMerge();
         await loadCart();
     }
 

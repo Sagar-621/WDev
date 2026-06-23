@@ -871,11 +871,34 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         if (!isLoggedIn()) {
-            sessionStorage.setItem('pendingCart', JSON.stringify({
-                productId: product.id, size: selectedSize, quantity
-            }));
-            window.location.href = 'cart.html';
-            return false;
+            window.DevasthraGuestCart?.add({
+                productId: product.id,
+                size: selectedSize || '',
+                quantity,
+                productDetails: {
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    original_price: product.original_price,
+                    image_url: product.image_url,
+                    category: product.category,
+                    stock: product.stock
+                }
+            });
+            if (window.firePixelAddToCart) {
+                window.firePixelAddToCart({
+                    product_id: product.id,
+                    sku: `SKU-${product.id}`,
+                    name: product.name,
+                    category: product.category,
+                    price: product.price,
+                    quantity,
+                    size: selectedSize || ''
+                });
+            }
+            updateCartBadge(window.DevasthraGuestCart?.count() || 0);
+            showToast(`${product.name} (${selectedSize || 'One Size'} x ${quantity}) added to cart`, 'success');
+            return true;
         }
 
         btn.textContent = 'Adding...';
@@ -1023,6 +1046,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                         gender: data.gender || ''
                     }));
                     otpModal.classList.remove('show'); otpOverlay.classList.remove('show'); document.body.style.overflow = '';
+                    sessionStorage.removeItem('pendingCart');
+                    try {
+                        const mergeData = await window.DevasthraGuestCart?.mergeToServer(data.token);
+                        if (mergeData?.success) updateCartBadge(mergeData.cartCount || 0);
+                    } catch {
+                        // Keep guest_cart in localStorage so cart.html can retry the merge.
+                    }
                     showToast('✓ Logged in!', 'success');
                     // Retry pending cart
                     const pending = sessionStorage.getItem('pendingCart');
@@ -1074,6 +1104,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             const d = await r.json();
             if (d.success) updateCartBadge(d.count);
         } catch { }
+    } else {
+        updateCartBadge(window.DevasthraGuestCart?.count() || 0);
     }
 
     if ((product.has_size_inventory && !(product.available_sizes || []).length) || (!product.has_size_inventory && (Number(product.stock) || 0) <= 0)) {

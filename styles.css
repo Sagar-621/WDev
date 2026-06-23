@@ -5142,14 +5142,14 @@ button.review-submit-btn:hover {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0.98);
-    width: min(92vw, 820px);
-    max-height: 92vh;
+    width: min(94vw, 980px);
+    max-height: min(92vh, 720px);
     overflow: hidden;
     flex-direction: column;
     background:
         radial-gradient(circle at top right, rgba(255, 215, 0, 0.09), transparent 30%),
         linear-gradient(180deg, #ffffff 0%, #fffaf6 100%);
-    border-radius: 28px;
+    border-radius: 24px;
     border: 1px solid rgba(112, 8, 35, 0.12);
     box-shadow: 0 28px 70px rgba(0, 0, 0, 0.24);
     z-index: 3300;
@@ -5169,8 +5169,8 @@ button.review-submit-btn:hover {
 
 .checkout-close {
     position: absolute;
-    top: 14px;
-    right: 18px;
+    top: 12px;
+    right: 14px;
     z-index: 2;
     background: rgba(255, 255, 255, 0.92);
     width: 38px;
@@ -5187,36 +5187,36 @@ button.review-submit-btn:hover {
 }
 
 .checkout-modal-header {
-    padding: 28px 28px 18px;
+    padding: 24px 72px 16px;
     text-align: center;
     border-bottom: 1px solid rgba(112, 8, 35, 0.08);
 }
 
 .checkout-kicker {
-    font-size: 0.78rem;
+    font-size: 0.74rem;
     font-weight: 700;
     letter-spacing: 0.24em;
     text-transform: uppercase;
     color: var(--color-gold-dark);
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .checkout-modal-header h2 {
     font-family: var(--font-heading);
-    font-size: clamp(1.4rem, 2.4vw, 2rem);
+    font-size: clamp(1.35rem, 2.1vw, 1.9rem);
     color: var(--color-black);
     margin-bottom: 8px;
 }
 
 .checkout-modal-header p {
     color: var(--color-medium-gray);
-    font-size: 0.95rem;
+    font-size: 0.92rem;
 }
 
 .checkout-modal-body {
-    padding: 22px 28px 18px;
+    padding: 20px 24px 14px;
     overflow-y: auto;
-    max-height: calc(92vh - 180px);
+    max-height: calc(min(92vh, 720px) - 174px);
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
@@ -5258,18 +5258,38 @@ button.review-submit-btn:hover {
 
 .checkout-review-stack {
     display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 0.9fr);
+    grid-template-areas:
+        "address payment"
+        "order payment";
     gap: 12px;
+    align-items: stretch;
 }
 
 .checkout-review-card {
     padding: 14px 16px;
-    border-radius: 18px;
+    border-radius: 16px;
     background: rgba(250, 245, 240, 0.75);
     border: 1px solid rgba(112, 8, 35, 0.08);
 }
 
+.checkout-address-review {
+    grid-area: address;
+}
+
+.checkout-order-review {
+    grid-area: order;
+}
+
+.checkout-payment-review {
+    grid-area: payment;
+    background: #fff;
+    border-color: rgba(112, 8, 35, 0.16);
+    box-shadow: 0 14px 36px rgba(112, 8, 35, 0.08);
+}
+
 .checkout-review-card h3 {
-    font-size: 0.86rem;
+    font-size: 0.82rem;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -5278,24 +5298,73 @@ button.review-submit-btn:hover {
 }
 
 .checkout-review-copy {
-    font-size: 0.93rem;
+    font-size: 0.91rem;
     color: var(--color-charcoal);
-    line-height: 1.55;
+    line-height: 1.48;
     word-break: break-word;
 }
 
-.checkout-msg {
+.checkout-gateway-summary {
     margin-top: 12px;
+}
+
+.checkout-gateway-title {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--color-black);
+}
+
+.checkout-gateway-error {
+    color: #b42318;
+}
+
+.checkout-gateway-option {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 10px;
+    align-items: flex-start;
+    padding: 10px 11px;
+    border: 1px solid rgba(112, 8, 35, 0.12);
+    border-radius: 12px;
+    background: rgba(250, 245, 240, 0.55);
+    cursor: pointer;
+}
+
+.checkout-gateway-option.has-gap {
+    margin-bottom: 8px;
+}
+
+.checkout-gateway-option input {
+    margin-top: 3px;
+    accent-color: var(--color-maroon);
+}
+
+.checkout-gateway-option span {
+    display: grid;
+    gap: 2px;
+}
+
+.checkout-gateway-option small {
+    color: #6b7280;
+    line-height: 1.35;
+}
+
+.checkout-msg {
+    margin-top: 4px;
     font-size: 0.9rem;
     color: #b42318;
     min-height: 1.2em;
+}
+
+.checkout-msg:empty {
+    display: none;
 }
 
 .checkout-modal-actions {
     display: flex;
     gap: 12px;
     justify-content: flex-end;
-    padding: 18px 28px 28px;
+    padding: 14px 24px 22px;
     border-top: 1px solid rgba(112, 8, 35, 0.08);
     background: rgba(255, 255, 255, 0.88);
     position: relative;
@@ -5315,7 +5384,7 @@ body.site-modal-open .dc-panel {
 
 @media (max-width: 768px) {
     .checkout-modal {
-        width: min(94vw, 820px);
+        width: min(94vw, 520px);
         border-radius: 22px;
         max-height: calc(100dvh - 18px);
     }
@@ -5325,8 +5394,17 @@ body.site-modal-open .dc-panel {
     }
 
     .checkout-modal-body {
-        max-height: none;
+        max-height: calc(100dvh - 214px);
+        flex: 0 1 auto;
         padding: 16px 16px 10px;
+    }
+
+    .checkout-review-stack {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "address"
+            "order"
+            "payment";
     }
 
     .checkout-modal-actions {
@@ -5344,59 +5422,96 @@ body.site-modal-open .dc-panel {
 
 @media (max-width: 480px) {
     .checkout-modal {
-        width: calc(100vw - 16px);
-        max-height: calc(100dvh - 182px);
+        width: min(calc(100vw - 20px), 380px);
+        max-height: calc(100dvh - 24px);
         border-radius: 18px;
+        height: auto;
     }
 
     .checkout-modal-header {
-        padding: 20px 16px 14px;
+        padding: 16px 52px 10px 16px;
+        text-align: left;
+    }
+
+    .checkout-kicker {
+        font-size: 0.68rem;
+        letter-spacing: 0.22em;
+        margin-bottom: 5px;
     }
 
     .checkout-modal-header h2 {
-        font-size: 1.08rem;
+        font-size: 0.98rem;
         line-height: 1.25;
+        margin-bottom: 6px;
     }
 
     .checkout-modal-header p {
-        font-size: 0.84rem;
-        line-height: 1.45;
+        font-size: 0.78rem;
+        line-height: 1.4;
     }
 
     .checkout-modal-body {
-        padding: 14px 14px 8px;
-        gap: 10px;
+        max-height: calc(100dvh - 176px);
+        padding: 10px 10px 6px;
+        gap: 8px;
     }
 
     .checkout-review-stack {
-        gap: 10px;
+        gap: 8px;
     }
 
     .checkout-review-card {
-        padding: 12px 12px;
-        border-radius: 14px;
+        padding: 10px 10px;
+        border-radius: 12px;
     }
 
     .checkout-review-card h3 {
-        font-size: 0.78rem;
-        margin-bottom: 6px;
+        font-size: 0.7rem;
+        margin-bottom: 5px;
         letter-spacing: 0.06em;
     }
 
     .checkout-review-copy {
-        font-size: 0.86rem;
-        line-height: 1.42;
+        font-size: 0.78rem;
+        line-height: 1.34;
+    }
+
+    .checkout-gateway-summary {
+        margin-top: 8px;
+    }
+
+    .checkout-gateway-title {
+        margin-bottom: 6px;
+        font-size: 0.8rem;
+    }
+
+    .checkout-gateway-option {
+        padding: 8px 9px;
+        border-radius: 10px;
+    }
+
+    .checkout-gateway-option.has-gap {
+        margin-bottom: 6px;
+    }
+
+    .checkout-gateway-option small {
+        font-size: 0.68rem;
     }
 
     .checkout-modal-actions {
-        padding: 12px 14px 14px;
-        gap: 10px;
-        padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+        padding: 10px 10px 12px;
+        gap: 0;
+        padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .checkout-modal-actions .btn-outline {
+        display: none;
     }
 
     .checkout-modal-actions .btn {
-        min-height: 46px;
-        font-size: 0.9rem;
+        min-height: 40px;
+        font-size: 0.78rem;
+        letter-spacing: 0.12em;
     }
 
     .otp-modal-header h2 {

@@ -255,6 +255,39 @@ CREATE TABLE IF NOT EXISTS payments (
 );
 
 -- =========================================
+-- 8a. PHONEPE TRANSACTIONS
+-- =========================================
+CREATE TABLE IF NOT EXISTS phonepe_transactions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL,
+    payment_id INT NULL,
+    merchant_order_id VARCHAR(80) NOT NULL,
+    phonepe_order_id VARCHAR(80) NULL,
+    state VARCHAR(30) NULL,
+    amount DECIMAL(10,2) NOT NULL DEFAULT 0,
+    expire_at DATETIME NULL,
+    payment_mode VARCHAR(50) NULL,
+    transaction_id VARCHAR(100) NULL,
+    transaction_state VARCHAR(30) NULL,
+    error_code VARCHAR(80) NULL,
+    detailed_error_code VARCHAR(80) NULL,
+    redirect_url TEXT NULL,
+    meta_info LONGTEXT NULL,
+    request_payload LONGTEXT NULL,
+    response_payload LONGTEXT NULL,
+    webhook_event VARCHAR(80) NULL,
+    webhook_authorization_verified BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_phonepe_transaction_order FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
+    CONSTRAINT fk_phonepe_transaction_payment FOREIGN KEY (payment_id) REFERENCES payments(id) ON DELETE SET NULL,
+    INDEX idx_phonepe_order (order_id),
+    INDEX idx_phonepe_payment (payment_id),
+    INDEX idx_phonepe_merchant_order (merchant_order_id),
+    INDEX idx_phonepe_transaction (transaction_id)
+);
+
+-- =========================================
 -- 8b. COUPONS
 -- =========================================
 CREATE TABLE IF NOT EXISTS coupons (
@@ -580,7 +613,6 @@ CREATE TABLE IF NOT EXISTS newsletter_signups (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_newsletter_created (created_at)
 );
-
 
 
 

@@ -326,6 +326,8 @@ app.use(async (req, res, next) => {
         pathName.startsWith('/site-status') ||
         pathName.startsWith('/api/store-config') ||
         pathName.startsWith('/api/config') ||
+        pathName.startsWith('/api/phonepe/callback') ||
+        pathName.startsWith('/api/payu/callback') ||
         pathName.startsWith('/backend/images') ||
         pathName.startsWith('/images') ||
         pathName.startsWith('/uploads') ||
@@ -377,6 +379,7 @@ app.use('/', require('./routes/cart'));
 app.use('/', require('./routes/address'));
 app.use('/', require('./routes/orders'));
 app.use('/api', require('./routes/orders'));
+app.use('/api/phonepe', require('./routes/phonepe'));
 app.use('/returns', require('./routes/returns'));
 app.use('/admin', require('./routes/admin'));
 app.use('/user', require('./routes/user'));

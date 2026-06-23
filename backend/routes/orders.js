@@ -5,6 +5,7 @@ const auth = require('../middleware/auth');
 const crypto = require('crypto');
 const axios = require('axios');
 const shiprocket = require('../services/shiprocket');
+const phonepe = require('../services/phonepe');
 const { sendTransactionalSms } = require('../services/sms');
 const {
     initiatePayuRefund,
@@ -35,18 +36,20 @@ const CANCELLATION_REASONS = new Set([
 function normalizeDob(value) {
     const dob = String(value || '').trim();
     if (!dob) return '';
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(dob)) return null;
+    const match = dob.match(/^(\d{4}-\d{2}-\d{2})/);
+    if (!match) return null;
+    const dateOnly = match[1];
 
-    const parsed = new Date(`${dob}T00:00:00Z`);
+    const parsed = new Date(`${dateOnly}T00:00:00Z`);
     if (Number.isNaN(parsed.getTime())) return null;
 
-    const [year, month, day] = dob.split('-').map(Number);
+    const [year, month, day] = dateOnly.split('-').map(Number);
     const isSameDate =
         parsed.getUTCFullYear() === year &&
         parsed.getUTCMonth() + 1 === month &&
         parsed.getUTCDate() === day;
 
-    return isSameDate ? dob : null;
+    return isSameDate ? dateOnly : null;
 }
 
 async function ensureAddressTables() {
@@ -767,6 +770,31 @@ function getPayuCallbackUrl() {
     return `${getStorefrontBaseUrl()}/api/payu/callback`;
 }
 
+function isLocalHost(host = '') {
+    return /^(localhost|127\.0\.0\.1)(:\d+)?$/i.test(String(host || '').trim());
+}
+
+function getRequestServerBaseUrl(req) {
+    const host = String(req.get('host') || '').trim();
+    if (!host) return '';
+    const protocol = isLocalHost(host) ? 'http' : (req.protocol || 'https');
+    return `${protocol}://${host}`.replace(/\/+$/, '');
+}
+
+function getPhonePeCallbackUrl(req, { merchantOrderId = '', orderId = '' } = {}) {
+    const requestBase = getRequestServerBaseUrl(req);
+    const configured = String(process.env.PHONEPE_CALLBACK_URL || '').trim();
+    const callbackBase = isLocalHost(req.get('host') || '')
+        ? `${requestBase}/api/phonepe/callback`
+        : (configured || `${getStorefrontBaseUrl()}/api/phonepe/callback`);
+    const callbackUrl = new URL(callbackBase);
+
+    if (merchantOrderId) callbackUrl.searchParams.set('merchantOrderId', String(merchantOrderId));
+    if (orderId) callbackUrl.searchParams.set('localOrderId', String(orderId));
+
+    return callbackUrl.toString();
+}
+
 function buildPayuRequestHash({
     txnid,
     amount,
@@ -1452,8 +1480,22 @@ router.post('/create-order', auth, async (req, res) => {
         const customerEmail = String(userProfile.email || '').trim();
         const customerName = selectedAddress.name || userProfile.name || 'Customer';
 
-        if (paymentMethod === 'Prepaid' && (!process.env.PAYU_KEY || !process.env.PAYU_SALT)) {
-            return res.status(500).json({ success: false, message: 'PayU is not configured yet' });
+        const paymentGateway = req.body.payment_gateway || 'PayU';
+
+        if (paymentMethod === 'Prepaid') {
+            if (paymentGateway === 'PhonePe') {
+                const phonePeClientId = phonepe.getPhonePeClientId();
+                const phonePeClientSecret = phonepe.getPhonePeClientSecret();
+                if (!phonePeClientId || !phonePeClientSecret) {
+                    return res.status(400).json({ success: false, message: 'PhonePe is not configured on this server' });
+                }
+            } else if (paymentGateway === 'PayU') {
+                if (!process.env.PAYU_KEY || !process.env.PAYU_SALT) {
+                    return res.status(500).json({ success: false, message: 'PayU is not configured yet' });
+                }
+            } else {
+                return res.status(400).json({ success: false, message: `Unsupported payment gateway: ${paymentGateway}` });
+            }
         }
 
         if (paymentMethod === 'Prepaid' && !customerEmail) {
@@ -1717,36 +1759,119 @@ router.post('/create-order', auth, async (req, res) => {
             });
         }
 
-        const payuFields = {
-            key: String(process.env.PAYU_KEY || '').trim(),
-            txnid: payuTxnId,
-            amount: Number(finalTotal).toFixed(2),
-            productinfo: `DEVASTHRA Order ${invoiceNumber}`,
-            firstname: customerName,
-            email: customerEmail,
-            phone: selectedAddress.mobile,
-            surl: getPayuCallbackUrl(),
-            furl: getPayuCallbackUrl(),
-            service_provider: 'payu_paisa',
-            udf1: String(orderId),
-            udf2: String(user_id),
-            udf3: invoiceNumber,
-            udf4: '',
-            udf5: ''
-        };
-        payuFields.hash = buildPayuRequestHash(payuFields);
+        // Check which payment gateway to use
+        if (paymentGateway === 'PhonePe') {
+            // PhonePe payment — single-step: create order + initiate payment
+            const merchantOrderId = `DVPH${String(orderId).padStart(8, '0')}_${Date.now()}`;
+            const amountPaise = Math.round(Number(finalTotal) * 100);
 
-        res.json({
-            success: true,
-            orderId,
-            orderReference: invoiceNumber,
-            paymentMethod,
-            paymentGateway: 'PayU',
-            payu: {
-                action: `${getPayuBaseUrl()}/_payment`,
-                fields: payuFields
+            // Update payment record to PhonePe
+            await db.execute(
+                `UPDATE payments SET gateway = ? WHERE order_id = ?`,
+                ['PhonePe', orderId]
+            );
+
+            // Build the callback/redirect URL (where PhonePe sends user back).
+            // PhonePe v2 does not always append merchantOrderId on redirects, so
+            // keep our own identifiers in the redirect URL for callback recovery.
+            const callbackUrl = getPhonePeCallbackUrl(req, { merchantOrderId, orderId });
+
+            // Initiate PhonePe payment
+            let phonepeResponse;
+            try {
+                phonepeResponse = await phonepe.initiatePhonePePayment({
+                    merchantOrderId,
+                    amountPaise,
+                    redirectUrl: callbackUrl,
+                    prefillPhoneNumber: String(selectedAddress.mobile || userProfile.mobile_number || '').trim(),
+                    metaInfo: {
+                        orderId: String(orderId),
+                        invoiceNumber: invoiceNumber,
+                        customerEmail: customerEmail || '',
+                        customerName: customerName || ''
+                    }
+                });
+            } catch (ppErr) {
+                console.error('[PhonePe] Payment initiation failed:', ppErr.message, ppErr.responseData || '');
+                return res.status(502).json({
+                    success: false,
+                    message: 'Failed to initiate PhonePe payment. Please try again or use a different payment method.'
+                });
             }
-        });
+
+            if (!phonepeResponse.ok || !phonepeResponse.redirectUrl) {
+                console.error('[PhonePe] No redirect URL in response:', phonepeResponse.response);
+                return res.status(502).json({
+                    success: false,
+                    message: 'PhonePe payment could not be started. Please try again.'
+                });
+            }
+
+            // Store PhonePe transaction record
+            await db.execute(
+                `INSERT INTO phonepe_transactions
+                 (order_id, merchant_order_id, phonepe_order_id, state, amount, redirect_url, request_payload, response_payload, created_at, updated_at)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`,
+                [
+                    orderId,
+                    merchantOrderId,
+                    phonepeResponse.phonepeOrderId || '',
+                    phonepeResponse.state || 'CREATED',
+                    finalTotal,
+                    phonepeResponse.redirectUrl,
+                    JSON.stringify(phonepeResponse.requestBody),
+                    JSON.stringify(phonepeResponse.response)
+                ]
+            );
+
+            console.log(`[PhonePe] ✅ Payment initiated for Order #${orderId}, redirecting to PhonePe`);
+
+            res.json({
+                success: true,
+                orderId,
+                orderReference: invoiceNumber,
+                paymentMethod,
+                paymentGateway: 'PhonePe',
+                merchantOrderId: merchantOrderId,
+                phonepe: {
+                    redirectUrl: phonepeResponse.redirectUrl,
+                    merchantOrderId: merchantOrderId,
+                    phonepeOrderId: phonepeResponse.phonepeOrderId || ''
+                }
+            });
+        } else {
+            // PayU payment (default)
+            const payuFields = {
+                key: String(process.env.PAYU_KEY || '').trim(),
+                txnid: payuTxnId,
+                amount: Number(finalTotal).toFixed(2),
+                productinfo: `DEVASTHRA Order ${invoiceNumber}`,
+                firstname: customerName,
+                email: customerEmail,
+                phone: selectedAddress.mobile,
+                surl: getPayuCallbackUrl(),
+                furl: getPayuCallbackUrl(),
+                service_provider: 'payu_paisa',
+                udf1: String(orderId),
+                udf2: String(user_id),
+                udf3: invoiceNumber,
+                udf4: '',
+                udf5: ''
+            };
+            payuFields.hash = buildPayuRequestHash(payuFields);
+
+            res.json({
+                success: true,
+                orderId,
+                orderReference: invoiceNumber,
+                paymentMethod,
+                paymentGateway: 'PayU',
+                payu: {
+                    action: `${getPayuBaseUrl()}/_payment`,
+                    fields: payuFields
+                }
+            });
+        }
     } catch (err) {
         console.error('create-order error:', err);
         res.status(err.statusCode || 500).json({

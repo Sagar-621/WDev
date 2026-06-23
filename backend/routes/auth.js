@@ -7,6 +7,8 @@ const { normalizeIndianMobile, sendManagedOtp, verifyManagedOtp } = require('../
 
 let emailAuthSchemaReady = false;
 const mobileOtpStore = new Map();
+const mobileOtpSendLocks = new Map();
+const MOBILE_OTP_RESEND_COOLDOWN_MS = 45 * 1000;
 
 async function ensureEmailAuthSchema() {
     if (emailAuthSchemaReady) return;
@@ -138,12 +140,14 @@ function isValidEmailAddress(email) {
 function normalizeDob(value) {
     const dob = String(value || '').trim();
     if (!dob) return '';
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(dob)) return null;
+    const match = dob.match(/^(\d{4}-\d{2}-\d{2})/);
+    if (!match) return null;
+    const dateOnly = match[1];
 
-    const [year, month, day] = dob.split('-').map(Number);
+    const [year, month, day] = dateOnly.split('-').map(Number);
     if (year < 1900 || year > new Date().getFullYear()) return null;
 
-    const parsed = new Date(`${dob}T00:00:00Z`);
+    const parsed = new Date(`${dateOnly}T00:00:00Z`);
     if (Number.isNaN(parsed.getTime())) return null;
 
     const isSameDate =
@@ -157,7 +161,35 @@ function normalizeDob(value) {
     const todayUtc = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
     if (parsed.getTime() > todayUtc) return null;
 
-    return dob;
+    return dateOnly;
+}
+
+function buildMobileOtpResponse(existingUser, mobile) {
+    return {
+        success: true,
+        message: 'OTP sent successfully',
+        dev: false,
+        isNewUser: !existingUser,
+        user: existingUser ? {
+            id: existingUser.id,
+            email: existingUser.email || '',
+            name: existingUser.name || '',
+            gender: existingUser.gender || '',
+            mobile_number: existingUser.mobile_number || mobile,
+            dob: normalizeDob(existingUser.dob) || ''
+        } : null
+    };
+}
+
+async function lookupMobileOtpUser(mobile, email) {
+    const existingUser = await findExistingLoginUser({ mobile, email });
+    console.log(
+        `[USER AUTH] Mobile OTP lookup for ${mobile}${email ? ` / ${email}` : ''}: ` +
+        (existingUser
+            ? `existing user found (userId=${existingUser.id}, matchedMobile=${existingUser.mobile_number || ''}, matchedEmail=${existingUser.email || ''})`
+            : 'no match found, treat as new user')
+    );
+    return existingUser;
 }
 
 async function sendEmailCode(email, code) {
@@ -220,7 +252,7 @@ router.post('/send-login-code', async (req, res) => {
                 name: existingUser.name,
                 gender: existingUser.gender,
                 mobile_number: existingUser.mobile_number || '',
-                dob: existingUser.dob || ''
+                dob: normalizeDob(existingUser.dob) || ''
             } : null
         });
     } catch (err) {
@@ -343,7 +375,7 @@ router.post('/verify-login-code', async (req, res) => {
             email,
             name: userName,
             mobile: users[0]?.mobile_number || mobile || '',
-            dob: users[0]?.dob || normalizedDob || '',
+            dob: normalizeDob(users[0]?.dob) || normalizedDob || '',
             gender: users[0]?.gender || gender || ''
         });
 
@@ -376,37 +408,47 @@ router.post('/send-mobile-login-otp', async (req, res) => {
     try {
         await ensureEmailAuthSchema();
 
-        const code = generateCode();
-        console.log(`[USER OTP] Requesting 2Factor OTP for ${mobile} using approved template NATDEV`);
-        const otpResult = await sendMobileCode(mobile, code);
-        mobileOtpStore.set(mobile, {
-            sessionId: otpResult.sessionId || '',
-            expiresAt: Date.now() + 10 * 60 * 1000
-        });
-        console.log(`[USER OTP] 2Factor OTP session created for ${mobile}`);
+        const now = Date.now();
+        const existingOtp = mobileOtpStore.get(mobile);
+        if (
+            existingOtp?.sessionId &&
+            existingOtp.expiresAt > now &&
+            now - Number(existingOtp.sentAt || 0) < MOBILE_OTP_RESEND_COOLDOWN_MS
+        ) {
+            console.log(`[USER OTP] Reusing active OTP session for ${mobile}; duplicate send suppressed`);
+            const existingUser = await lookupMobileOtpUser(mobile, email);
+            return res.json(buildMobileOtpResponse(existingUser, mobile));
+        }
 
-        const existingUser = await findExistingLoginUser({ mobile, email });
-        console.log(
-            `[USER AUTH] Mobile OTP lookup for ${mobile}${email ? ` / ${email}` : ''}: ` +
-            (existingUser
-                ? `existing user found (userId=${existingUser.id}, matchedMobile=${existingUser.mobile_number || ''}, matchedEmail=${existingUser.email || ''})`
-                : 'no match found, treat as new user')
-        );
+        if (mobileOtpSendLocks.has(mobile)) {
+            console.log(`[USER OTP] Joining in-flight OTP request for ${mobile}; duplicate send suppressed`);
+            const existingUser = await mobileOtpSendLocks.get(mobile);
+            return res.json(buildMobileOtpResponse(existingUser, mobile));
+        }
 
-        res.json({
-            success: true,
-            message: 'OTP sent successfully',
-            dev: false,
-            isNewUser: !existingUser,
-            user: existingUser ? {
-                id: existingUser.id,
-                email: existingUser.email || '',
-                name: existingUser.name || '',
-                gender: existingUser.gender || '',
-                mobile_number: existingUser.mobile_number || mobile,
-                dob: existingUser.dob || ''
-            } : null
-        });
+        const sendOtpPromise = (async () => {
+            const code = generateCode();
+            console.log(`[USER OTP] Requesting 2Factor OTP for ${mobile} using configured template`);
+            const otpResult = await sendMobileCode(mobile, code);
+            mobileOtpStore.set(mobile, {
+                sessionId: otpResult.sessionId || '',
+                expiresAt: Date.now() + 10 * 60 * 1000,
+                sentAt: Date.now()
+            });
+            console.log(`[USER OTP] 2Factor OTP session created for ${mobile}`);
+            return lookupMobileOtpUser(mobile, email);
+        })();
+
+        mobileOtpSendLocks.set(mobile, sendOtpPromise);
+
+        try {
+            const existingUser = await sendOtpPromise;
+            return res.json(buildMobileOtpResponse(existingUser, mobile));
+        } finally {
+            if (mobileOtpSendLocks.get(mobile) === sendOtpPromise) {
+                mobileOtpSendLocks.delete(mobile);
+            }
+        }
     } catch (err) {
         console.error('send-mobile-login-otp error:', err);
         res.status(500).json({ success: false, message: err.message || 'Failed to send OTP' });
@@ -534,7 +576,7 @@ router.post('/verify-mobile-login-otp', async (req, res) => {
             email: userEmail || '',
             name: userName,
             mobile,
-            dob: existingUser?.dob || normalizedDob || '',
+            dob: normalizeDob(existingUser?.dob) || normalizedDob || '',
             gender: existingUser?.gender || gender || ''
         });
         console.log(

@@ -472,12 +472,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function handleAddToCart(productId, size, quantity = 1, btn = null) {
         if (!isLoggedIn()) {
-            sessionStorage.setItem('pendingCart', JSON.stringify({ productId, size, quantity }));
-            if (typeof window.openEmailAuthModal === 'function') {
-                window.openEmailAuthModal();
-            } else {
-                window.location.href = 'index.html?action=login';
-            }
+            window.DevasthraGuestCart?.add({
+                productId,
+                size: size || '',
+                quantity,
+                productDetails: {
+                    id: productId,
+                    name: btn?.getAttribute('data-name') || 'Product',
+                    price: Number(btn?.getAttribute('data-price') || 0)
+                }
+            });
+            updateCartBadge(window.DevasthraGuestCart?.count() || 0);
+            showToast('Added to cart', 'success');
+            if (btn) { btn.textContent = 'Added'; setTimeout(() => { btn.textContent = 'Add to Cart'; btn.disabled = false; }, 1200); }
             return;
         }
         await doAddToCart(productId, size, quantity, btn);
@@ -532,7 +539,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function refreshCartCount() {
-        if (!isLoggedIn()) return;
+        if (!isLoggedIn()) {
+            updateCartBadge(window.DevasthraGuestCart?.count() || 0);
+            return;
+        }
         try {
             const res = await fetch(`${API_BASE}/cart/count`, {
                 headers: { 'Authorization': `Bearer ${getToken()}` }
