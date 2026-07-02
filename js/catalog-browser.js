@@ -130,6 +130,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (['women', 'woman', 'female', 'ladies', 'lady'].includes(normalized)) return 'Women';
         if (['men', 'man', 'male', 'gents', 'gentlemen'].includes(normalized)) return 'Men';
         if (['kids', 'kid', 'children', 'child', 'boys', 'girls'].includes(normalized)) return 'Kids';
+        if (['unisex', 'all', 'all genders', 'everyone'].includes(normalized)) return 'Unisex';
         if (!normalized) return 'Unspecified';
         return String(value).trim();
     }

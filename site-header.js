@@ -775,6 +775,9 @@
                 text-decoration: none;
                 flex-shrink: 0;
                 transition: opacity .2s;
+                position: relative;
+                z-index: 920;
+                pointer-events: auto;
             }
             .logo:hover { opacity: .82; }
             .logo-img {
@@ -981,9 +984,10 @@
                 backdrop-filter: blur(4px);
                 z-index: 850;
                 opacity: 0;
+                pointer-events: none;
                 transition: opacity .3s var(--dv-ease);
             }
-            .mobile-overlay.visible { opacity: 1; }
+            .mobile-overlay.visible { opacity: 1; pointer-events: auto; }
 
             /* ══════════════════════════════════════════════════════
                CATEGORY DRAWER
@@ -1268,7 +1272,7 @@
         injectMetaPixel();
         injectHeaderStyles();
 
-        const homePrefix = 'index.html#home';
+        const homePrefix = 'index.html';
         const homeLink = 'index.html#home';
         const aboutLink = 'index.html#about';
         const contactLink = 'index.html#contact';
@@ -1434,6 +1438,7 @@
         const loginBtn      = document.getElementById('loginBtn');
         const mobileLoginBtn = document.getElementById('mobileLoginBtn');
         const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
+        const logoLink      = document.querySelector('.header .logo');
 
         function closeMenu() {
             if (hamburger) hamburger.classList.remove('active');
@@ -1485,6 +1490,10 @@
                 closeMenu();
             });
         }
+
+        logoLink?.addEventListener('click', function () {
+            closeMenu();
+        });
 
         /* User dropdown — clone elements to strip any duplicate listeners from page scripts */
         if (userBtn && userDrop && !userBtn._siteHeaderDropdownBound) {

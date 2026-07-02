@@ -972,7 +972,8 @@ function getAudienceTaxonomy(audience) {
 }
 
 function getAudienceOptions() {
-    return ['Men', 'Women', 'Kids'];
+    const configuredAudiences = Object.keys(structuredCatalogTaxonomy || {});
+    return configuredAudiences.length ? configuredAudiences : ['Men', 'Women', 'Kids', 'Unisex'];
 }
 
 function getAudienceFashions(audience) {
@@ -1181,7 +1182,8 @@ function populateAudienceOptions(selectedAudience = '') {
     const audienceInput = document.getElementById('pf_ideal_for');
     if (!audienceInput) return;
 
-    const audiences = ['Men', 'Women', 'Kids'];
+    const audiences = getAudienceOptions();
+    audienceInput.innerHTML = audiences.map(audience => `<option value="${escapeHtml(audience)}">${escapeHtml(audience)}</option>`).join('');
     if (selectedAudience) {
         audienceInput.value = selectedAudience;
     } else if (!audienceInput.value) {
@@ -1291,7 +1293,8 @@ function populateTaxonomyManagerOptions(selectedAudience = '', selectedFashion =
 
     if (!fashionOptions || !categoryOptions || !subcategoryOptions || !audienceInput || !fashionInput || !categoryInput || !subcategoryInput) return;
 
-    const audiences = ['Men', 'Women', 'Kids'];
+    const audiences = getAudienceOptions();
+    audienceInput.innerHTML = audiences.map(audience => `<option value="${escapeHtml(audience)}">${escapeHtml(audience)}</option>`).join('');
     if (selectedAudience) audienceInput.value = selectedAudience;
 
     const activeAudience = audienceInput.value || selectedAudience || audiences[0] || '';

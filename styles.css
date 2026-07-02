@@ -185,6 +185,9 @@ button {
     text-decoration: none;
     flex-shrink: 0;
     order: 1;
+    position: relative;
+    z-index: 1102;
+    pointer-events: auto;
 }
 
 .logo:first-child {
@@ -4661,10 +4664,12 @@ button.review-submit-btn:hover {
         inset: 0;
         background: rgba(0, 0, 0, 0.4);
         z-index: 1040;
+        pointer-events: none;
     }
 
     .mobile-overlay.visible {
         display: block;
+        pointer-events: auto;
     }
 
     .hero-title {
@@ -8734,13 +8739,15 @@ body.site-modal-open .dc-panel {
 }
 
 .drawer-audience-switch {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
     padding: 0 22px 18px;
 }
 
 .drawer-audience-chip {
-    min-width: 92px;
+    width: 100%;
+    min-width: 0;
     padding: 10px 16px;
     border-radius: 999px;
     border: 1px solid rgba(107, 15, 43, 0.12);

@@ -22,6 +22,7 @@ function normalizeAudience(value) {
     if (['men', 'man', 'male', 'gents', 'gentlemen'].includes(normalized)) return 'Men';
     if (['women', 'woman', 'female', 'ladies', 'lady'].includes(normalized)) return 'Women';
     if (['kids', 'kid', 'children', 'child', 'boys', 'girls'].includes(normalized)) return 'Kids';
+    if (['unisex', 'all', 'all genders', 'everyone'].includes(normalized)) return 'Unisex';
     return '';
 }
 
@@ -146,7 +147,8 @@ async function ensureFixedAudiences(db) {
     const fixedAudiences = [
         { name: 'Men', slug: 'men', display_order: 1 },
         { name: 'Women', slug: 'women', display_order: 2 },
-        { name: 'Kids', slug: 'kids', display_order: 3 }
+        { name: 'Kids', slug: 'kids', display_order: 3 },
+        { name: 'Unisex', slug: 'unisex', display_order: 4 }
     ];
 
     for (const audience of fixedAudiences) {
@@ -406,7 +408,7 @@ async function ensureCatalogPath(db, { audience, fashionGroup, category, subcate
         slug: slugify(normalizedAudience)
     });
     if (!audienceRow) {
-        throw new Error('Invalid gender. Allowed values: Men, Women, Kids');
+        throw new Error('Invalid gender. Allowed values: Men, Women, Kids, Unisex');
     }
 
     const fashionRow = await createNode(db, {
@@ -591,4 +593,3 @@ module.exports = {
     slugify,
     updateCatalogNode
 };
-
