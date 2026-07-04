@@ -370,8 +370,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await res.json();
 
             const featuredProducts = (data.products || [])
-                .filter(product => product.is_main_product)
-                .filter(product => !!product.badge)
+                .filter(product => product.listing_status === 'Active' || product.is_main_product)
+                .filter(product => !!product.image_url)
+                .sort((left, right) => {
+                    const leftRank = String(left.badge || '').toLowerCase() === 'bestseller' ? 3 : left.badge ? 1 : 0;
+                    const rightRank = String(right.badge || '').toLowerCase() === 'bestseller' ? 3 : right.badge ? 1 : 0;
+                    return rightRank - leftRank;
+                })
                 .slice(0, 8);
 
             if (!data.success || !featuredProducts.length) {

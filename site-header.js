@@ -982,7 +982,7 @@
                 inset: 0;
                 background: rgba(13,10,7,.45);
                 backdrop-filter: blur(4px);
-                z-index: 850;
+                z-index: 950;
                 opacity: 0;
                 pointer-events: none;
                 transition: opacity .3s var(--dv-ease);
@@ -1143,7 +1143,7 @@
                     padding: 80px 0 32px;
                     transform: translateX(110%);
                     transition: transform .38s var(--dv-ease);
-                    z-index: 870;
+                    z-index: 960;
                     box-shadow: -6px 0 40px rgba(13,10,7,.12);
                     gap: 0;
                     overflow-y: auto;
@@ -1158,7 +1158,11 @@
                 .nav-links > a::after { display: none; }
 
                 .mobile-overlay { display: block; }
-                .hamburger { display: flex; }
+                .hamburger {
+                    display: flex;
+                    position: relative;
+                    z-index: 970;
+                }
                 .header-company-logo {
                     display: flex;
                     order: 3;

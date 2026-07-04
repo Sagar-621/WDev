@@ -53,7 +53,6 @@
             '</svg>' +
             '</a>' +
             '</div>' +
-            /* Powered by NatooKart */
             '<div class="footer-powered">' +
             '</div>' +
             '</div>' +
@@ -110,7 +109,7 @@
 
             /* ── Footer Bottom ── */
             '<div class="footer-bottom">' +
-            '<p>&copy; 2026 DEVASTHRA. All rights reserved. Powered by NATOO KART TECHNOLOGIES PRIVATE LIMITED.</p>' +
+            '<p>&copy; 2026 DEVASTHRA. All rights reserved. A NATOO KART TECHNOLOGIES PRIVATE LIMITED brand.</p>' +
             '<div class="footer-bottom-links">' +
             '<a href="terms-of-service.html">Terms of Service</a>' +
             '<a href="privacy-policy.html">Privacy Policy</a>' +

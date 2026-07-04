@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         let activeAudience = audiences.includes('Men') ? 'Men' : audiences[0];
         const bestSellers = [...products]
             .filter((product) => product.listing_status === 'Active')
-            .filter((product) => !!product.badge)
+            .filter((product) => product.image_url)
             .sort((left, right) => {
                 const leftRank = String(left.badge || '').toLowerCase() === 'bestseller' ? 3 : left.badge ? 1 : 0;
                 const rightRank = String(right.badge || '').toLowerCase() === 'bestseller' ? 3 : right.badge ? 1 : 0;
@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <article class="product-card ${index === 0 ? 'best-seller-featured' : ''}" data-product-id="${product.id}" role="link" tabindex="0">
                         <div class="product-image">
                             <img src="${getImageUrl(product.image_url)}" alt="${product.name}" loading="lazy">
-                            <span class="product-badge ${product.badge_class || 'trending'}">${product.badge || 'Best Seller'}</span>
+                            ${product.badge ? `<span class="product-badge ${product.badge_class || 'trending'}">${product.badge}</span>` : ''}
                         </div>
                         <div class="product-info">
                             <h3 class="product-name">${product.name}</h3>
